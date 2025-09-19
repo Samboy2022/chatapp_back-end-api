@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-600 hover:text-green-600 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Index
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-green-100 rounded-lg p-1">
+                            <i class="fas fa-comments text-green-600"></i>
+                        </div>
+                        <span class="font-medium text-gray-900">Chat API</span>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                    Updated: 2025-09-15
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <div class="flex items-center space-x-4 mb-6">
+                <div class="bg-green-600 rounded-lg p-3">
+                    <i class="fas fa-comments text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Chat API</h1>
+                    <p class="text-gray-600 mt-1">Real-time messaging, chat management, and media sharing</p>
+                </div>
+            </div>
+
+            <div class="bg-green-50 rounded-lg p-4">
+                <div class="flex items-center space-x-3 text-green-800">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <p class="font-medium">Base URL: http://127.0.0.1:8000/api</p>
+                        <p class="text-sm">12+ endpoints • Real-time WebSocket support • Media sharing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Navigation</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="#chats" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-green-50 transition-colors">
+                    <i class="fas fa-list text-green-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Chat List</div>
+                </a>
+                <a href="#create" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
+                    <i class="fas fa-plus text-blue-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Create Chat</div>
+                </a>
+                <a href="#messages" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-purple-50 transition-colors">
+                    <i class="fas fa-envelope text-purple-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Messages</div>
+                </a>
+                <a href="#manage" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-orange-50 transition-colors">
+                    <i class="fas fa-cog text-orange-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Management</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="space-y-8">
+            <!-- Get Chats -->
+            <div id="chats" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-green-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/chats</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get user's chat list with pagination</p>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-gray-900 mb-3">Query Parameters</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div><strong>per_page:</strong> integer (default: 50)</div>
+                            <div><strong>page:</strong> integer (default: 1)</div>
+                            <div><strong>type:</strong> private/group (optional)</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Success Response (200)</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "success": true,
+  "data": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 1,
+        "type": "private",
+        "name": null,
+        "participants": [
+          {
+            "id": 1,
+            "name": "John Doe",
+            "role": "admin"
+          }
+        ],
+        "last_message": {
+          "id": 5,
+          "content": "Hello there!",
+          "created_at": "2025-09-15T00:36:00.000000Z",
+          "sender": { "id": 2, "name": "Jane Smith" }
+        }
+      }
+    ]
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Chat -->
+            <div id="create" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-blue-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/chats</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Create a new chat (private or group)</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Request Body</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>// Private chat
+{
+  "participants": [2],
+  "type": "private"
+}
+
+// Group chat
+{
+  "participants": [2, 3, 4],
+  "type": "group",
+  "name": "Project Team",
+  "description": "Team discussion"
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-800 mb-2">Required Fields</h4>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• participants: Array of user IDs</li>
+                            <li>• type: "private" or "group"</li>
+                            <li>• name: Required for group chats</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Messages -->
+            <div id="messages" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-purple-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/chats/{chatId}/messages</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get messages for a specific chat</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Success Response (200)</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "success": true,
+  "data": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 1,
+        "chat_id": 1,
+        "sender_id": 1,
+        "message_type": "text",
+        "content": "Hello everyone!",
+        "created_at": "2025-09-15T00:36:00.000000Z",
+        "sender": {
+          "id": 1,
+          "name": "John Doe"
+        },
+        "reactions": []
+      }
+    ]
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Send Message -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-indigo-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/chats/{chatId}/messages</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Send a new message to a chat</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Supported Message Types</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">text</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">image</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">video</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">audio</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">voice</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">document</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">location</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">contact</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Request Examples</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm">
+                                <div class="text-green-400 mb-2">// Text message</div>
+                                <pre><code>{
+  "type": "text",
+  "content": "Hello!"
+}</code></pre>
+                            </div>
+                            <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm">
+                                <div class="text-blue-400 mb-2">// Location message</div>
+                                <pre><code>{
+  "type": "location",
+  "latitude": 40.7128,
+  "longitude": -74.0060,
+  "location_name": "NYC"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mark as Read -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-teal-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-teal-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/chats/{chatId}/messages/{messageId}/read</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Mark a message as read</p>
+                    <div class="bg-teal-50 rounded-lg p-4">
+                        <p class="text-teal-800 text-sm">Automatically tracks message read status for engagement analytics.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Reaction -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-pink-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/chats/{chatId}/messages/{messageId}/react</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Add reaction to a message</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Request Body</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm">
+                            <pre><code>{
+  "emoji": "👍"
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-pink-50 rounded-lg p-4">
+                        <p class="text-pink-800 text-sm">Supports any emoji character. Users can update their existing reaction.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Management -->
+            <div id="manage" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-orange-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/chats/{chatId}/pin</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Pin or unpin a chat</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <i class="fas fa-thumbtack text-orange-600 text-2xl mb-2"></i>
+                            <div class="text-sm font-medium">Pin Chat</div>
+                            <div class="text-xs text-gray-600">Keep chat at top</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <i class="fas fa-bell-slash text-orange-600 text-2xl mb-2"></i>
+                            <div class="text-sm font-medium">Mute Chat</div>
+                            <div class="text-xs text-gray-600">Disable notifications</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <i class="fas fa-edit text-orange-600 text-2xl mb-2"></i>
+                            <div class="text-sm font-medium">Update Chat</div>
+                            <div class="text-xs text-gray-600">Modify settings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Examples -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">💻 Code Examples</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">JavaScript (Real-time Chat)</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code>// Get user's chats
+const getChats = async () => {
+  const response = await fetch('http://127.0.0.1:8000/api/chats', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};
+
+// Create group chat
+const createGroup = async (participants, name) => {
+  const response = await fetch('http://127.0.0.1:8000/api/chats', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      participants,
+      type: 'group',
+      name
+    })
+  });
+  return await response.json();
+};
+
+// Send message
+const sendMessage = async (chatId, content) => {
+  const response = await fetch(`http://127.0.0.1:8000/api/chats/${chatId}/messages`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      type: 'text',
+      content
+    })
+  });
+  return await response.json();
+};
+
+// Add reaction
+const addReaction = async (chatId, messageId, emoji) => {
+  const response = await fetch(`http://127.0.0.1:8000/api/chats/${chatId}/messages/${messageId}/react`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ emoji })
+  });
+  return await response.json();
+};</code></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">cURL Commands</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code># Get chat list
+curl -X GET "http://127.0.0.1:8000/api/chats" \
+  -H "Authorization: Bearer TOKEN"
+
+# Create group chat
+curl -X POST "http://127.0.0.1:8000/api/chats" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "participants": [2, 3],
+    "type": "group",
+    "name": "Project Team"
+  }'
+
+# Send message
+curl -X POST "http://127.0.0.1:8000/api/chats/1/messages" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "text",
+    "content": "Hello everyone!"
+  }'
+
+# Add reaction
+curl -X POST "http://127.0.0.1:8000/api/chats/1/messages/5/react" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"emoji": "👍"}'
+
+# Pin chat
+curl -X POST "http://127.0.0.1:8000/api/chats/1/pin" \
+  -H "Authorization: Bearer TOKEN"</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Overview -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">✨ Key Features</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="flex items-start space-x-3">
+                    <div class="bg-green-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-bolt text-green-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Real-time Messaging</h3>
+                        <p class="text-sm text-gray-600">WebSocket integration for instant message delivery</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-blue-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Group & Private Chats</h3>
+                        <p class="text-sm text-gray-600">Support for both individual and group conversations</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-purple-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-image text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Rich Media Support</h3>
+                        <p class="text-sm text-gray-600">Images, videos, documents, and location sharing</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-orange-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-smile text-orange-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Message Reactions</h3>
+                        <p class="text-sm text-gray-600">Emoji reactions and threaded conversations</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-red-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-bell text-red-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Smart Notifications</h3>
+                        <p class="text-sm text-gray-600">Pin, mute, and customize chat notifications</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-indigo-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-check-double text-indigo-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Read Receipts</h3>
+                        <p class="text-sm text-gray-600">Track message delivery and read status</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Handling -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">⚠️ Error Handling</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Common Error Codes</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm font-medium">403</span>
+                            <span class="text-gray-700">Not chat participant</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm font-medium">404</span>
+                            <span class="text-gray-700">Chat or message not found</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm font-medium">422</span>
+                            <span class="text-gray-700">Validation failed</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm font-medium">429</span>
+                            <span class="text-gray-700">Rate limit exceeded</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Error Response Format</h3>
+                    <div class="bg-red-900 text-red-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code>{
+  "success": false,
+  "message": "You are not a participant in this chat"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Notes -->
+        <div class="bg-blue-50 rounded-lg p-6 mt-8">
+            <h2 class="text-xl font-bold text-blue-900 mb-4">🔧 Integration Notes</h2>
+            <ul class="space-y-2 text-blue-800">
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Use WebSocket for real-time message updates and typing indicators</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Implement pagination for large chat lists and message history</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Handle file uploads separately before sending media messages</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Cache chat lists locally for better performance</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Implement optimistic updates for better UX</span>
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-6 mt-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Chat App API Documentation</p>
+        </div>
+    </footer>
+</body>
+</html>

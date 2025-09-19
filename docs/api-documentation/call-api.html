@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call API - FarmersNetwork Documentation</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-phone me-2"></i>
+                Call API
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#endpoints">Endpoints</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#websocket">WebSocket Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#react-native">React Native</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#flutter">Flutter</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold text-white mb-4">
+                        <i class="fas fa-phone-alt text-warning me-3"></i>
+                        Call API Documentation
+                    </h1>
+                    <p class="lead text-light mb-4">
+                        Complete voice and video calling system with WebSocket signaling, real-time events, and mobile app integration for React Native and Flutter.
+                    </p>
+                    <div class="hero-stats row text-center mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h3 class="text-warning">Voice & Video</h3>
+                                <p class="text-light">Call Support</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h3 class="text-warning">Real-time</h3>
+                                <p class="text-light">WebSocket Events</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h3 class="text-warning">React Native</h3>
+                                <p class="text-light">Integration</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h3 class="text-warning">Flutter</h3>
+                                <p class="text-light">Support</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">Call API Overview</h2>
+                    <p class="lead text-muted text-center mb-5">
+                        The Call API provides comprehensive voice and video calling functionality with WebSocket-based signaling, real-time events, and seamless mobile app integration.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h4>Voice & Video Calls</h4>
+                        <p>Support for both audio and video calls with proper signaling and state management.</p>
+                        <ul class="feature-list">
+                            <li>Call initiation and acceptance</li>
+                            <li>Call rejection and ending</li>
+                            <li>Duration tracking</li>
+                            <li>Call history and statistics</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-broadcast-tower"></i>
+                        </div>
+                        <h4>WebSocket Signaling</h4>
+                        <p>Real-time call signaling with dynamic driver support (Pusher Cloud / Laravel Reverb).</p>
+                        <ul class="feature-list">
+                            <li>CallInitiated events</li>
+                            <li>CallAccepted events</li>
+                            <li>CallEnded events</li>
+                            <li>CallRejected events</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Base URL Info -->
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="api-info-card">
+                        <h4><i class="fas fa-server me-2"></i>Base URL</h4>
+                        <div class="code-block">
+                            <code>https://your-domain.com/api</code>
+                        </div>
+                        <p class="mt-3 mb-0">All call endpoints are prefixed with <code>/api</code> and require Bearer token authentication.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call Endpoints Section -->
+    <section id="endpoints" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">Call Endpoints</h2>
+                </div>
+            </div>
+
+            <!-- Initiate Call -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method method-post">POST</span>
+                            <span class="endpoint-url">/api/calls</span>
+                            <span class="endpoint-title">Initiate Call</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p>Initiate a new voice or video call to another user.</p>
+                            
+                            <h5>Request Body</h5>
+                            <pre><code class="language-json">{
+  "receiver_id": 123,
+  "type": "video"
+}</code></pre>
+
+                            <h5>Parameters</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Required</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>receiver_id</code></td>
+                                            <td>integer</td>
+                                            <td>Yes</td>
+                                            <td>ID of the user to call</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>type</code></td>
+                                            <td>string</td>
+                                            <td>Yes</td>
+                                            <td>Call type: "audio" or "video"</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5>Response</h5>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "id": 456,
+    "caller_id": 789,
+    "receiver_id": 123,
+    "call_type": "video",
+    "status": "ringing",
+    "started_at": "2025-07-15T10:30:00.000000Z",
+    "caller": {
+      "id": 789,
+      "name": "John Doe",
+      "avatar_url": "https://example.com/avatar.jpg"
+    },
+    "receiver": {
+      "id": 123,
+      "name": "Jane Smith",
+      "avatar_url": "https://example.com/avatar2.jpg"
+    }
+  },
+  "message": "Call initiated successfully"
+}</code></pre>
+
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>WebSocket Event:</strong> A <code>CallInitiated</code> event is broadcast to the receiver's channel <code>call.{receiver_id}</code>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Answer Call -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method method-post">POST</span>
+                            <span class="endpoint-url">/api/calls/{call_id}/answer</span>
+                            <span class="endpoint-title">Answer Call</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p>Accept an incoming call.</p>
+                            
+                            <h5>Response</h5>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "id": 456,
+    "status": "answered",
+    "answered_at": "2025-07-15T10:31:00.000000Z"
+  },
+  "message": "Call answered successfully"
+}</code></pre>
+
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>WebSocket Event:</strong> A <code>CallAccepted</code> event is broadcast to both participants' channels.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End Call -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method method-post">POST</span>
+                            <span class="endpoint-url">/api/calls/{call_id}/end</span>
+                            <span class="endpoint-title">End Call</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p>End an active call.</p>
+                            
+                            <h5>Response</h5>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "id": 456,
+    "status": "ended",
+    "ended_at": "2025-07-15T10:35:00.000000Z",
+    "duration": 240
+  },
+  "message": "Call ended successfully"
+}</code></pre>
+
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>WebSocket Event:</strong> A <code>CallEnded</code> event is broadcast to both participants' channels.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reject Call -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="method method-post">POST</span>
+                            <span class="endpoint-url">/api/calls/{call_id}/decline</span>
+                            <span class="endpoint-title">Reject Call</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p>Reject an incoming call.</p>
+                            
+                            <h5>Response</h5>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "id": 456,
+    "status": "declined",
+    "ended_at": "2025-07-15T10:30:30.000000Z"
+  },
+  "message": "Call declined successfully"
+}</code></pre>
+
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>WebSocket Event:</strong> A <code>CallRejected</code> event is broadcast to the caller's channel.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WebSocket Events Section -->
+    <section id="websocket" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">WebSocket Events</h2>
+                    <p class="lead text-muted text-center mb-5">
+                        Real-time call signaling events broadcast through WebSocket channels for seamless call management.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Channel Subscription -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="websocket-card">
+                        <h4><i class="fas fa-satellite-dish me-2"></i>Channel Subscription</h4>
+                        <p>Subscribe to private channel to receive call events:</p>
+                        <div class="code-block">
+                            <code>call.{user_id}</code>
+                        </div>
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-lock me-2"></i>
+                            <strong>Authentication Required:</strong> Bearer token authentication is required for private channel subscription.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CallInitiated Event -->
+            <div class="row mb-4">
+                <div class="col-lg-10 mx-auto">
+                    <div class="event-card">
+                        <div class="event-header">
+                            <span class="event-name">CallInitiated</span>
+                            <span class="event-description">Fired when someone initiates a call to you</span>
+                        </div>
+                        <div class="event-body">
+                            <h5>Event Data</h5>
+                            <pre><code class="language-json">{
+  "event_type": "call_initiated",
+  "call_id": "456",
+  "caller_id": "789",
+  "recipient_id": "123",
+  "caller_name": "John Doe",
+  "caller_avatar": "https://example.com/avatar.jpg",
+  "call_type": "video",
+  "timestamp": "2025-07-15T10:30:00.000000Z",
+  "metadata": {
+    "chat_id": 101,
+    "status": "ringing",
+    "started_at": "2025-07-15T10:30:00.000000Z"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CallAccepted Event -->
+            <div class="row mb-4">
+                <div class="col-lg-10 mx-auto">
+                    <div class="event-card">
+                        <div class="event-header">
+                            <span class="event-name">CallAccepted</span>
+                            <span class="event-description">Fired when a call is accepted by the recipient</span>
+                        </div>
+                        <div class="event-body">
+                            <h5>Event Data</h5>
+                            <pre><code class="language-json">{
+  "event_type": "call_accepted",
+  "call_id": "456",
+  "caller_id": "789",
+  "recipient_id": "123",
+  "caller_name": "John Doe",
+  "caller_avatar": "https://example.com/avatar.jpg",
+  "call_type": "video",
+  "timestamp": "2025-07-15T10:31:00.000000Z",
+  "metadata": {
+    "chat_id": 101,
+    "status": "answered",
+    "answered_at": "2025-07-15T10:31:00.000000Z"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CallEnded Event -->
+            <div class="row mb-4">
+                <div class="col-lg-10 mx-auto">
+                    <div class="event-card">
+                        <div class="event-header">
+                            <span class="event-name">CallEnded</span>
+                            <span class="event-description">Fired when a call is ended by either party</span>
+                        </div>
+                        <div class="event-body">
+                            <h5>Event Data</h5>
+                            <pre><code class="language-json">{
+  "event_type": "call_ended",
+  "call_id": "456",
+  "caller_id": "789",
+  "recipient_id": "123",
+  "caller_name": "John Doe",
+  "caller_avatar": "https://example.com/avatar.jpg",
+  "call_type": "video",
+  "timestamp": "2025-07-15T10:35:00.000000Z",
+  "metadata": {
+    "chat_id": 101,
+    "status": "ended",
+    "duration": 240,
+    "ended_at": "2025-07-15T10:35:00.000000Z",
+    "started_at": "2025-07-15T10:30:00.000000Z"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CallRejected Event -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="event-card">
+                        <div class="event-header">
+                            <span class="event-name">CallRejected</span>
+                            <span class="event-description">Fired when a call is rejected by the recipient</span>
+                        </div>
+                        <div class="event-body">
+                            <h5>Event Data</h5>
+                            <pre><code class="language-json">{
+  "event_type": "call_rejected",
+  "call_id": "456",
+  "caller_id": "789",
+  "recipient_id": "123",
+  "caller_name": "John Doe",
+  "caller_avatar": "https://example.com/avatar.jpg",
+  "call_type": "video",
+  "timestamp": "2025-07-15T10:30:30.000000Z",
+  "metadata": {
+    "chat_id": 101,
+    "status": "declined",
+    "ended_at": "2025-07-15T10:30:30.000000Z"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- React Native Implementation Section -->
+    <section id="react-native" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">
+                        <i class="fab fa-react text-info me-3"></i>React Native Implementation
+                    </h2>
+                    <p class="lead text-muted text-center mb-5">
+                        Complete React Native integration guide for voice and video calling with WebSocket signaling.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dependencies -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-cube me-2"></i>Dependencies</h4>
+                        <p>Install the required packages for React Native call integration:</p>
+                        <pre><code class="language-bash">npm install @react-native-async-storage/async-storage
+npm install react-native-webrtc
+npm install laravel-echo pusher-js
+npm install @react-native-community/netinfo</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call Service Setup -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-cog me-2"></i>Call Service Setup</h4>
+                        <p>Create a call service to handle WebSocket connections and call management:</p>
+                        <pre><code class="language-javascript">// services/CallService.js
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+class CallService {
+  constructor() {
+    this.echo = null;
+    this.currentCall = null;
+    this.listeners = {};
+  }
+
+  async initialize(userId, authToken) {
+    try {
+      // Get broadcast configuration
+      const config = await this.getBroadcastConfig();
+
+      if (!config.enabled) {
+        throw new Error('Broadcasting is disabled');
+      }
+
+      // Initialize Echo based on driver
+      if (config.driver === 'pusher') {
+        this.initializePusher(config.config, authToken);
+      } else if (config.driver === 'reverb') {
+        this.initializeReverb(config.config, authToken);
+      }
+
+      // Subscribe to call channel
+      this.subscribeToCallChannel(userId);
+
+      console.log('✅ Call service initialized');
+      return true;
+    } catch (error) {
+      console.error('❌ Failed to initialize call service:', error);
+      return false;
+    }
+  }
+
+  async getBroadcastConfig() {
+    const response = await fetch('YOUR_API_URL/api/broadcast-settings', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    return data.success ? data.data : null;
+  }
+
+  initializePusher(config, authToken) {
+    window.Pusher = Pusher;
+
+    this.echo = new Echo({
+      broadcaster: 'pusher',
+      key: config.key,
+      cluster: config.cluster,
+      forceTLS: true,
+      auth: {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      },
+      authEndpoint: config.auth_endpoint,
+    });
+  }
+
+  initializeReverb(config, authToken) {
+    this.echo = new Echo({
+      broadcaster: 'socket.io',
+      host: `${config.scheme}://${config.host}:${config.port}`,
+      auth: {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      },
+      authEndpoint: config.auth_endpoint,
+    });
+  }
+
+  subscribeToCallChannel(userId) {
+    const channel = this.echo.private(`call.${userId}`);
+
+    channel.listen('CallInitiated', (event) => {
+      this.handleCallInitiated(event);
+    });
+
+    channel.listen('CallAccepted', (event) => {
+      this.handleCallAccepted(event);
+    });
+
+    channel.listen('CallEnded', (event) => {
+      this.handleCallEnded(event);
+    });
+
+    channel.listen('CallRejected', (event) => {
+      this.handleCallRejected(event);
+    });
+  }
+
+  // Event handlers
+  handleCallInitiated(event) {
+    this.currentCall = event;
+    this.emit('callInitiated', event);
+  }
+
+  handleCallAccepted(event) {
+    this.emit('callAccepted', event);
+  }
+
+  handleCallEnded(event) {
+    this.currentCall = null;
+    this.emit('callEnded', event);
+  }
+
+  handleCallRejected(event) {
+    this.currentCall = null;
+    this.emit('callRejected', event);
+  }
+
+  // Event listener management
+  on(event, callback) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
+    this.listeners[event].push(callback);
+  }
+
+  off(event, callback) {
+    if (this.listeners[event]) {
+      this.listeners[event] = this.listeners[event].filter(cb => cb !== callback);
+    }
+  }
+
+  emit(event, data) {
+    if (this.listeners[event]) {
+      this.listeners[event].forEach(callback => callback(data));
+    }
+  }
+
+  // Call API methods
+  async initiateCall(receiverId, callType, authToken) {
+    try {
+      const response = await fetch('YOUR_API_URL/api/calls', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          receiver_id: receiverId,
+          type: callType,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        this.currentCall = data.data;
+        return data.data;
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      console.error('Failed to initiate call:', error);
+      throw error;
+    }
+  }
+
+  async answerCall(callId, authToken) {
+    try {
+      const response = await fetch(`YOUR_API_URL/api/calls/${callId}/answer`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+
+      const data = await response.json();
+      return data.success;
+    } catch (error) {
+      console.error('Failed to answer call:', error);
+      throw error;
+    }
+  }
+
+  async endCall(callId, authToken) {
+    try {
+      const response = await fetch(`YOUR_API_URL/api/calls/${callId}/end`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        this.currentCall = null;
+      }
+
+      return data.success;
+    } catch (error) {
+      console.error('Failed to end call:', error);
+      throw error;
+    }
+  }
+
+  async rejectCall(callId, authToken) {
+    try {
+      const response = await fetch(`YOUR_API_URL/api/calls/${callId}/decline`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        this.currentCall = null;
+      }
+
+      return data.success;
+    } catch (error) {
+      console.error('Failed to reject call:', error);
+      throw error;
+    }
+  }
+}
+
+export default new CallService();</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- React Native Components -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-mobile-alt me-2"></i>React Native Components</h4>
+                        <p>Example components for handling incoming calls and call screens:</p>
+
+                        <h5>Incoming Call Component</h5>
+                        <pre><code class="language-javascript">// components/IncomingCallModal.js
+import React from 'react';
+import { View, Text, TouchableOpacity, Modal, Image, StyleSheet } from 'react-native';
+
+const IncomingCallModal = ({ visible, callData, onAccept, onReject }) => {
+  if (!callData) return null;
+
+  return (
+    &lt;Modal visible={visible} animationType="slide" transparent={true}&gt;
+      &lt;View style={styles.overlay}&gt;
+        &lt;View style={styles.callCard}&gt;
+          &lt;Image
+            source={{ uri: callData.caller_avatar || 'default-avatar.png' }}
+            style={styles.avatar}
+          /&gt;
+          &lt;Text style={styles.callerName}&gt;{callData.caller_name}&lt;/Text&gt;
+          &lt;Text style={styles.callType}&gt;
+            Incoming {callData.call_type} call
+          &lt;/Text&gt;
+
+          &lt;View style={styles.buttonContainer}&gt;
+            &lt;TouchableOpacity
+              style={[styles.button, styles.rejectButton]}
+              onPress={onReject}
+            &gt;
+              &lt;Text style={styles.buttonText}&gt;Reject&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+
+            &lt;TouchableOpacity
+              style={[styles.button, styles.acceptButton]}
+              onPress={onAccept}
+            &gt;
+              &lt;Text style={styles.buttonText}&gt;Accept&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+          &lt;/View&gt;
+        &lt;/View&gt;
+      &lt;/View&gt;
+    &lt;/Modal&gt;
+  );
+};
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  callCard: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 30,
+    alignItems: 'center',
+    width: '80%',
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 20,
+  },
+  callerName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  callType: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 30,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  button: {
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    minWidth: 100,
+  },
+  acceptButton: {
+    backgroundColor: '#4CAF50',
+  },
+  rejectButton: {
+    backgroundColor: '#F44336',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});
+
+export default IncomingCallModal;</code></pre>
+
+                        <h5>Call Screen Component</h5>
+                        <pre><code class="language-javascript">// components/CallScreen.js
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { RTCView } from 'react-native-webrtc';
+
+const CallScreen = ({ callData, localStream, remoteStream, onEndCall }) => {
+  const [callDuration, setCallDuration] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCallDuration(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const toggleMute = () => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach(track => {
+        track.enabled = isMuted;
+      });
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const toggleVideo = () => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach(track => {
+        track.enabled = !isVideoEnabled;
+      });
+      setIsVideoEnabled(!isVideoEnabled);
+    }
+  };
+
+  return (
+    &lt;View style={styles.container}&gt;
+      {/* Remote Video */}
+      {remoteStream && (
+        &lt;RTCView
+          streamURL={remoteStream.toURL()}
+          style={styles.remoteVideo}
+          objectFit="cover"
+        /&gt;
+      )}
+
+      {/* Local Video */}
+      {localStream && callData.call_type === 'video' && (
+        &lt;RTCView
+          streamURL={localStream.toURL()}
+          style={styles.localVideo}
+          objectFit="cover"
+          mirror={true}
+        /&gt;
+      )}
+
+      {/* Call Info */}
+      &lt;View style={styles.callInfo}&gt;
+        &lt;Text style={styles.callerName}&gt;{callData.caller_name}&lt;/Text&gt;
+        &lt;Text style={styles.callDuration}&gt;{formatDuration(callDuration)}&lt;/Text&gt;
+      &lt;/View&gt;
+
+      {/* Controls */}
+      &lt;View style={styles.controls}&gt;
+        &lt;TouchableOpacity
+          style={[styles.controlButton, isMuted && styles.activeButton]}
+          onPress={toggleMute}
+        &gt;
+          &lt;Text style={styles.controlText}&gt;{isMuted ? 'Unmute' : 'Mute'}&lt;/Text&gt;
+        &lt;/TouchableOpacity&gt;
+
+        {callData.call_type === 'video' && (
+          &lt;TouchableOpacity
+            style={[styles.controlButton, !isVideoEnabled && styles.activeButton]}
+            onPress={toggleVideo}
+          &gt;
+            &lt;Text style={styles.controlText}&gt;{isVideoEnabled ? 'Video Off' : 'Video On'}&lt;/Text&gt;
+          &lt;/TouchableOpacity&gt;
+        )}
+
+        &lt;TouchableOpacity
+          style={[styles.controlButton, styles.endButton]}
+          onPress={onEndCall}
+        &gt;
+          &lt;Text style={styles.controlText}&gt;End Call&lt;/Text&gt;
+        &lt;/TouchableOpacity&gt;
+      &lt;/View&gt;
+    &lt;/View&gt;
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  remoteVideo: {
+    flex: 1,
+    backgroundColor: '#333',
+  },
+  localVideo: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    width: 120,
+    height: 160,
+    borderRadius: 10,
+    backgroundColor: '#333',
+  },
+  callInfo: {
+    position: 'absolute',
+    top: 100,
+    left: 20,
+    alignItems: 'flex-start',
+  },
+  callerName: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  callDuration: {
+    color: 'white',
+    fontSize: 16,
+    marginTop: 5,
+  },
+  controls: {
+    position: 'absolute',
+    bottom: 50,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+  },
+  controlButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    minWidth: 80,
+  },
+  activeButton: {
+    backgroundColor: '#F44336',
+  },
+  endButton: {
+    backgroundColor: '#F44336',
+  },
+  controlText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});
+
+export default CallScreen;</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flutter Implementation Section -->
+    <section id="flutter" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">
+                        <i class="fab fa-google text-primary me-3"></i>Flutter Implementation
+                    </h2>
+                    <p class="lead text-muted text-center mb-5">
+                        Complete Flutter integration guide for voice and video calling with WebSocket signaling.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dependencies -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-cube me-2"></i>Dependencies</h4>
+                        <p>Add these dependencies to your <code>pubspec.yaml</code>:</p>
+                        <pre><code class="language-yaml">dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.1.0
+  shared_preferences: ^2.2.2
+  pusher_channels_flutter: ^2.2.1
+  laravel_echo: ^0.4.0
+  socket_io_client: ^2.0.3+1
+  flutter_webrtc: ^0.9.48</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call Service Setup -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-cog me-2"></i>Call Service Setup</h4>
+                        <p>Create a call service to handle WebSocket connections and call management:</p>
+                        <pre><code class="language-dart">// services/call_service.dart
+import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
+import 'package:laravel_echo/laravel_echo.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
+
+enum CallEventType {
+  callInitiated,
+  callAccepted,
+  callEnded,
+  callRejected,
+}
+
+class CallEvent {
+  final CallEventType type;
+  final String callId;
+  final String callerId;
+  final String? recipientId;
+  final String callerName;
+  final String? callerAvatar;
+  final String callType;
+  final DateTime timestamp;
+  final Map&lt;String, dynamic&gt;? metadata;
+
+  CallEvent({
+    required this.type,
+    required this.callId,
+    required this.callerId,
+    this.recipientId,
+    required this.callerName,
+    this.callerAvatar,
+    required this.callType,
+    required this.timestamp,
+    this.metadata,
+  });
+
+  factory CallEvent.fromJson(Map&lt;String, dynamic&gt; json) {
+    return CallEvent(
+      type: _parseEventType(json['event_type'] ?? ''),
+      callId: json['call_id'] ?? '',
+      callerId: json['caller_id'] ?? '',
+      recipientId: json['recipient_id'],
+      callerName: json['caller_name'] ?? '',
+      callerAvatar: json['caller_avatar'],
+      callType: json['call_type'] ?? 'audio',
+      timestamp: DateTime.parse(json['timestamp'] ?? DateTime.now().toIso8601String()),
+      metadata: json['metadata'],
+    );
+  }
+
+  static CallEventType _parseEventType(String eventType) {
+    switch (eventType.toLowerCase()) {
+      case 'call_initiated':
+        return CallEventType.callInitiated;
+      case 'call_accepted':
+        return CallEventType.callAccepted;
+      case 'call_ended':
+        return CallEventType.callEnded;
+      case 'call_rejected':
+        return CallEventType.callRejected;
+      default:
+        return CallEventType.callInitiated;
+    }
+  }
+}
+
+class CallService {
+  static final CallService _instance = CallService._internal();
+  factory CallService() =&gt; _instance;
+  CallService._internal();
+
+  // WebSocket connections
+  PusherChannelsFlutter? _pusher;
+  Echo? _echo;
+  io.Socket? _socket;
+
+  // State management
+  String? _userId;
+  String? _authToken;
+  Map&lt;String, dynamic&gt;? _broadcastConfig;
+
+  // Event streams
+  final StreamController&lt;CallEvent&gt; _callEventController =
+      StreamController&lt;CallEvent&gt;.broadcast();
+
+  // Getters
+  Stream&lt;CallEvent&gt; get callEvents =&gt; _callEventController.stream;
+
+  /// Initialize the call service
+  Future&lt;bool&gt; initialize({
+    required String userId,
+    required String authToken,
+    String baseUrl = 'https://your-api-url.com',
+  }) async {
+    try {
+      _userId = userId;
+      _authToken = authToken;
+
+      debugPrint('🔄 Initializing CallService for user: $userId');
+
+      // Get broadcast configuration
+      final config = await _getBroadcastConfig(baseUrl);
+      if (config == null || config['enabled'] != true) {
+        debugPrint('❌ Broadcasting is disabled');
+        return false;
+      }
+
+      _broadcastConfig = config;
+
+      // Initialize WebSocket connection
+      final success = await _initializeWebSocket();
+
+      if (success) {
+        debugPrint('✅ CallService initialized successfully');
+      }
+
+      return success;
+
+    } catch (error) {
+      debugPrint('❌ Failed to initialize CallService: $error');
+      return false;
+    }
+  }
+
+  /// Get broadcast configuration from API
+  Future&lt;Map&lt;String, dynamic&gt;?&gt; _getBroadcastConfig(String baseUrl) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/broadcast-settings'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (_authToken != null) 'Authorization': 'Bearer $_authToken',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          return data['data'];
+        }
+      }
+
+      return null;
+
+    } catch (error) {
+      debugPrint('❌ Error getting broadcast config: $error');
+      return null;
+    }
+  }
+
+  /// Initialize WebSocket connection based on driver
+  Future&lt;bool&gt; _initializeWebSocket() async {
+    try {
+      final driver = _broadcastConfig!['driver'];
+
+      if (driver == 'pusher') {
+        return await _initializePusher();
+      } else if (driver == 'reverb') {
+        return await _initializeReverb();
+      }
+
+      return false;
+    } catch (error) {
+      debugPrint('❌ Failed to initialize WebSocket: $error');
+      return false;
+    }
+  }
+
+  /// Initialize Pusher connection
+  Future&lt;bool&gt; _initializePusher() async {
+    try {
+      final config = _broadcastConfig!['config'];
+
+      _pusher = PusherChannelsFlutter.getInstance();
+
+      await _pusher!.init(
+        apiKey: config['key'],
+        cluster: config['cluster'],
+        onConnectionStateChange: _onPusherConnectionStateChange,
+        onError: _onPusherError,
+        onEvent: _onPusherEvent,
+        authEndpoint: config['auth_endpoint'],
+        onAuthorizer: (channelName, socketId, options) async {
+          return {
+            'Authorization': 'Bearer $_authToken',
+          };
+        },
+      );
+
+      await _pusher!.connect();
+
+      // Subscribe to call channel
+      await _subscribeToCallChannel();
+
+      debugPrint('✅ Pusher initialized successfully');
+      return true;
+
+    } catch (error) {
+      debugPrint('❌ Failed to initialize Pusher: $error');
+      return false;
+    }
+  }
+
+  /// Initialize Laravel Reverb connection
+  Future&lt;bool&gt; _initializeReverb() async {
+    try {
+      final config = _broadcastConfig!['config'];
+
+      // Create Socket.IO client for Reverb
+      _socket = io.io('${config['scheme']}://${config['host']}:${config['port']}',
+        io.OptionBuilder()
+          .setTransports(['websocket'])
+          .enableAutoConnect()
+          .setAuth({
+            'Authorization': 'Bearer $_authToken',
+          })
+          .build()
+      );
+
+      // Set up connection event handlers
+      _socket!.onConnect((_) {
+        debugPrint('✅ Reverb connected');
+      });
+
+      _socket!.onDisconnect((_) {
+        debugPrint('❌ Reverb disconnected');
+      });
+
+      // Subscribe to call channel
+      await _subscribeToCallChannel();
+
+      debugPrint('✅ Reverb initialized successfully');
+      return true;
+
+    } catch (error) {
+      debugPrint('❌ Failed to initialize Reverb: $error');
+      return false;
+    }
+  }
+
+  /// Subscribe to call channel
+  Future&lt;void&gt; _subscribeToCallChannel() async {
+    if (_userId == null) return;
+
+    final channelName = 'call.$_userId';
+
+    try {
+      if (_pusher != null) {
+        await _pusher!.subscribe(channelName: channelName);
+        debugPrint('✅ Subscribed to Pusher channel: $channelName');
+
+      } else if (_socket != null) {
+        _socket!.on('CallInitiated', _handleReverbEvent);
+        _socket!.on('CallAccepted', _handleReverbEvent);
+        _socket!.on('CallEnded', _handleReverbEvent);
+        _socket!.on('CallRejected', _handleReverbEvent);
+        debugPrint('✅ Subscribed to Reverb events');
+      }
+
+    } catch (error) {
+      debugPrint('❌ Failed to subscribe to call channel: $error');
+    }
+  }
+
+  /// Handle Pusher connection state changes
+  void _onPusherConnectionStateChange(String currentState, String previousState) {
+    debugPrint('Pusher connection state: $previousState -&gt; $currentState');
+  }
+
+  /// Handle Pusher errors
+  void _onPusherError(String message, int? code, dynamic e) {
+    debugPrint('❌ Pusher error: $message (code: $code)');
+  }
+
+  /// Handle Pusher events
+  void _onPusherEvent(PusherEvent event) {
+    debugPrint('📞 Received Pusher event: ${event.eventName}');
+
+    try {
+      final data = json.decode(event.data);
+      final callEvent = CallEvent.fromJson(data);
+      _callEventController.add(callEvent);
+    } catch (error) {
+      debugPrint('❌ Failed to parse call event: $error');
+    }
+  }
+
+  /// Handle Reverb events
+  void _handleReverbEvent(dynamic data) {
+    debugPrint('📞 Received Reverb call event');
+
+    try {
+      final callEvent = CallEvent.fromJson(data);
+      _callEventController.add(callEvent);
+    } catch (error) {
+      debugPrint('❌ Failed to parse Reverb call event: $error');
+    }
+  }
+
+  // Call API methods
+  Future&lt;Map&lt;String, dynamic&gt;?&gt; initiateCall(int receiverId, String callType) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://your-api-url.com/api/calls'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_authToken',
+        },
+        body: json.encode({
+          'receiver_id': receiverId,
+          'type': callType,
+        }),
+      );
+
+      final data = json.decode(response.body);
+
+      if (data['success'] == true) {
+        return data['data'];
+      } else {
+        throw Exception(data['message']);
+      }
+    } catch (error) {
+      debugPrint('Failed to initiate call: $error');
+      rethrow;
+    }
+  }
+
+  Future&lt;bool&gt; answerCall(String callId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://your-api-url.com/api/calls/$callId/answer'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $_authToken',
+        },
+      );
+
+      final data = json.decode(response.body);
+      return data['success'] == true;
+    } catch (error) {
+      debugPrint('Failed to answer call: $error');
+      return false;
+    }
+  }
+
+  Future&lt;bool&gt; endCall(String callId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://your-api-url.com/api/calls/$callId/end'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $_authToken',
+        },
+      );
+
+      final data = json.decode(response.body);
+      return data['success'] == true;
+    } catch (error) {
+      debugPrint('Failed to end call: $error');
+      return false;
+    }
+  }
+
+  Future&lt;bool&gt; rejectCall(String callId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://your-api-url.com/api/calls/$callId/decline'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $_authToken',
+        },
+      );
+
+      final data = json.decode(response.body);
+      return data['success'] == true;
+    } catch (error) {
+      debugPrint('Failed to reject call: $error');
+      return false;
+    }
+  }
+
+  /// Dispose of the service
+  Future&lt;void&gt; dispose() async {
+    await _pusher?.disconnect();
+    _socket?.disconnect();
+    await _callEventController.close();
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flutter UI Components -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-mobile-alt me-2"></i>Flutter UI Components</h4>
+                        <p>Example UI components for handling incoming calls and call screens:</p>
+
+                        <h5>Incoming Call Widget</h5>
+                        <pre><code class="language-dart">// widgets/incoming_call_dialog.dart
+import 'package:flutter/material.dart';
+import '../models/call_event.dart';
+
+class IncomingCallDialog extends StatelessWidget {
+  final CallEvent callEvent;
+  final VoidCallback onAccept;
+  final VoidCallback onReject;
+
+  const IncomingCallDialog({
+    Key? key,
+    required this.callEvent,
+    required this.onAccept,
+    required this.onReject,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Caller avatar
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: callEvent.callerAvatar != null
+                  ? NetworkImage(callEvent.callerAvatar!)
+                  : null,
+              child: callEvent.callerAvatar == null
+                  ? Icon(Icons.person, size: 50)
+                  : null,
+            ),
+
+            SizedBox(height: 16),
+
+            // Caller name
+            Text(
+              callEvent.callerName,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            SizedBox(height: 8),
+
+            // Call type
+            Text(
+              'Incoming ${callEvent.callType} call',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+
+            SizedBox(height: 32),
+
+            // Action buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Reject button
+                FloatingActionButton(
+                  onPressed: onReject,
+                  backgroundColor: Colors.red,
+                  child: Icon(Icons.call_end, color: Colors.white),
+                ),
+
+                // Accept button
+                FloatingActionButton(
+                  onPressed: onAccept,
+                  backgroundColor: Colors.green,
+                  child: Icon(Icons.call, color: Colors.white),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</code></pre>
+
+                        <h5>Call Screen Widget</h5>
+                        <pre><code class="language-dart">// screens/call_screen.dart
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
+import '../services/call_service.dart';
+
+class CallScreen extends StatefulWidget {
+  final Map&lt;String, dynamic&gt; callData;
+  final RTCVideoRenderer localRenderer;
+  final RTCVideoRenderer remoteRenderer;
+  final MediaStream? localStream;
+  final Function() onEndCall;
+
+  const CallScreen({
+    Key? key,
+    required this.callData,
+    required this.localRenderer,
+    required this.remoteRenderer,
+    required this.localStream,
+    required this.onEndCall,
+  }) : super(key: key);
+
+  @override
+  _CallScreenState createState() => _CallScreenState();
+}
+
+class _CallScreenState extends State&lt;CallScreen&gt; {
+  final CallService _callService = CallService();
+  int _callDuration = 0;
+  bool _isMuted = false;
+  bool _isVideoEnabled = true;
+  late Timer _durationTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startDurationTimer();
+  }
+
+  void _startDurationTimer() {
+    _durationTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _callDuration++;
+      });
+    });
+  }
+
+  String _formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  void _toggleMute() {
+    if (widget.localStream != null) {
+      final audioTracks = widget.localStream!.getAudioTracks();
+      for (var track in audioTracks) {
+        track.enabled = _isMuted;
+      }
+      setState(() {
+        _isMuted = !_isMuted;
+      });
+    }
+  }
+
+  void _toggleVideo() {
+    if (widget.localStream != null) {
+      final videoTracks = widget.localStream!.getVideoTracks();
+      for (var track in videoTracks) {
+        track.enabled = !_isVideoEnabled;
+      }
+      setState(() {
+        _isVideoEnabled = !_isVideoEnabled;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _durationTimer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isVideoCall = widget.callData['call_type'] == 'video';
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Remote video (full screen)
+          if (isVideoCall)
+            RTCVideoView(
+              widget.remoteRenderer,
+              objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+            ),
+
+          // Local video (picture-in-picture)
+          if (isVideoCall)
+            Positioned(
+              top: 50,
+              right: 20,
+              child: Container(
+                width: 120,
+                height: 160,
+                decoration: BoxDecoration(
+                  color: Colors.grey[800],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: RTCVideoView(
+                    widget.localRenderer,
+                    mirror: true,
+                    objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                  ),
+                ),
+              ),
+            ),
+
+          // Call info overlay
+          Positioned(
+            top: 60,
+            left: 20,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.callData['caller_name'] ?? 'Unknown',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  _formatDuration(_callDuration),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Call controls
+          Positioned(
+            bottom: 50,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Mute button
+                _buildControlButton(
+                  icon: _isMuted ? Icons.mic_off : Icons.mic,
+                  label: _isMuted ? 'Unmute' : 'Mute',
+                  color: _isMuted ? Colors.red : Colors.white,
+                  onPressed: _toggleMute,
+                ),
+
+                // Video toggle button (only for video calls)
+                if (isVideoCall)
+                  _buildControlButton(
+                    icon: _isVideoEnabled ? Icons.videocam : Icons.videocam_off,
+                    label: _isVideoEnabled ? 'Video Off' : 'Video On',
+                    color: _isVideoEnabled ? Colors.white : Colors.red,
+                    onPressed: _toggleVideo,
+                  ),
+
+                // End call button
+                _buildControlButton(
+                  icon: Icons.call_end,
+                  label: 'End',
+                  color: Colors.red,
+                  onPressed: widget.onEndCall,
+                  isEndCall: true,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildControlButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+    bool isEndCall = false,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        FloatingActionButton(
+          onPressed: onPressed,
+          backgroundColor: isEndCall ? Colors.red : Colors.grey[800],
+          child: Icon(icon, color: color),
+        ),
+        SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(color: Colors.white, fontSize: 12),
+        ),
+      ],
+    );
+  }
+}</code></pre>
+
+                        <h5>Call Handler Widget</h5>
+                        <pre><code class="language-dart">// widgets/call_handler.dart
+import 'package:flutter/material.dart';
+import '../services/call_service.dart';
+
+class CallHandler extends StatefulWidget {
+  final Widget child;
+  final String userId;
+  final String authToken;
+
+  const CallHandler({
+    Key? key,
+    required this.child,
+    required this.userId,
+    required this.authToken,
+  }) : super(key: key);
+
+  @override
+  _CallHandlerState createState() => _CallHandlerState();
+}
+
+class _CallHandlerState extends State&lt;CallHandler&gt; {
+  final CallService _callService = CallService();
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeCallService();
+  }
+
+  Future&lt;void&gt; _initializeCallService() async {
+    final success = await _callService.initialize(
+      userId: widget.userId,
+      authToken: widget.authToken,
+    );
+
+    if (success) {
+      setState(() {
+        _isInitialized = true;
+      });
+
+      // Listen for call events
+      _callService.callEvents.listen(_handleCallEvent);
+    }
+  }
+
+  void _handleCallEvent(CallEvent event) {
+    switch (event.type) {
+      case CallEventType.callInitiated:
+        _showIncomingCallDialog(event);
+        break;
+      case CallEventType.callAccepted:
+        _handleCallAccepted(event);
+        break;
+      case CallEventType.callEnded:
+        _handleCallEnded(event);
+        break;
+      case CallEventType.callRejected:
+        _handleCallRejected(event);
+        break;
+    }
+  }
+
+  void _showIncomingCallDialog(CallEvent event) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => IncomingCallDialog(
+        callEvent: event,
+        onAccept: () => _acceptCall(event),
+        onReject: () => _rejectCall(event),
+      ),
+    );
+  }
+
+  void _acceptCall(CallEvent event) {
+    Navigator.of(context).pop(); // Close dialog
+    // TODO: Initialize WebRTC session and navigate to call screen
+  }
+
+  void _rejectCall(CallEvent event) {
+    Navigator.of(context).pop(); // Close dialog
+    _callService.rejectCall(event.callId);
+  }
+
+  void _handleCallAccepted(CallEvent event) {
+    // TODO: Start WebRTC session
+  }
+
+  void _handleCallEnded(CallEvent event) {
+    // TODO: End WebRTC session and close call screen
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  void _handleCallRejected(CallEvent event) {
+    // TODO: Handle call rejection
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Call was rejected')),
+    );
+  }
+
+  @override
+  void dispose() {
+    _callService.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Integration Example -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-puzzle-piece me-2"></i>Integration Example</h4>
+                        <p>Example of how to integrate the call handler in your Flutter app:</p>
+                        <pre><code class="language-dart">// main.dart
+import 'package:flutter/material.dart';
+import 'widgets/call_handler.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Call App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: CallHandler(
+        userId: '123', // Replace with actual user ID
+        authToken: 'your-auth-token', // Replace with actual auth token
+        child: HomeScreen(),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Call App'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // Initiate a voice call
+                _initiateCall(context, '456', 'audio');
+              },
+              child: Text('Start Voice Call'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Initiate a video call
+                _initiateCall(context, '456', 'video');
+              },
+              child: Text('Start Video Call'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _initiateCall(BuildContext context, String recipientId, String callType) async {
+    final callService = CallService();
+
+    try {
+      final callData = await callService.initiateCall(
+        int.parse(recipientId),
+        callType,
+      );
+
+      // TODO: Initialize WebRTC and navigate to call screen
+
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to initiate call: $error')),
+      );
+    }
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center text-white">
+                    <h4 class="mb-4">FarmersNetwork Call API</h4>
+                    <p>
+                        Complete voice and video calling system with WebSocket signaling, real-time events, and mobile app integration.
+                    </p>
+                    <hr class="my-4">
+                    <p class="small mb-0">
+                        &copy; 2025 FarmersNetwork. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

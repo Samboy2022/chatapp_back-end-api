@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Broadcast System Configuration Guide</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 25px;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-healthy { background-color: var(--success-color); }
+        .status-warning { background-color: var(--warning-color); }
+        .status-error { background-color: var(--danger-color); }
+
+        .config-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            color: white;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .environment-tab {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 1rem;
+        }
+
+        .health-check {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .sidebar .nav-link {
+            color: #6c757d;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">
+                        <i class="fas fa-broadcast-tower me-3"></i>
+                        Broadcast System Configuration Guide
+                    </h1>
+                    <p class="lead mb-4">
+                        Complete setup guide for Laravel + React Native real-time chat system with WebSocket broadcasting
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <button class="btn btn-light btn-lg" onclick="checkSystemHealth()">
+                            <i class="fas fa-heartbeat me-2"></i>Check System Health
+                        </button>
+                        <button class="btn btn-outline-light btn-lg" onclick="testConnections()">
+                            <i class="fas fa-wifi me-2"></i>Test Connections
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <div class="health-status-card bg-white rounded-3 p-4 text-dark">
+                        <h5 class="mb-3">System Status</h5>
+                        <div id="system-status">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3">
+                <div class="sidebar">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-list me-2"></i>Table of Contents
+                            </h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <nav class="nav flex-column p-3">
+                                <a class="nav-link active" href="#overview">
+                                    <i class="fas fa-eye me-2"></i>Overview
+                                </a>
+                                <a class="nav-link" href="#prerequisites">
+                                    <i class="fas fa-check-circle me-2"></i>Prerequisites
+                                </a>
+                                <a class="nav-link" href="#laravel-setup">
+                                    <i class="fab fa-laravel me-2"></i>Laravel Setup
+                                </a>
+                                <a class="nav-link" href="#pusher-cloud-setup">
+                                    <i class="fas fa-cloud me-2"></i>Pusher Cloud Setup
+                                </a>
+                                <a class="nav-link" href="#react-native-setup">
+                                    <i class="fab fa-react me-2"></i>React Native Setup
+                                </a>
+                                <a class="nav-link" href="#local-development">
+                                    <i class="fas fa-laptop-code me-2"></i>Local Development
+                                </a>
+                                <a class="nav-link" href="#production-deployment">
+                                    <i class="fas fa-server me-2"></i>Production Deployment
+                                </a>
+                                <a class="nav-link" href="#troubleshooting">
+                                    <i class="fas fa-tools me-2"></i>Troubleshooting
+                                </a>
+                                <a class="nav-link" href="#testing">
+                                    <i class="fas fa-vial me-2"></i>Testing
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Overview Section -->
+                <section id="overview" class="config-section">
+                    <h2 class="mb-4">
+                        <i class="fas fa-eye text-primary me-3"></i>System Overview
+                    </h2>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fab fa-laravel text-danger me-2"></i>Laravel Backend
+                                    </h5>
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success me-2"></i>Laravel Reverb WebSocket Server</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Broadcasting Events</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Private Channel Authentication</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Dynamic Configuration System</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-cloud text-primary me-2"></i>Pusher Cloud API
+                                    </h5>
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success me-2"></i>Pusher.com Cloud Service</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Global CDN & Scaling</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Multiple Cluster Support</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Built-in SSL/TLS</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fab fa-react text-info me-2"></i>React Native Frontend
+                                    </h5>
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success me-2"></i>Laravel Echo Integration</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Real-time Message Delivery</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Typing Indicators</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>User Presence System</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <h6><i class="fas fa-info-circle me-2"></i>Architecture Overview</h6>
+                        <p class="mb-2">
+                            This system supports <strong>TWO broadcasting options</strong>:
+                        </p>
+                        <ul class="mb-2">
+                            <li><strong>Laravel Reverb (Self-hosted):</strong> Free, self-hosted WebSocket server with full control</li>
+                            <li><strong>Pusher Cloud API:</strong> Managed cloud service with global scaling and built-in SSL</li>
+                        </ul>
+                        <p class="mb-0">
+                            Both options use Laravel Echo for client-side WebSocket management and include a dynamic configuration
+                            system for easy switching between services through the admin panel.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Prerequisites Section -->
+                <section id="prerequisites" class="config-section">
+                    <h2 class="mb-4">
+                        <i class="fas fa-check-circle text-success me-3"></i>Prerequisites
+                    </h2>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Server Requirements</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">PHP 8.1+ with extensions: mbstring, openssl, pdo, tokenizer</li>
+                                <li class="list-group-item">Composer 2.0+</li>
+                                <li class="list-group-item">MySQL 8.0+ or PostgreSQL 13+</li>
+                                <li class="list-group-item">Redis 6.0+ (optional, for caching)</li>
+                                <li class="list-group-item">Node.js 18+ and npm/yarn</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Development Tools</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Laravel 11.x</li>
+                                <li class="list-group-item">React Native with Expo</li>
+                                <li class="list-group-item">Laravel Reverb package</li>
+                                <li class="list-group-item">Laravel Echo & Pusher JS</li>
+                                <li class="list-group-item">Git for version control</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning mt-4">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Important Notes</h6>
+                        <ul class="mb-0">
+                            <li>Ensure your firewall allows traffic on WebSocket ports (default: 6001, 8080)</li>
+                            <li>For production, use a process manager like Supervisor for Laravel Reverb</li>
+                            <li>SSL certificates are required for production WebSocket connections</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Laravel Setup Section -->
+                <section id="laravel-setup" class="config-section">
+                    <h2 class="mb-4">
+                        <i class="fab fa-laravel text-danger me-3"></i>Laravel Backend Setup
+                    </h2>
+
+                    <!-- Environment Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cog me-2"></i>Step 1: Environment Configuration
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Configure your Laravel <code>.env</code> file with the following settings:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('laravel-env')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="laravel-env"><code class="language-bash"># Broadcasting Configuration
+BROADCAST_DRIVER=reverb
+
+# Laravel Reverb Configuration
+REVERB_APP_ID=chatapp-id
+REVERB_APP_KEY=chatapp-key
+REVERB_APP_SECRET=chatapp-secret
+REVERB_HOST=127.0.0.1
+REVERB_PORT=8080
+REVERB_SCHEME=http
+
+# Database Configuration
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+
+# Queue Configuration (for broadcasting)
+QUEUE_CONNECTION=database
+
+# Session Configuration
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+
+# Vite Configuration (for frontend assets)
+VITE_REVERB_APP_KEY="${REVERB_APP_KEY}"
+VITE_REVERB_HOST="${REVERB_HOST}"
+VITE_REVERB_PORT="${REVERB_PORT}"
+VITE_REVERB_SCHEME="${REVERB_SCHEME}"</code></pre>
+                            </div>
+
+                            <div class="alert alert-info mt-3">
+                                <strong>Production Note:</strong> For production, change <code>REVERB_HOST</code> to your server's IP address or domain,
+                                and set <code>REVERB_SCHEME=https</code> with proper SSL certificates.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Database Setup -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-database me-2"></i>Step 2: Database Setup
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Run the following commands to set up your database:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('laravel-db-setup')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="laravel-db-setup"><code class="language-bash"># Run database migrations
+php artisan migrate
+
+# Create broadcast settings table (if not exists)
+# Run the SQL script: update_broadcast_settings_safe.sql
+
+# Seed the broadcast settings
+php artisan db:seed --class=BroadcastSettingsSeeder
+
+# Create queue jobs table (for broadcasting)
+php artisan queue:table
+php artisan migrate</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Laravel Reverb Installation -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-download me-2"></i>Step 3: Laravel Reverb Installation
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Install and configure Laravel Reverb:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('reverb-install')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="reverb-install"><code class="language-bash"># Install Laravel Reverb
+composer require laravel/reverb
+
+# Publish Reverb configuration
+php artisan reverb:install
+
+# Start Reverb server (development)
+php artisan reverb:start
+
+# Start Reverb server with custom host/port
+php artisan reverb:start --host=0.0.0.0 --port=8080
+
+# For production, use process manager (see production section)</code></pre>
+                            </div>
+
+                            <div class="alert alert-success mt-3">
+                                <strong>Verification:</strong> After starting Reverb, you should see output like:
+                                <code>Starting server on 127.0.0.1:8080</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Broadcasting Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-broadcast-tower me-2"></i>Step 4: Broadcasting Configuration
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Configure broadcasting channels and authentication:</p>
+
+                            <h6>Update <code>routes/channels.php</code>:</h6>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('channels-config')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="channels-config"><code class="language-php"><?php
+
+use Illuminate\Support\Facades\Broadcast;
+
+// Private user channel
+Broadcast::channel('private.user.{userId}', function ($user, $userId) {
+    return (int) $user->id === (int) $userId;
+});
+
+// Private chat channel
+Broadcast::channel('private.chat.{chatId}', function ($user, $chatId) {
+    // Check if user is member of this chat
+    return $user->chats()->where('chats.id', $chatId)->exists();
+});
+
+// Presence channel for chat
+Broadcast::channel('presence.chat.{chatId}', function ($user, $chatId) {
+    if ($user->chats()->where('chats.id', $chatId)->exists()) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'avatar' => $user->avatar_url,
+        ];
+    }
+});</code></pre>
+                            </div>
+
+                            <h6 class="mt-4">Update <code>config/broadcasting.php</code>:</h6>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('broadcasting-config')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="broadcasting-config"><code class="language-php">'reverb' => [
+    'driver' => 'reverb',
+    'key' => env('REVERB_APP_KEY'),
+    'secret' => env('REVERB_APP_SECRET'),
+    'app_id' => env('REVERB_APP_ID'),
+    'options' => [
+        'host' => env('REVERB_HOST', 'localhost'),
+        'port' => env('REVERB_PORT', 8080),
+        'scheme' => env('REVERB_SCHEME', 'http'),
+        'useTLS' => env('REVERB_SCHEME', 'http') === 'https',
+    ],
+],</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Queue Worker Setup -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tasks me-2"></i>Step 5: Queue Worker Setup
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Set up queue workers for broadcasting events:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('queue-setup')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="queue-setup"><code class="language-bash"># Start queue worker (development)
+php artisan queue:work
+
+# Start queue worker with specific queue
+php artisan queue:work --queue=default,broadcasting
+
+# For production, use Supervisor (see production section)
+# Create supervisor configuration file</code></pre>
+                            </div>
+
+                            <div class="alert alert-warning mt-3">
+                                <strong>Important:</strong> Queue workers must be running for broadcasting events to work.
+                                In production, use a process manager like Supervisor to ensure workers stay running.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Pusher Cloud Setup Section -->
+                <section id="pusher-cloud-setup" class="config-section">
+                    <h2 class="mb-4">
+                        <i class="fas fa-cloud text-primary me-3"></i>Pusher Cloud API Setup
+                    </h2>
+
+                    <div class="alert alert-info mb-4">
+                        <h6><i class="fas fa-info-circle me-2"></i>About Pusher Cloud</h6>
+                        <p class="mb-2">
+                            Pusher Cloud is a managed WebSocket service that provides:
+                        </p>
+                        <ul class="mb-0">
+                            <li>Global CDN with multiple clusters (US, EU, Asia-Pacific)</li>
+                            <li>Built-in SSL/TLS encryption</li>
+                            <li>Automatic scaling and high availability</li>
+                            <li>No server management required</li>
+                            <li>Free tier available (100 connections, 200k messages/day)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Account Setup -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user-plus me-2"></i>Step 1: Create Pusher Account
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>Go to <a href="https://pusher.com" target="_blank">pusher.com</a> and create a free account</li>
+                                <li>Create a new app in your Pusher dashboard</li>
+                                <li>Choose your preferred cluster (us2, eu, ap1, etc.)</li>
+                                <li>Copy your App ID, Key, Secret, and Cluster from the dashboard</li>
+                            </ol>
+
+                            <div class="alert alert-warning mt-3">
+                                <strong>Important:</strong> Keep your App Secret secure and never expose it in client-side code.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Laravel Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cog me-2"></i>Step 2: Laravel Configuration
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Update your Laravel <code>.env</code> file with Pusher Cloud credentials:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('pusher-cloud-env')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="pusher-cloud-env"><code class="language-bash"># Broadcasting Configuration
+BROADCAST_DRIVER=pusher
+
+# Pusher Cloud Configuration
+PUSHER_APP_ID=your-app-id-here
+PUSHER_APP_KEY=your-app-key-here
+PUSHER_APP_SECRET=your-app-secret-here
+PUSHER_APP_CLUSTER=us2
+
+# Alternative: Use environment-specific settings
+PUSHER_CLOUD_APP_ID=your-app-id-here
+PUSHER_CLOUD_APP_KEY=your-app-key-here
+PUSHER_CLOUD_APP_SECRET=your-app-secret-here
+PUSHER_CLOUD_CLUSTER=us2
+PUSHER_CLOUD_USE_TLS=true
+
+# Service Type Selection
+PUSHER_SERVICE_TYPE=pusher_cloud</code></pre>
+                            </div>
+
+                            <h6 class="mt-4">Available Clusters:</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li><strong>us2:</strong> US East (Virginia)</li>
+                                        <li><strong>us3:</strong> US West (Oregon)</li>
+                                        <li><strong>eu:</strong> Europe (Ireland)</li>
+                                        <li><strong>ap1:</strong> Asia Pacific (Singapore)</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li><strong>ap2:</strong> Asia Pacific (Mumbai)</li>
+                                        <li><strong>ap3:</strong> Asia Pacific (Tokyo)</li>
+                                        <li><strong>ap4:</strong> Asia Pacific (Sydney)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Panel Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tools me-2"></i>Step 3: Admin Panel Configuration
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Configure Pusher Cloud through the admin panel:</p>
+
+                            <ol>
+                                <li>Access the admin panel: <code>http://your-domain/admin/broadcast-settings</code></li>
+                                <li>Set <strong>Pusher Service Type</strong> to <code>Pusher Cloud API</code></li>
+                                <li>Fill in your Pusher Cloud credentials in the <strong>Pusher Cloud</strong> section</li>
+                                <li>Select your preferred cluster</li>
+                                <li>Enable TLS/SSL (recommended)</li>
+                                <li>Click <strong>Save Settings</strong></li>
+                                <li>Test the connection using the <strong>Test Connection</strong> button</li>
+                            </ol>
+
+                            <div class="alert alert-success mt-3">
+                                <strong>Advantage:</strong> No need to manage your own WebSocket server - Pusher handles everything!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- React Native Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fab fa-react me-2"></i>Step 4: React Native Configuration
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Update your React Native <code>.env</code> file:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('rn-pusher-env')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="rn-pusher-env"><code class="language-bash"># Service Type Selection
+PUSHER_SERVICE_TYPE=pusher_cloud
+
+# Pusher Cloud Configuration
+PUSHER_CLOUD_APP_KEY=your-app-key-here
+PUSHER_CLOUD_CLUSTER=us2
+PUSHER_CLOUD_USE_TLS=true
+
+# API Configuration (unchanged)
+API_HOST=your-server-ip
+API_PORT=8000</code></pre>
+                            </div>
+
+                            <p class="mt-3">The mobile app will automatically use Pusher Cloud when <code>PUSHER_SERVICE_TYPE=pusher_cloud</code>.</p>
+                        </div>
+                    </div>
+
+                    <!-- Testing -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-vial me-2"></i>Step 5: Testing Pusher Cloud
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Laravel Testing:</h6>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('pusher-test')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="pusher-test"><code class="language-bash"># Test broadcasting with Artisan command
+php artisan tinker
+
+# In Tinker, test broadcasting
+broadcast(new App\Events\MessageSent($message));
+
+# Check Pusher dashboard for activity</code></pre>
+                            </div>
+
+                            <h6 class="mt-4">Admin Panel Testing:</h6>
+                            <ul>
+                                <li>Use the <strong>Test Connection</strong> button in admin panel</li>
+                                <li>Check the <strong>System Health</strong> status</li>
+                                <li>Monitor the Pusher dashboard for connection activity</li>
+                            </ul>
+
+                            <div class="alert alert-info mt-3">
+                                <strong>Monitoring:</strong> Pusher provides detailed analytics in their dashboard including
+                                connection counts, message volumes, and error rates.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- React Native Setup Section -->
+                <section id="react-native-setup" class="config-section">
+                    <h2 class="mb-4">
+                        <i class="fab fa-react text-info me-3"></i>React Native Frontend Setup
+                    </h2>
+
+                    <!-- Environment Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cog me-2"></i>Step 1: Environment Configuration
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Configure your React Native <code>.env</code> file:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('rn-env')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="rn-env"><code class="language-bash"># API Configuration
+API_HOST=192.168.1.100  # Your computer's IP address
+API_PORT=8000
+API_SCHEME=http
+
+# WebSocket Configuration (Laravel Reverb)
+WEBSOCKET_HOST=192.168.1.100  # Same as API_HOST
+WEBSOCKET_PORT=6001  # Different from Reverb port (8080)
+WEBSOCKET_SCHEME=http
+
+# Development Configuration
+NODE_ENV=development
+EXPO_PUBLIC_API_URL=http://192.168.1.100:8000/api
+EXPO_PUBLIC_WEBSOCKET_URL=http://192.168.1.100:6001
+
+# Network Timeout (milliseconds)
+API_TIMEOUT=15000
+
+# Storage Keys
+AUTH_TOKEN_KEY=auth_token
+USER_DATA_KEY=user_data
+REFRESH_TOKEN_KEY=refresh_token
+
+# App Configuration
+APP_NAME=FarmersNetwork
+APP_VERSION=1.0.0
+
+# Debug Configuration
+DEBUG_API_CALLS=true
+DEBUG_WEBSOCKET=true
+DEBUG_AUTH=true
+
+# Network Retry Configuration
+MAX_RETRY_ATTEMPTS=3
+RETRY_DELAY=1000
+ENABLE_NETWORK_LOGGING=true</code></pre>
+                            </div>
+
+                            <div class="alert alert-info mt-3">
+                                <strong>Finding Your IP Address:</strong>
+                                <ul class="mb-0">
+                                    <li><strong>Windows:</strong> Run <code>ipconfig</code> in Command Prompt</li>
+                                    <li><strong>Mac:</strong> Run <code>ifconfig</code> in Terminal</li>
+                                    <li><strong>Linux:</strong> Run <code>hostname -I</code> in Terminal</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Package Installation -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-download me-2"></i>Step 2: Package Installation
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Install required packages for WebSocket functionality:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('rn-packages')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="rn-packages"><code class="language-bash"># Install Laravel Echo and Pusher JS
+npm install laravel-echo pusher-js
+
+# Install Expo secure store for token storage
+npx expo install expo-secure-store
+
+# Install additional media packages (if needed)
+npx expo install expo-av expo-document-picker expo-image-picker
+
+# Install network info (optional, for debugging)
+npx expo install @react-native-async-storage/async-storage</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WebSocket Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-wifi me-2"></i>Step 3: WebSocket Configuration
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>The WebSocket configuration is already set up in your project. Key files:</p>
+
+                            <h6><code>src/config/api.js</code> - Main Configuration:</h6>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('api-config')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="api-config"><code class="language-javascript">export const API_CONFIG = {
+  BASE_URL: process.env.EXPO_PUBLIC_API_URL,
+  WEBSOCKET_CONFIG: {
+    host: process.env.WEBSOCKET_HOST,
+    port: parseInt(process.env.WEBSOCKET_PORT),
+    scheme: process.env.WEBSOCKET_SCHEME,
+    forceTLS: false,
+    encrypted: false,
+    authEndpoint: `${process.env.EXPO_PUBLIC_API_URL}/broadcasting/auth`,
+  },
+  REVERB_CONFIG: {
+    app_key: 'chatapp-key',
+    app_id: 'chatapp-id',
+    app_secret: 'chatapp-secret',
+  },
+};</code></pre>
+                            </div>
+
+                            <h6 class="mt-4"><code>src/services/websocket/reverbConnection.js</code> - Connection Manager:</h6>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('connection-manager')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="connection-manager"><code class="language-javascript">// Usage in your components
+import reverbConnection from '../services/websocket/reverbConnection';
+
+// Connect to WebSocket
+await reverbConnection.connect(user, authToken);
+
+// Subscribe to private channel
+const channel = reverbConnection.subscribePrivate(`private.chat.${chatId}`);
+
+// Listen for messages
+channel.listen('MessageSent', (event) => {
+  console.log('New message:', event.message);
+});
+
+// Subscribe to presence channel
+const presenceChannel = reverbConnection.subscribePresence(`presence.chat.${chatId}`);
+
+// Listen for user joining/leaving
+presenceChannel.here((users) => {
+  console.log('Users currently in chat:', users);
+});</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Authentication Setup -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-shield-alt me-2"></i>Step 4: Authentication Setup
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Ensure WebSocket authentication is properly configured:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('auth-setup')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="auth-setup"><code class="language-javascript">// In your authentication context or service
+import reverbConnection from '../services/websocket/reverbConnection';
+
+// After successful login
+const handleLogin = async (user, token) => {
+  // Store authentication data
+  await SecureStore.setItemAsync('auth_token', token);
+  await SecureStore.setItemAsync('user_data', JSON.stringify(user));
+
+  // Connect to WebSocket
+  try {
+    await reverbConnection.connect(user, token);
+    console.log('WebSocket connected successfully');
+  } catch (error) {
+    console.error('WebSocket connection failed:', error);
+  }
+};
+
+// On app startup, reconnect if authenticated
+const initializeWebSocket = async () => {
+  const token = await SecureStore.getItemAsync('auth_token');
+  const userData = await SecureStore.getItemAsync('user_data');
+
+  if (token && userData) {
+    const user = JSON.parse(userData);
+    await reverbConnection.connect(user, token);
+  }
+};</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Local Development Section -->
+                <section id="local-development" class="config-section">
+                    <h2 class="mb-4">
+                        <i class="fas fa-laptop-code text-warning me-3"></i>Local Development Setup
+                    </h2>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <i class="fab fa-laravel me-2"></i>Laravel Development
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Terminal 1: Laravel Server</h6>
+                                    <div class="position-relative">
+                                        <button class="copy-btn" onclick="copyToClipboard('laravel-dev')">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <pre class="code-block" id="laravel-dev"><code class="language-bash"># Start Laravel development server
+php artisan serve --host=0.0.0.0 --port=8000
+
+# Server will be available at:
+# http://192.168.1.100:8000</code></pre>
+                                    </div>
+
+                                    <h6 class="mt-3">Terminal 2: Laravel Reverb</h6>
+                                    <div class="position-relative">
+                                        <button class="copy-btn" onclick="copyToClipboard('reverb-dev')">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <pre class="code-block" id="reverb-dev"><code class="language-bash"># Start Reverb WebSocket server
+php artisan reverb:start --host=0.0.0.0 --port=8080
+
+# WebSocket will be available at:
+# ws://192.168.1.100:8080</code></pre>
+                                    </div>
+
+                                    <h6 class="mt-3">Terminal 3: Queue Worker</h6>
+                                    <div class="position-relative">
+                                        <button class="copy-btn" onclick="copyToClipboard('queue-dev')">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <pre class="code-block" id="queue-dev"><code class="language-bash"># Start queue worker for broadcasting
+php artisan queue:work --verbose</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <i class="fab fa-react me-2"></i>React Native Development
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Terminal 4: Expo Development</h6>
+                                    <div class="position-relative">
+                                        <button class="copy-btn" onclick="copyToClipboard('expo-dev')">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <pre class="code-block" id="expo-dev"><code class="language-bash"># Navigate to mobile app directory
+cd mobile_app
+
+# Start Expo development server
+npx expo start
+
+# Scan QR code with Expo Go app
+# Or press 'a' for Android emulator
+# Or press 'i' for iOS simulator</code></pre>
+                                    </div>
+
+                                    <h6 class="mt-3">Network Configuration</h6>
+                                    <div class="alert alert-info">
+                                        <small>
+                                            <strong>Important:</strong> Ensure your mobile device and development computer are on the same network.
+                                            Update the IP address in your <code>.env</code> file if your network changes.
+                                        </small>
+                                    </div>
+
+                                    <h6 class="mt-3">Testing Checklist</h6>
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success me-2"></i>Laravel server running</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Reverb server running</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Queue worker running</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Mobile app connected</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>WebSocket connection established</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success mt-4">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Development Tips</h6>
+                        <ul class="mb-0">
+                            <li>Use the admin panel at <code>http://your-ip:8000/admin/broadcast-settings</code> to test configurations</li>
+                            <li>Monitor Laravel logs with <code>tail -f storage/logs/laravel.log</code></li>
+                            <li>Use browser developer tools to inspect WebSocket connections</li>
+                            <li>Test with multiple devices to verify real-time functionality</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Production Deployment Section -->
+                <section id="production-deployment" class="config-section">
+                    <h2 class="mb-4">
+                        <i class="fas fa-server text-danger me-3"></i>Production Deployment
+                    </h2>
+
+                    <!-- Server Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-server me-2"></i>Server Configuration
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Environment Variables (.env)</h6>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('prod-env')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="prod-env"><code class="language-bash"># Production Environment
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
+
+# Broadcasting Configuration
+BROADCAST_DRIVER=reverb
+
+# Laravel Reverb Configuration (Production)
+REVERB_APP_ID=chatapp-id
+REVERB_APP_KEY=chatapp-key
+REVERB_APP_SECRET=your-secure-secret-here
+REVERB_HOST=0.0.0.0
+REVERB_PORT=6001
+REVERB_SCHEME=https
+
+# Database Configuration (Production)
+DB_CONNECTION=mysql
+DB_HOST=your-db-host
+DB_PORT=3306
+DB_DATABASE=your_production_db
+DB_USERNAME=your_db_user
+DB_PASSWORD=your-secure-password
+
+# Queue Configuration
+QUEUE_CONNECTION=redis  # Use Redis for production
+
+# Cache Configuration
+CACHE_DRIVER=redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=your-redis-password
+REDIS_PORT=6379
+
+# Session Configuration
+SESSION_DRIVER=redis
+SESSION_LIFETIME=120
+
+# SSL Configuration
+REVERB_CERT_PATH=/path/to/ssl/cert.pem
+REVERB_KEY_PATH=/path/to/ssl/private.key</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Supervisor Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tasks me-2"></i>Process Management (Supervisor)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Laravel Reverb Supervisor Config</h6>
+                            <p>Create <code>/etc/supervisor/conf.d/laravel-reverb.conf</code>:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('supervisor-reverb')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="supervisor-reverb"><code class="language-ini">[program:laravel-reverb]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/your-app/artisan reverb:start --host=0.0.0.0 --port=6001
+directory=/var/www/your-app
+autostart=true
+autorestart=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/your-app/storage/logs/reverb.log
+stopwaitsecs=3600</code></pre>
+                            </div>
+
+                            <h6 class="mt-4">Queue Worker Supervisor Config</h6>
+                            <p>Create <code>/etc/supervisor/conf.d/laravel-worker.conf</code>:</p>
+
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('supervisor-queue')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="supervisor-queue"><code class="language-ini">[program:laravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/your-app/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+directory=/var/www/your-app
+autostart=true
+autorestart=true
+user=www-data
+numprocs=4
+redirect_stderr=true
+stdout_logfile=/var/www/your-app/storage/logs/worker.log
+stopwaitsecs=3600</code></pre>
+                            </div>
+
+                            <h6 class="mt-4">Supervisor Commands</h6>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('supervisor-commands')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="supervisor-commands"><code class="language-bash"># Update supervisor configuration
+sudo supervisorctl reread
+sudo supervisorctl update
+
+# Start services
+sudo supervisorctl start laravel-reverb:*
+sudo supervisorctl start laravel-worker:*
+
+# Check status
+sudo supervisorctl status
+
+# Restart services
+sudo supervisorctl restart laravel-reverb:*
+sudo supervisorctl restart laravel-worker:*</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SSL Configuration -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-lock me-2"></i>SSL Configuration
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Nginx Configuration for WebSocket</h6>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyToClipboard('nginx-config')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <pre class="code-block" id="nginx-config"><code class="language-nginx"># Add to your Nginx site configuration
+location /app/ {
+    proxy_pass http://127.0.0.1:6001;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_cache_bypass $http_upgrade;
+    proxy_read_timeout 86400;
+}</code></pre>
+                            </div>
+
+                            <div class="alert alert-warning mt-3">
+                                <strong>Important:</strong> For production, ensure your SSL certificate covers the WebSocket subdomain
+                                and configure your firewall to allow traffic on the WebSocket port.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Troubleshooting Section -->
+                <section id="troubleshooting" class="config-section">
+                    <h2 class="mb-4">
+                        <i class="fas fa-tools text-warning me-3"></i>Troubleshooting Guide
+                    </h2>
+
+                    <div class="accordion" id="troubleshootingAccordion">
+                        <!-- Connection Issues -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#connectionIssues">
+                                    <i class="fas fa-wifi me-2"></i>WebSocket Connection Issues
+                                </button>
+                            </h2>
+                            <div id="connectionIssues" class="accordion-collapse collapse show" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <h6>Symptoms:</h6>
+                                    <ul>
+                                        <li>Mobile app can't connect to WebSocket</li>
+                                        <li>Real-time features not working</li>
+                                        <li>Connection timeouts</li>
+                                    </ul>
+
+                                    <h6>Solutions:</h6>
+                                    <ol>
+                                        <li><strong>Check IP Address:</strong> Ensure mobile app .env has correct IP address</li>
+                                        <li><strong>Verify Ports:</strong> Confirm Laravel (8000) and Reverb (8080) are running</li>
+                                        <li><strong>Network Access:</strong> Both devices must be on same network</li>
+                                        <li><strong>Firewall:</strong> Allow traffic on ports 8000 and 8080</li>
+                                        <li><strong>Test Endpoints:</strong> Visit http://your-ip:8000/api/health in browser</li>
+                                    </ol>
+
+                                    <div class="alert alert-info">
+                                        <strong>Quick Test:</strong> Run <code>curl http://your-ip:8080/app/chatapp-key</code> to test Reverb server.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Authentication Issues -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#authIssues">
+                                    <i class="fas fa-shield-alt me-2"></i>Authentication Issues
+                                </button>
+                            </h2>
+                            <div id="authIssues" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <h6>Symptoms:</h6>
+                                    <ul>
+                                        <li>WebSocket authentication failed (4001 error)</li>
+                                        <li>Cannot subscribe to private channels</li>
+                                        <li>Token validation errors</li>
+                                    </ul>
+
+                                    <h6>Solutions:</h6>
+                                    <ol>
+                                        <li><strong>Check Token:</strong> Ensure valid Bearer token is being sent</li>
+                                        <li><strong>Verify Routes:</strong> Confirm /broadcasting/auth route exists</li>
+                                        <li><strong>Channel Authorization:</strong> Check routes/channels.php permissions</li>
+                                        <li><strong>CORS:</strong> Ensure CORS is configured for WebSocket domain</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Broadcasting Issues -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#broadcastIssues">
+                                    <i class="fas fa-broadcast-tower me-2"></i>Broadcasting Issues
+                                </button>
+                            </h2>
+                            <div id="broadcastIssues" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <h6>Symptoms:</h6>
+                                    <ul>
+                                        <li>Events not being broadcast</li>
+                                        <li>Messages not appearing in real-time</li>
+                                        <li>Queue jobs failing</li>
+                                    </ul>
+
+                                    <h6>Solutions:</h6>
+                                    <ol>
+                                        <li><strong>Queue Worker:</strong> Ensure queue worker is running</li>
+                                        <li><strong>Broadcasting Driver:</strong> Verify BROADCAST_DRIVER=reverb in .env</li>
+                                        <li><strong>Event Implementation:</strong> Check events implement ShouldBroadcast</li>
+                                        <li><strong>Channel Names:</strong> Verify channel names match between Laravel and React Native</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Performance Issues -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#performanceIssues">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Performance Issues
+                                </button>
+                            </h2>
+                            <div id="performanceIssues" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                <div class="accordion-body">
+                                    <h6>Symptoms:</h6>
+                                    <ul>
+                                        <li>Slow message delivery</li>
+                                        <li>High memory usage</li>
+                                        <li>Connection drops</li>
+                                    </ul>
+
+                                    <h6>Solutions:</h6>
+                                    <ol>
+                                        <li><strong>Redis:</strong> Use Redis for queue and cache in production</li>
+                                        <li><strong>Connection Limits:</strong> Adjust max_connections in broadcast settings</li>
+                                        <li><strong>Timeout Settings:</strong> Optimize ping_interval and connection_timeout</li>
+                                        <li><strong>Process Management:</strong> Use Supervisor for process management</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Testing Section -->
+                <section id="testing" class="config-section">
+                    <h2 class="mb-4">
+                        <i class="fas fa-vial text-info me-3"></i>Testing & Validation
+                    </h2>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-heartbeat me-2"></i>Health Checks
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="health-check" id="health-results">
+                                        <div class="text-center">
+                                            <button class="btn btn-gradient" onclick="runHealthChecks()">
+                                                <i class="fas fa-play me-2"></i>Run Health Checks
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-wifi me-2"></i>Connection Tests
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="health-check" id="connection-results">
+                                        <div class="text-center">
+                                            <button class="btn btn-gradient" onclick="testConnections()">
+                                                <i class="fas fa-play me-2"></i>Test Connections
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list-check me-2"></i>Manual Testing Checklist
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Backend Tests</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test1">
+                                        <label class="form-check-label" for="test1">Laravel server running on port 8000</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test2">
+                                        <label class="form-check-label" for="test2">Reverb server running on port 8080</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test3">
+                                        <label class="form-check-label" for="test3">Queue worker processing jobs</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test4">
+                                        <label class="form-check-label" for="test4">Database migrations completed</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test5">
+                                        <label class="form-check-label" for="test5">Broadcast settings configured</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Frontend Tests</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test6">
+                                        <label class="form-check-label" for="test6">Mobile app connects to API</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test7">
+                                        <label class="form-check-label" for="test7">User authentication works</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test8">
+                                        <label class="form-check-label" for="test8">WebSocket connection established</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test9">
+                                        <label class="form-check-label" for="test9">Real-time messages working</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="test10">
+                                        <label class="form-check-label" for="test10">Typing indicators functional</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <div class="text-center py-4">
+                    <p class="text-muted">
+                        <i class="fas fa-heart text-danger me-1"></i>
+                        Built with Laravel + React Native + WebSocket Technology
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            // Update these with your actual server details
+            API_BASE_URL: 'http://192.168.1.100:8000/api',
+            WEBSOCKET_URL: 'http://192.168.1.100:8080',
+            HEALTH_CHECK_TIMEOUT: 10000
+        };
+
+        // Utility functions
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent || element.innerText;
+
+            navigator.clipboard.writeText(text).then(() => {
+                // Show success feedback
+                const button = element.parentElement.querySelector('.copy-btn');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                button.classList.add('btn-success');
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('btn-success');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            });
+        }
+
+        // Health check functions
+        async function checkSystemHealth() {
+            const statusElement = document.getElementById('system-status');
+            statusElement.innerHTML = `
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Checking...</span>
+                </div>
+                <p class="mt-2">Checking system health...</p>
+            `;
+
+            try {
+                const response = await fetch(`${CONFIG.API_BASE_URL}/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    signal: AbortSignal.timeout(CONFIG.HEALTH_CHECK_TIMEOUT)
+                });
+
+                const data = await response.json();
+                displaySystemStatus(data);
+            } catch (error) {
+                displaySystemStatus({
+                    status: 'error',
+                    message: `Health check failed: ${error.message}`,
+                    checks: {}
+                });
+            }
+        }
+
+        function displaySystemStatus(data) {
+            const statusElement = document.getElementById('system-status');
+            const status = data.status || 'error';
+            const statusIcon = getStatusIcon(status);
+            const statusColor = getStatusColor(status);
+
+            let checksHtml = '';
+            if (data.checks) {
+                checksHtml = Object.entries(data.checks).map(([key, check]) => {
+                    const checkIcon = getStatusIcon(check.status);
+                    const checkColor = getStatusColor(check.status);
+                    return `
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="status-indicator status-${check.status}"></span>
+                            <small class="text-${checkColor}">${key}: ${check.message}</small>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            statusElement.innerHTML = `
+                <div class="text-center">
+                    <i class="fas ${statusIcon} fa-2x text-${statusColor} mb-2"></i>
+                    <h6 class="text-${statusColor}">${status.toUpperCase()}</h6>
+                    <small class="text-muted">${data.message || 'System status checked'}</small>
+                </div>
+                ${checksHtml ? `<hr><div class="mt-3">${checksHtml}</div>` : ''}
+            `;
+        }
+
+        async function runHealthChecks() {
+            const resultsElement = document.getElementById('health-results');
+            resultsElement.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Running comprehensive health checks...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${CONFIG.API_BASE_URL}/health/broadcast`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    signal: AbortSignal.timeout(CONFIG.HEALTH_CHECK_TIMEOUT)
+                });
+
+                const data = await response.json();
+                displayHealthResults(data);
+            } catch (error) {
+                displayHealthResults({
+                    status: 'error',
+                    message: `Health check failed: ${error.message}`,
+                    checks: {}
+                });
+            }
+        }
+
+        function displayHealthResults(data) {
+            const resultsElement = document.getElementById('health-results');
+            const checks = data.checks || {};
+
+            const checksHtml = Object.entries(checks).map(([key, check]) => {
+                const statusColor = getStatusColor(check.status);
+                const statusIcon = getStatusIcon(check.status);
+
+                return `
+                    <div class="d-flex align-items-center justify-content-between mb-2 p-2 border rounded">
+                        <div>
+                            <strong>${key.replace(/_/g, ' ').toUpperCase()}</strong>
+                            <br>
+                            <small class="text-muted">${check.message}</small>
+                        </div>
+                        <div class="text-${statusColor}">
+                            <i class="fas ${statusIcon}"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            resultsElement.innerHTML = `
+                <div class="mb-3">
+                    <h6>Health Check Results</h6>
+                    <div class="alert alert-${getStatusColor(data.status)}">
+                        Overall Status: <strong>${data.status?.toUpperCase()}</strong>
+                    </div>
+                </div>
+                ${checksHtml}
+                <div class="text-center mt-3">
+                    <button class="btn btn-outline-primary btn-sm" onclick="runHealthChecks()">
+                        <i class="fas fa-redo me-1"></i>Recheck
+                    </button>
+                </div>
+            `;
+        }
+
+        async function testConnections() {
+            const resultsElement = document.getElementById('connection-results');
+            resultsElement.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Testing connections...</p>
+                </div>
+            `;
+
+            const tests = [
+                { name: 'Laravel API', test: testLaravelAPI },
+                { name: 'WebSocket Server', test: testWebSocketServer },
+                { name: 'Database', test: testDatabase }
+            ];
+
+            const results = [];
+            for (const test of tests) {
+                try {
+                    const result = await test.test();
+                    results.push({ name: test.name, ...result });
+                } catch (error) {
+                    results.push({
+                        name: test.name,
+                        status: 'error',
+                        message: error.message
+                    });
+                }
+            }
+
+            displayConnectionResults(results);
+        }
+
+        async function testLaravelAPI() {
+            const response = await fetch(`${CONFIG.API_BASE_URL}/test`, {
+                method: 'GET',
+                signal: AbortSignal.timeout(5000)
+            });
+
+            if (response.ok) {
+                return { status: 'success', message: 'API is accessible' };
+            } else {
+                return { status: 'error', message: `API returned ${response.status}` };
+            }
+        }
+
+        async function testWebSocketServer() {
+            try {
+                const response = await fetch(`${CONFIG.WEBSOCKET_URL}/app/chatapp-key`, {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(5000)
+                });
+
+                if (response.ok) {
+                    return { status: 'success', message: 'WebSocket server is running' };
+                } else {
+                    return { status: 'warning', message: `WebSocket server returned ${response.status}` };
+                }
+            } catch (error) {
+                return { status: 'error', message: 'WebSocket server not accessible' };
+            }
+        }
+
+        async function testDatabase() {
+            try {
+                const response = await fetch(`${CONFIG.API_BASE_URL}/health`, {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(5000)
+                });
+
+                const data = await response.json();
+                const dbCheck = data.checks?.database;
+
+                if (dbCheck?.status === 'healthy') {
+                    return { status: 'success', message: 'Database is accessible' };
+                } else {
+                    return { status: 'error', message: dbCheck?.message || 'Database check failed' };
+                }
+            } catch (error) {
+                return { status: 'error', message: 'Cannot check database status' };
+            }
+        }
+
+        function displayConnectionResults(results) {
+            const resultsElement = document.getElementById('connection-results');
+
+            const resultsHtml = results.map(result => {
+                const statusColor = getStatusColor(result.status);
+                const statusIcon = getStatusIcon(result.status);
+
+                return `
+                    <div class="d-flex align-items-center justify-content-between mb-2 p-2 border rounded">
+                        <div>
+                            <strong>${result.name}</strong>
+                            <br>
+                            <small class="text-muted">${result.message}</small>
+                        </div>
+                        <div class="text-${statusColor}">
+                            <i class="fas ${statusIcon}"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            resultsElement.innerHTML = `
+                <div class="mb-3">
+                    <h6>Connection Test Results</h6>
+                </div>
+                ${resultsHtml}
+                <div class="text-center mt-3">
+                    <button class="btn btn-outline-primary btn-sm" onclick="testConnections()">
+                        <i class="fas fa-redo me-1"></i>Retest
+                    </button>
+                </div>
+            `;
+        }
+
+        function getStatusIcon(status) {
+            switch (status) {
+                case 'healthy':
+                case 'success':
+                    return 'fa-check-circle';
+                case 'warning':
+                case 'degraded':
+                    return 'fa-exclamation-triangle';
+                case 'error':
+                case 'unhealthy':
+                    return 'fa-times-circle';
+                default:
+                    return 'fa-question-circle';
+            }
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'healthy':
+                case 'success':
+                    return 'success';
+                case 'warning':
+                case 'degraded':
+                    return 'warning';
+                case 'error':
+                case 'unhealthy':
+                    return 'danger';
+                default:
+                    return 'secondary';
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+
+                    // Update active nav link
+                    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-check system health on load
+            setTimeout(checkSystemHealth, 1000);
+
+            // Initialize syntax highlighting
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightAll();
+            }
+        });
+
+        // Update configuration based on user input
+        function updateConfiguration() {
+            const apiHost = prompt('Enter your Laravel server IP address:', '192.168.1.100');
+            if (apiHost) {
+                CONFIG.API_BASE_URL = `http://${apiHost}:8000/api`;
+                CONFIG.WEBSOCKET_URL = `http://${apiHost}:8080`;
+
+                // Update displayed URLs in the documentation
+                document.querySelectorAll('code').forEach(code => {
+                    if (code.textContent.includes('192.168.1.100')) {
+                        code.textContent = code.textContent.replace(/192\.168\.1\.100/g, apiHost);
+                    }
+                });
+
+                alert(`Configuration updated to use ${apiHost}`);
+            }
+        }
+
+        // Add configuration update button
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroSection = document.querySelector('.hero-section .d-flex');
+            if (heroSection) {
+                const configButton = document.createElement('button');
+                configButton.className = 'btn btn-outline-light btn-lg';
+                configButton.innerHTML = '<i class="fas fa-cog me-2"></i>Update IP Address';
+                configButton.onclick = updateConfiguration;
+                heroSection.appendChild(configButton);
+            }
+        });
+    </script>
+</body>
+</html>

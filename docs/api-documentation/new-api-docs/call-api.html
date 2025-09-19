@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-600 hover:text-purple-600 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Index
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-purple-100 rounded-lg p-1">
+                            <i class="fas fa-phone text-purple-600"></i>
+                        </div>
+                        <span class="font-medium text-gray-900">Call API</span>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                    Updated: 2025-09-15
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <div class="flex items-center space-x-4 mb-6">
+                <div class="bg-purple-600 rounded-lg p-3">
+                    <i class="fas fa-phone text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Call API</h1>
+                    <p class="text-gray-600 mt-1">Voice and video calling with real-time communication</p>
+                </div>
+            </div>
+
+            <div class="bg-purple-50 rounded-lg p-4">
+                <div class="flex items-center space-x-3 text-purple-800">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <p class="font-medium">Base URL: http://127.0.0.1:8000/api</p>
+                        <p class="text-sm">10+ endpoints • Real-time WebSocket events • Call statistics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Navigation</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="#initiate" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-purple-50 transition-colors">
+                    <i class="fas fa-phone text-purple-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Initiate Call</div>
+                </a>
+                <a href="#answer" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-green-50 transition-colors">
+                    <i class="fas fa-phone-alt text-green-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Answer Call</div>
+                </a>
+                <a href="#end" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-red-50 transition-colors">
+                    <i class="fas fa-phone-slash text-red-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">End Call</div>
+                </a>
+                <a href="#history" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
+                    <i class="fas fa-history text-blue-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Call History</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="space-y-8">
+            <!-- Initiate Call -->
+            <div id="initiate" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-purple-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/calls</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Initiate a new call to another user</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Request Body</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "receiver_id": 2,
+  "type": "voice"
+}</code></pre>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-2">Type options: voice, video, audio</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Success Response (201)</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "success": true,
+  "data": {
+    "id": 1,
+    "caller_id": 1,
+    "receiver_id": 2,
+    "call_type": "voice",
+    "status": "ringing",
+    "started_at": "2025-09-15T00:36:30.000000Z"
+  },
+  "message": "Call initiated successfully"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Answer Call -->
+            <div id="answer" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-green-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/calls/{callId}/accept</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Accept an incoming call</p>
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <p class="text-green-800 text-sm">Must be the call receiver. Call status changes from 'ringing' to 'answered'.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reject Call -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-red-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/calls/{callId}/reject</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Reject an incoming call</p>
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <p class="text-red-800 text-sm">Must be the call receiver. Call status changes to 'declined'.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End Call -->
+            <div id="end" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-gray-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/calls/{callId}/end</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">End an active call</p>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-gray-800 text-sm">Can be called by either participant. Calculates and stores call duration.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call History -->
+            <div id="history" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-blue-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/calls</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get user's call history with pagination</p>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-gray-900 mb-3">Query Parameters</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div><strong>per_page:</strong> integer (default: 50)</div>
+                            <div><strong>page:</strong> integer (default: 1)</div>
+                            <div><strong>type:</strong> audio/video (optional)</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Response Format</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "success": true,
+  "data": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 1,
+        "caller_id": 2,
+        "callee_id": 1,
+        "type": "voice",
+        "status": "ended",
+        "duration": 245,
+        "started_at": "2025-09-15T00:36:00.000000Z"
+      }
+    ]
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Calls -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-indigo-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/calls/active</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get all active calls for the user</p>
+                    <div class="bg-indigo-50 rounded-lg p-4">
+                        <p class="text-indigo-800 text-sm">Returns calls with status 'ringing' or 'answered'.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call Statistics -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-teal-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-teal-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/calls/statistics</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get detailed call statistics</p>
+
+                    <div class="bg-teal-50 rounded-lg p-4">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div><strong>Total calls:</strong> Count of all calls</div>
+                            <div><strong>Outgoing:</strong> Calls initiated by user</div>
+                            <div><strong>Incoming:</strong> Calls received by user</div>
+                            <div><strong>Answered:</strong> Successfully answered calls</div>
+                            <div><strong>Missed:</strong> Unanswered incoming calls</div>
+                            <div><strong>Talk time:</strong> Total duration formatted</div>
+                            <div><strong>Video calls:</strong> Video call count</div>
+                            <div><strong>Audio calls:</strong> Audio call count</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Missed Calls Count -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-orange-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/calls/missed-count</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get count of missed calls in the last 7 days</p>
+                    <div class="bg-orange-50 rounded-lg p-4">
+                        <p class="text-orange-800 text-sm">Useful for displaying notification badges in mobile apps.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call Lifecycle -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🔄 Call Lifecycle</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-phone text-yellow-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Ringing</h3>
+                    <p class="text-sm text-gray-600">Call initiated, waiting for receiver</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-phone-alt text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Answered</h3>
+                    <p class="text-sm text-gray-600">Call accepted and active</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-phone-slash text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Declined</h3>
+                    <p class="text-sm text-gray-600">Receiver rejected the call</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-times text-gray-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Ended</h3>
+                    <p class="text-sm text-gray-600">Call completed normally</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Examples -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">💻 Code Examples</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">JavaScript (Call Management)</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code>// Initiate voice call
+const initiateCall = async (receiverId, callType = 'voice') => {
+  const response = await fetch('http://127.0.0.1:8000/api/calls', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      receiver_id: receiverId,
+      type: callType
+    })
+  });
+  return await response.json();
+};
+
+// Answer incoming call
+const answerCall = async (callId) => {
+  const response = await fetch(`http://127.0.0.1:8000/api/calls/${callId}/accept`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};
+
+// End call
+const endCall = async (callId) => {
+  const response = await fetch(`http://127.0.0.1:8000/api/calls/${callId}/end`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};
+
+// Get call history
+const getCallHistory = async () => {
+  const response = await fetch('http://127.0.0.1:8000/api/calls', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};
+
+// Get call statistics
+const getCallStatistics = async () => {
+  const response = await fetch('http://127.0.0.1:8000/api/calls/statistics', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};</code></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">cURL Commands</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code># Initiate voice call
+curl -X POST "http://127.0.0.1:8000/api/calls" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "receiver_id": 2,
+    "type": "voice"
+  }'
+
+# Answer call
+curl -X POST "http://127.0.0.1:8000/api/calls/1/accept" \
+  -H "Authorization: Bearer TOKEN"
+
+# End call
+curl -X POST "http://127.0.0.1:8000/api/calls/1/end" \
+  -H "Authorization: Bearer TOKEN"
+
+# Get call history
+curl -X GET "http://127.0.0.1:8000/api/calls" \
+  -H "Authorization: Bearer TOKEN"
+
+# Get call statistics
+curl -X GET "http://127.0.0.1:8000/api/calls/statistics" \
+  -H "Authorization: Bearer TOKEN"
+
+# Get missed calls count
+curl -X GET "http://127.0.0.1:8000/api/calls/missed-count" \
+  -H "Authorization: Bearer TOKEN"</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Notes -->
+        <div class="bg-blue-50 rounded-lg p-6 mt-8">
+            <h2 class="text-xl font-bold text-blue-900 mb-4">🔧 Integration Notes</h2>
+            <ul class="space-y-2 text-blue-800">
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Use WebSocket events for real-time call status updates</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Implement call timeout handling (2 minutes for ringing calls)</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Handle concurrent call prevention between same users</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Integrate with WebRTC for actual audio/video communication</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Track call duration and calculate statistics</span>
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-6 mt-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Chat App API Documentation</p>
+        </div>
+    </footer>
+</body>
+</html>

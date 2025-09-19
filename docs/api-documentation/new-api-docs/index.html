@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App Backend API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-600 rounded-lg p-2">
+                        <i class="fas fa-comments text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Chat App API</h1>
+                        <p class="text-sm text-gray-600">Backend Documentation</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-clock mr-1"></i>
+                        Updated: 2025-09-15
+                    </div>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-play mr-2"></i>View Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Hero Section -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 mb-8 text-white">
+            <div class="max-w-3xl">
+                <h2 class="text-3xl font-bold mb-4">Welcome to Chat App API</h2>
+                <p class="text-lg mb-6 opacity-90">
+                    Complete REST API documentation for the Chat App backend system.
+                    Build real-time messaging, voice calls, and social features with ease.
+                </p>
+                <div class="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
+                    <div class="flex items-center space-x-4 text-sm">
+                        <span><i class="fas fa-globe mr-1"></i>http://127.0.0.1:8000/api</span>
+                        <span><i class="fas fa-key mr-1"></i>Bearer Token</span>
+                        <span><i class="fas fa-server mr-1"></i>REST API</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg p-6 text-center shadow-sm">
+                <div class="text-3xl font-bold text-blue-600 mb-2">6</div>
+                <div class="text-gray-600">API Categories</div>
+            </div>
+            <div class="bg-white rounded-lg p-6 text-center shadow-sm">
+                <div class="text-3xl font-bold text-green-600 mb-2">40+</div>
+                <div class="text-gray-600">API Endpoints</div>
+            </div>
+            <div class="bg-white rounded-lg p-6 text-center shadow-sm">
+                <div class="text-3xl font-bold text-purple-600 mb-2">100%</div>
+                <div class="text-gray-600">Tested</div>
+            </div>
+            <div class="bg-white rounded-lg p-6 text-center shadow-sm">
+                <div class="text-3xl font-bold text-orange-600 mb-2">Real-time</div>
+                <div class="text-gray-600">WebSocket Ready</div>
+            </div>
+        </div>
+
+        <!-- API Categories Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Authentication -->
+            <a href="authentication-api.html" class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border-l-4 border-blue-600">
+                <div class="flex items-center mb-4">
+                    <div class="bg-blue-100 rounded-lg p-2 mr-3">
+                        <i class="fas fa-key text-blue-600 text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Authentication</h3>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                    User registration, login, token management, and profile updates.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">6 endpoints</span>
+                    <i class="fas fa-arrow-right text-blue-600"></i>
+                </div>
+            </a>
+
+            <!-- Chat -->
+            <a href="chat-api.html" class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border-l-4 border-green-600">
+                <div class="flex items-center mb-4">
+                    <div class="bg-green-100 rounded-lg p-2 mr-3">
+                        <i class="fas fa-comments text-green-600 text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Chat & Messaging</h3>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                    Private/group chats, real-time messaging, reactions, and media sharing.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">12+ endpoints</span>
+                    <i class="fas fa-arrow-right text-green-600"></i>
+                </div>
+            </a>
+
+            <!-- Calls -->
+            <a href="call-api.html" class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border-l-4 border-purple-600">
+                <div class="flex items-center mb-4">
+                    <div class="bg-purple-100 rounded-lg p-2 mr-3">
+                        <i class="fas fa-phone text-purple-600 text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Voice & Video Calls</h3>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                    Voice and video calling, call history, and statistics tracking.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">10+ endpoints</span>
+                    <i class="fas fa-arrow-right text-purple-600"></i>
+                </div>
+            </a>
+
+            <!-- Status -->
+            <a href="status-api.html" class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border-l-4 border-orange-600">
+                <div class="flex items-center mb-4">
+                    <div class="bg-orange-100 rounded-lg p-2 mr-3">
+                        <i class="fas fa-circle text-orange-600 text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Status Updates</h3>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                    Instagram-style status updates with media support and view tracking.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">6 endpoints</span>
+                    <i class="fas fa-arrow-right text-orange-600"></i>
+                </div>
+            </a>
+
+            <!-- User Management -->
+            <a href="user-management-api.html" class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border-l-4 border-indigo-600">
+                <div class="flex items-center mb-4">
+                    <div class="bg-indigo-100 rounded-lg p-2 mr-3">
+                        <i class="fas fa-user-cog text-indigo-600 text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">User Management</h3>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                    Profile settings, privacy controls, notifications, and data export.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full">8+ endpoints</span>
+                    <i class="fas fa-arrow-right text-indigo-600"></i>
+                </div>
+            </a>
+
+            <!-- Contact Management -->
+            <a href="contact-management-api.html" class="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border-l-4 border-pink-600">
+                <div class="flex items-center mb-4">
+                    <div class="bg-pink-100 rounded-lg p-2 mr-3">
+                        <i class="fas fa-address-book text-pink-600 text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Contact Management</h3>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                    Device contact synchronization, search, favorites, and blocking.
+                </p>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded-full">6 endpoints</span>
+                    <i class="fas fa-arrow-right text-pink-600"></i>
+                </div>
+            </a>
+        </div>
+
+        <!-- Getting Started Section -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🚀 Getting Started</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Setup</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-blue-100 rounded-full p-1 mt-0.5">
+                                <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Start Laravel Server</p>
+                                <p class="text-sm text-gray-600">php artisan serve --host=127.0.0.1 --port=8000</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-blue-100 rounded-full p-1 mt-0.5">
+                                <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Register User</p>
+                                <p class="text-sm text-gray-600">POST /auth/register</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-blue-100 rounded-full p-1 mt-0.5">
+                                <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Get Token</p>
+                                <p class="text-sm text-gray-600">POST /auth/login</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Sample Request</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <div class="text-green-400 mb-2"># Get user profile</div>
+                        <div>curl -X GET http://127.0.0.1:8000/api/auth/user \</div>
+                        <div class="ml-4">-H "Authorization: Bearer YOUR_TOKEN"</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="bg-white rounded-lg shadow-sm p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">✨ Key Features</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Real-time</h3>
+                    <p class="text-sm text-gray-600">WebSocket integration for instant messaging and updates</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Secure</h3>
+                    <p class="text-sm text-gray-600">OAuth 2.0 Bearer tokens with comprehensive authentication</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-mobile-alt text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Mobile Ready</h3>
+                    <p class="text-sm text-gray-600">Optimized for React Native, Flutter, and mobile apps</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <i class="fas fa-comments text-blue-400"></i>
+                        <span class="font-semibold">Chat App API</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Built with Laravel & Laravel Sanctum</p>
+                </div>
+
+                <div class="flex items-center space-x-6 text-sm text-gray-400">
+                    <span><i class="fas fa-code mr-1"></i>Laravel 10.x</span>
+                    <span><i class="fas fa-database mr-1"></i>MySQL</span>
+                    <span><i class="fas fa-server mr-1"></i>REST API</span>
+                    <span><i class="fas fa-mobile mr-1"></i>Mobile Ready</span>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-6 pt-6 text-center text-gray-400 text-sm">
+                <p>&copy; 2025 Chat App Development Team. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

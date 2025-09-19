@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Implementation Guide - FarmersNetwork Documentation</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-mobile-alt me-2"></i>
+                Mobile Implementation
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#react-native">React Native</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#flutter">Flutter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#authentication">Authentication</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#websocket">WebSocket</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#deployment">Deployment</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold text-white mb-4">
+                        <i class="fas fa-mobile-alt text-warning me-3"></i>
+                        Mobile Implementation Guide
+                    </h1>
+                    <p class="lead text-light mb-4">
+                        Complete guide for integrating FarmersNetwork Chat API with React Native and Flutter applications, including authentication, WebSocket connections, and real-time features.
+                    </p>
+                    <div class="hero-stats row text-center mb-4">
+                        <div class="col-md-4">
+                            <div class="stat-item">
+                                <h3 class="text-warning">React Native</h3>
+                                <p class="text-light">Complete Integration</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-item">
+                                <h3 class="text-warning">Flutter</h3>
+                                <p class="text-light">Full Support</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-item">
+                                <h3 class="text-warning">WebSocket</h3>
+                                <p class="text-light">Real-time Events</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-buttons">
+                        <a href="#react-native" class="btn btn-warning btn-lg me-3">
+                            <i class="fab fa-react me-2"></i>React Native Guide
+                        </a>
+                        <a href="#flutter" class="btn btn-outline-light btn-lg">
+                            <i class="fab fa-google me-2"></i>Flutter Guide
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">Implementation Overview</h2>
+                    <p class="lead text-muted text-center mb-5">
+                        This guide provides step-by-step instructions for integrating the FarmersNetwork Chat API with mobile applications built using React Native and Flutter.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Authentication</h4>
+                        <p>Secure authentication using Laravel Sanctum with token-based authorization.</p>
+                        <ul class="feature-list">
+                            <li>Bearer token authentication</li>
+                            <li>Secure token storage</li>
+                            <li>Automatic token refresh</li>
+                            <li>Logout handling</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-broadcast-tower"></i>
+                        </div>
+                        <h4>Real-time Communication</h4>
+                        <p>WebSocket integration with dynamic driver support for real-time messaging and calls.</p>
+                        <ul class="feature-list">
+                            <li>Pusher Cloud integration</li>
+                            <li>Laravel Reverb support</li>
+                            <li>Dynamic configuration</li>
+                            <li>Connection management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Diagram -->
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="architecture-card">
+                        <h4><i class="fas fa-sitemap me-2"></i>Architecture Overview</h4>
+                        <div class="architecture-diagram">
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <div class="arch-component mobile">
+                                        <i class="fas fa-mobile-alt"></i>
+                                        <h5>Mobile App</h5>
+                                        <p>React Native / Flutter</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="arch-component api">
+                                        <i class="fas fa-server"></i>
+                                        <h5>Laravel API</h5>
+                                        <p>REST Endpoints</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="arch-component websocket">
+                                        <i class="fas fa-broadcast-tower"></i>
+                                        <h5>WebSocket</h5>
+                                        <p>Pusher / Reverb</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="arch-connections">
+                                <div class="connection-line"></div>
+                                <div class="connection-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- React Native Section -->
+    <section id="react-native" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">
+                        <i class="fab fa-react text-info me-3"></i>React Native Implementation
+                    </h2>
+                    <p class="lead text-muted text-center mb-5">
+                        Complete React Native integration with authentication, WebSocket connections, and real-time features.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quick Start -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-rocket me-2"></i>Quick Start</h4>
+                        <p>Get started with React Native integration in 5 minutes:</p>
+                        
+                        <h5>1. Install Dependencies</h5>
+                        <pre><code class="language-bash">npm install @react-native-async-storage/async-storage
+npm install laravel-echo pusher-js
+npm install @react-native-community/netinfo</code></pre>
+
+                        <h5>2. Configure API Service</h5>
+                        <pre><code class="language-javascript">// services/ApiService.js
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+class ApiService {
+  constructor() {
+    this.baseURL = 'https://your-api-url.com/api';
+    this.token = null;
+  }
+
+  async initialize() {
+    this.token = await AsyncStorage.getItem('auth_token');
+  }
+
+  async request(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+      },
+      ...options,
+    };
+
+    const response = await fetch(url, config);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'API request failed');
+    }
+
+    return data;
+  }
+
+  // Authentication methods
+  async login(credentials) {
+    const data = await this.request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+
+    if (data.success) {
+      this.token = data.data.token;
+      await AsyncStorage.setItem('auth_token', this.token);
+      await AsyncStorage.setItem('user_data', JSON.stringify(data.data.user));
+    }
+
+    return data;
+  }
+
+  async logout() {
+    try {
+      await this.request('/auth/logout', { method: 'POST' });
+    } finally {
+      this.token = null;
+      await AsyncStorage.multiRemove(['auth_token', 'user_data']);
+    }
+  }
+
+  // Chat methods
+  async getChats() {
+    return this.request('/chats');
+  }
+
+  async sendMessage(chatId, message) {
+    return this.request(`/chats/${chatId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify(message),
+    });
+  }
+
+  // Call methods
+  async initiateCall(receiverId, callType) {
+    return this.request('/calls', {
+      method: 'POST',
+      body: JSON.stringify({
+        receiver_id: receiverId,
+        type: callType,
+      }),
+    });
+  }
+
+  async answerCall(callId) {
+    return this.request(`/calls/${callId}/answer`, {
+      method: 'POST',
+    });
+  }
+
+  async endCall(callId) {
+    return this.request(`/calls/${callId}/end`, {
+      method: 'POST',
+    });
+  }
+}
+
+export default new ApiService();</code></pre>
+
+                        <h5>3. Set up WebSocket Service</h5>
+                        <pre><code class="language-javascript">// services/WebSocketService.js
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+import ApiService from './ApiService';
+
+class WebSocketService {
+  constructor() {
+    this.echo = null;
+    this.isConnected = false;
+  }
+
+  async initialize(userId) {
+    try {
+      // Get broadcast configuration
+      const config = await this.getBroadcastConfig();
+      
+      if (!config.enabled) {
+        throw new Error('Broadcasting is disabled');
+      }
+
+      // Initialize Echo based on driver
+      if (config.driver === 'pusher') {
+        this.initializePusher(config.config);
+      } else if (config.driver === 'reverb') {
+        this.initializeReverb(config.config);
+      }
+
+      this.isConnected = true;
+      return true;
+    } catch (error) {
+      console.error('Failed to initialize WebSocket:', error);
+      return false;
+    }
+  }
+
+  async getBroadcastConfig() {
+    const response = await fetch('https://your-api-url.com/api/broadcast-settings');
+    const data = await response.json();
+    return data.success ? data.data : null;
+  }
+
+  initializePusher(config) {
+    window.Pusher = Pusher;
+    
+    this.echo = new Echo({
+      broadcaster: 'pusher',
+      key: config.key,
+      cluster: config.cluster,
+      forceTLS: true,
+      auth: {
+        headers: {
+          Authorization: `Bearer ${ApiService.token}`,
+        },
+      },
+      authEndpoint: config.auth_endpoint,
+    });
+  }
+
+  initializeReverb(config) {
+    this.echo = new Echo({
+      broadcaster: 'socket.io',
+      host: `${config.scheme}://${config.host}:${config.port}`,
+      auth: {
+        headers: {
+          Authorization: `Bearer ${ApiService.token}`,
+        },
+      },
+      authEndpoint: config.auth_endpoint,
+    });
+  }
+
+  subscribeToChannel(channelName, events) {
+    if (!this.echo) return null;
+
+    const channel = this.echo.private(channelName);
+    
+    Object.entries(events).forEach(([eventName, callback]) => {
+      channel.listen(eventName, callback);
+    });
+
+    return channel;
+  }
+
+  disconnect() {
+    if (this.echo) {
+      this.echo.disconnect();
+      this.echo = null;
+      this.isConnected = false;
+    }
+  }
+}
+
+export default new WebSocketService();</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication Provider -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-lock me-2"></i>Authentication Provider</h4>
+                        <p>Create an authentication provider to manage user state:</p>
+
+                        <pre><code class="language-dart">// providers/auth_provider.dart
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/api_service.dart';
+import '../services/websocket_service.dart';
+
+class User {
+  final int id;
+  final String name;
+  final String email;
+  final String? avatarUrl;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.avatarUrl,
+  });
+
+  factory User.fromJson(Map&lt;String, dynamic&gt; json) {
+    return User(
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      avatarUrl: json['avatar_url'],
+    );
+  }
+}
+
+class AuthProvider with ChangeNotifier {
+  final ApiService _apiService = ApiService();
+  final WebSocketService _webSocketService = WebSocketService();
+
+  User? _user;
+  bool _isLoading = false;
+  bool _isInitialized = false;
+
+  User? get user => _user;
+  bool get isLoading => _isLoading;
+  bool get isAuthenticated => _user != null;
+  bool get isInitialized => _isInitialized;
+
+  Future&lt;void&gt; initialize() async {
+    if (_isInitialized) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _apiService.initialize();
+
+      if (_apiService.token != null) {
+        final prefs = await SharedPreferences.getInstance();
+        final userData = prefs.getString('user_data');
+
+        if (userData != null) {
+          _user = User.fromJson(json.decode(userData));
+
+          // Initialize WebSocket connection
+          await _webSocketService.initialize(
+            userId: _user!.id.toString(),
+            authToken: _apiService.token!,
+          );
+        }
+      }
+    } catch (error) {
+      debugPrint('Failed to initialize auth: $error');
+    } finally {
+      _isLoading = false;
+      _isInitialized = true;
+      notifyListeners();
+    }
+  }
+
+  Future&lt;bool&gt; login(String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _apiService.login(email, password);
+
+      if (response['success'] == true) {
+        _user = User.fromJson(response['data']['user']);
+
+        // Initialize WebSocket connection
+        await _webSocketService.initialize(
+          userId: _user!.id.toString(),
+          authToken: _apiService.token!,
+        );
+
+        notifyListeners();
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      debugPrint('Login failed: $error');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future&lt;void&gt; logout() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      // Disconnect WebSocket
+      await _webSocketService.dispose();
+
+      // Logout from API
+      await _apiService.logout();
+
+      // Clear user state
+      _user = null;
+    } catch (error) {
+      debugPrint('Logout failed: $error');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+}</code></pre>
+
+                        <h5>Main App Setup</h5>
+                        <pre><code class="language-dart">// main.dart
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/auth_provider.dart';
+import 'screens/splash_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => AuthProvider(),
+      child: MaterialApp(
+        title: 'FarmersNetwork Chat',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: AuthWrapper(),
+      ),
+    );
+  }
+}
+
+class AuthWrapper extends StatefulWidget {
+  @override
+  _AuthWrapperState createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State&lt;AuthWrapper&gt; {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize authentication on app start
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read&lt;AuthProvider&gt;().initialize();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer&lt;AuthProvider&gt;(
+      builder: (context, authProvider, child) {
+        if (!authProvider.isInitialized) {
+          return SplashScreen();
+        }
+
+        if (authProvider.isAuthenticated) {
+          return HomeScreen();
+        } else {
+          return LoginScreen();
+        }
+      },
+    );
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Authentication Section -->
+    <section id="authentication" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">Authentication Implementation</h2>
+                    <p class="lead text-muted text-center mb-5">
+                        Secure authentication implementation for both React Native and Flutter applications.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Authentication Flow -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-flow-chart me-2"></i>Authentication Flow</h4>
+                        <div class="auth-flow">
+                            <div class="flow-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>User Login</h5>
+                                    <p>User enters credentials (email/phone + password)</p>
+                                </div>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>API Authentication</h5>
+                                    <p>POST /api/auth/login with credentials</p>
+                                </div>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>Token Storage</h5>
+                                    <p>Store Bearer token securely (AsyncStorage/SharedPreferences)</p>
+                                </div>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>WebSocket Init</h5>
+                                    <p>Initialize WebSocket connection with token</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Best Practices -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-shield-alt me-2"></i>Security Best Practices</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Token Management</h5>
+                                <ul class="security-list">
+                                    <li>Store tokens in secure storage (Keychain/Keystore)</li>
+                                    <li>Implement automatic token refresh</li>
+                                    <li>Clear tokens on logout</li>
+                                    <li>Handle token expiration gracefully</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Network Security</h5>
+                                <ul class="security-list">
+                                    <li>Use HTTPS for all API calls</li>
+                                    <li>Implement certificate pinning</li>
+                                    <li>Validate SSL certificates</li>
+                                    <li>Use secure WebSocket connections (WSS)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WebSocket Section -->
+    <section id="websocket" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">WebSocket Implementation</h2>
+                    <p class="lead text-muted text-center mb-5">
+                        Real-time WebSocket integration for both React Native and Flutter applications.
+                    </p>
+                </div>
+            </div>
+
+            <!-- WebSocket Architecture -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-sitemap me-2"></i>WebSocket Architecture</h4>
+                        <p>The FarmersNetwork Chat API supports two WebSocket drivers:</p>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="websocket-option">
+                                    <h5><i class="fab fa-pushed me-2"></i>Pusher Cloud</h5>
+                                    <ul>
+                                        <li>Managed WebSocket service</li>
+                                        <li>Reliable and scalable</li>
+                                        <li>Easy to implement</li>
+                                        <li>Requires Pusher account</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="websocket-option">
+                                    <h5><i class="fas fa-server me-2"></i>Laravel Reverb</h5>
+                                    <ul>
+                                        <li>Self-hosted WebSocket server</li>
+                                        <li>No external dependencies</li>
+                                        <li>Complete control</li>
+                                        <li>Requires server setup</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Configuration -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-cogs me-2"></i>Dynamic Configuration</h4>
+                        <p>The mobile app should dynamically detect and use the configured WebSocket driver:</p>
+
+                        <pre><code class="language-javascript">// React Native example
+async function getBroadcastConfig() {
+  try {
+    const response = await fetch('https://your-api-url.com/api/broadcast-settings');
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Failed to get broadcast config:', error);
+    return null;
+  }
+}
+
+async function initializeWebSocket(authToken) {
+  const config = await getBroadcastConfig();
+
+  if (!config || !config.enabled) {
+    console.warn('Broadcasting is disabled');
+    return false;
+  }
+
+  if (config.driver === 'pusher') {
+    // Initialize Pusher
+    return initializePusher(config.config, authToken);
+  } else if (config.driver === 'reverb') {
+    // Initialize Reverb
+    return initializeReverb(config.config, authToken);
+  }
+
+  return false;
+}</code></pre>
+
+                        <pre><code class="language-dart">// Flutter example
+Future&lt;Map&lt;String, dynamic&gt;?&gt; getBroadcastConfig() async {
+  try {
+    final response = await http.get(
+      Uri.parse('https://your-api-url.com/api/broadcast-settings'),
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['success'] == true) {
+        return data['data'];
+      }
+    }
+
+    return null;
+  } catch (error) {
+    debugPrint('Failed to get broadcast config: $error');
+    return null;
+  }
+}
+
+Future&lt;bool&gt; initializeWebSocket(String authToken) async {
+  final config = await getBroadcastConfig();
+
+  if (config == null || config['enabled'] != true) {
+    debugPrint('Broadcasting is disabled');
+    return false;
+  }
+
+  if (config['driver'] == 'pusher') {
+    // Initialize Pusher
+    return initializePusher(config['config'], authToken);
+  } else if (config['driver'] == 'reverb') {
+    // Initialize Reverb
+    return initializeReverb(config['config'], authToken);
+  }
+
+  return false;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Handling -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-bolt me-2"></i>Event Handling</h4>
+                        <p>Handle WebSocket events for real-time features:</p>
+
+                        <h5>Chat Events</h5>
+                        <pre><code class="language-javascript">// React Native example
+function subscribeToChatEvents(chatId) {
+  const channel = echo.private(`chat.${chatId}`);
+
+  channel.listen('MessageSent', (event) => {
+    // Handle new message
+    console.log('New message received:', event);
+    // Update UI with new message
+  });
+
+  channel.listen('MessageRead', (event) => {
+    // Handle message read receipt
+    console.log('Message read:', event);
+    // Update message status in UI
+  });
+
+  channel.listen('UserTyping', (event) => {
+    // Handle typing indicator
+    console.log('User typing:', event);
+    // Show typing indicator in UI
+  });
+}</code></pre>
+
+                        <h5>Call Events</h5>
+                        <pre><code class="language-dart">// Flutter example
+void subscribeToCallEvents(String userId) {
+  final channel = echo.private('call.$userId');
+
+  channel.listen('CallInitiated', (event) {
+    // Handle incoming call
+    debugPrint('Incoming call: $event');
+    // Show incoming call UI
+  });
+
+  channel.listen('CallAccepted', (event) {
+    // Handle call accepted
+    debugPrint('Call accepted: $event');
+    // Start WebRTC session
+  });
+
+  channel.listen('CallEnded', (event) {
+    // Handle call ended
+    debugPrint('Call ended: $event');
+    // End WebRTC session and update UI
+  });
+
+  channel.listen('CallRejected', (event) {
+    // Handle call rejected
+    debugPrint('Call rejected: $event');
+    // Update UI
+  });
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deployment Section -->
+    <section id="deployment" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-4 text-center">Deployment Considerations</h2>
+                    <p class="lead text-muted text-center mb-5">
+                        Important considerations for deploying mobile apps with FarmersNetwork Chat API.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Environment Configuration -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-server me-2"></i>Environment Configuration</h4>
+                        <p>Configure different environments for development, staging, and production:</p>
+
+                        <h5>React Native (.env files)</h5>
+                        <pre><code class="language-bash"># .env.development
+API_URL=http://192.168.0.102:8000/api
+WEBSOCKET_HOST=http://192.168.0.102:6001
+
+# .env.production
+API_URL=https://api.farmersnetwork.com/api
+WEBSOCKET_HOST=https://socket.farmersnetwork.com</code></pre>
+
+                        <h5>Flutter (environment config)</h5>
+                        <pre><code class="language-dart">// config/environment.dart
+enum Environment { development, staging, production }
+
+class EnvironmentConfig {
+  static Environment _environment = Environment.development;
+
+  static void setEnvironment(Environment environment) {
+    _environment = environment;
+  }
+
+  static String get apiUrl {
+    switch (_environment) {
+      case Environment.development:
+        return 'http://192.168.0.102:8000/api';
+      case Environment.staging:
+        return 'https://staging-api.farmersnetwork.com/api';
+      case Environment.production:
+        return 'https://api.farmersnetwork.com/api';
+    }
+  }
+
+  static String get websocketHost {
+    switch (_environment) {
+      case Environment.development:
+        return 'http://192.168.0.102:6001';
+      case Environment.staging:
+        return 'https://staging-socket.farmersnetwork.com';
+      case Environment.production:
+        return 'https://socket.farmersnetwork.com';
+    }
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network Considerations -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="implementation-card">
+                        <h4><i class="fas fa-wifi me-2"></i>Network Considerations</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Offline Support</h5>
+                                <ul>
+                                    <li>Cache messages locally</li>
+                                    <li>Queue outgoing messages</li>
+                                    <li>Sync when back online</li>
+                                    <li>Show offline indicators</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>WebSocket Reconnection</h5>
+                                <ul>
+                                    <li>Implement exponential backoff</li>
+                                    <li>Handle connection timeouts</li>
+                                    <li>Reconnect on network change</li>
+                                    <li>Sync missed events after reconnection</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center text-white">
+                    <h4 class="mb-4">FarmersNetwork Mobile Implementation Guide</h4>
+                    <p>
+                        Complete guide for integrating FarmersNetwork Chat API with React Native and Flutter applications.
+                    </p>
+                    <hr class="my-4">
+                    <p class="small mb-0">
+                        &copy; 2025 FarmersNetwork. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

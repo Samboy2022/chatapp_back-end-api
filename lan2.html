@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmers Network - Connect, Chat, Grow Together</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #065f46 0%, #10b981 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+        
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Mobile menu animation */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-white overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-effect">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-seedling text-2xl text-emerald-400"></i>
+                    <span class="text-xl font-semibold">Farmers Network</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-300 hover:text-white transition-colors duration-200">Features</a>
+                    <a href="#community" class="text-gray-300 hover:text-white transition-colors duration-200">Community</a>
+                    <a href="#download" class="text-gray-300 hover:text-white transition-colors duration-200">Download</a>
+                    <button class="bg-emerald-500 hover:bg-emerald-600 px-5 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                        Get Started
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-gray-900 p-6 md:hidden">
+            <button onclick="toggleMobileMenu()" class="absolute top-6 right-6">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div class="mt-16 space-y-6">
+                <a href="#features" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-white transition-colors">Features</a>
+                <a href="#community" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-white transition-colors">Community</a>
+                <a href="#download" onclick="toggleMobileMenu()" class="block text-gray-300 hover:text-white transition-colors">Download</a>
+                <button class="bg-emerald-500 hover:bg-emerald-600 px-5 py-2 rounded-full text-sm font-medium transition-colors w-full">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center gradient-bg px-4 py-20">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                Connect with Farmers
+                <span class="block text-white/90">Worldwide</span>
+            </h1>
+            <p class="text-lg sm:text-xl md:text-2xl mb-10 text-white/80 max-w-3xl mx-auto leading-relaxed">
+                Join the largest farming community. Share knowledge, trade crops, and grow together.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-white text-emerald-700 hover:bg-gray-100 px-8 py-4 rounded-full font-semibold transition-all duration-200 hover-scale shadow-lg">
+                    <i class="fas fa-download mr-2"></i>
+                    Download Now
+                </button>
+                <button class="border-2 border-white text-white hover:bg-white hover:text-emerald-700 px-8 py-4 rounded-full font-semibold transition-all duration-200">
+                    Learn More
+                </button>
+            </div>
+            
+            <!-- Simple Stats -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                <div class="text-center">
+                    <h3 class="text-3xl md:text-4xl font-bold">2.5M+</h3>
+                    <p class="text-white/70 mt-1">Active Users</p>
+                </div>
+                <div class="text-center">
+                    <h3 class="text-3xl md:text-4xl font-bold">150+</h3>
+                    <p class="text-white/70 mt-1">Countries</p>
+                </div>
+                <div class="text-center">
+                    <h3 class="text-3xl md:text-4xl font-bold">50M+</h3>
+                    <p class="text-white/70 mt-1">Messages</p>
+                </div>
+                <div class="text-center">
+                    <h3 class="text-3xl md:text-4xl font-bold">4.8★</h3>
+                    <p class="text-white/70 mt-1">App Rating</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+                    Simple, Powerful Features
+                </h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Everything you need to connect with the farming community
+                </p>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature Card -->
+                <div class="glass-effect rounded-2xl p-8 hover-scale cursor-pointer">
+                    <div class="bg-emerald-500 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-comments text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Real-time Chat</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Instant messaging with farmers worldwide. Share photos, documents, and voice messages.
+                    </p>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 hover-scale cursor-pointer">
+                    <div class="bg-blue-500 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-video text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Video Calls</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        High-quality video calling for remote consultations and virtual farm tours.
+                    </p>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 hover-scale cursor-pointer">
+                    <div class="bg-purple-500 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Communities</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Join groups based on crops, regions, or farming techniques. Learn from experts.
+                    </p>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 hover-scale cursor-pointer">
+                    <div class="bg-orange-500 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Market Insights</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Real-time crop prices and market trends to help you make informed decisions.
+                    </p>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 hover-scale cursor-pointer">
+                    <div class="bg-red-500 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Secure & Private</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        End-to-end encryption ensures your conversations and data remain private.
+                    </p>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 hover-scale cursor-pointer">
+                    <div class="bg-yellow-500 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-cloud-sun text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Weather Updates</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Localized weather forecasts and alerts to help plan your farming activities.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section id="community" class="py-20 px-4 bg-gray-900">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+                    Join Our Community
+                </h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Farmers worldwide trust our platform for connection and growth
+                </p>
+            </div>
+            
+            <!-- Testimonials -->
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-effect rounded-2xl p-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-emerald-500 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Sarah Johnson</h4>
+                            <p class="text-sm text-gray-400">Organic Farmer, USA</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic">
+                        "This app transformed how I connect with other farmers. The knowledge sharing has improved my yields by 30%."
+                    </p>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-500 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Miguel Rodriguez</h4>
+                            <p class="text-sm text-gray-400">Crop Specialist, Mexico</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic">
+                        "Real-time communication with farmers worldwide has been invaluable for my research and consulting work."
+                    </p>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-500 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Priya Patel</h4>
+                            <p class="text-sm text-gray-400">Rice Farmer, India</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic">
+                        "The community support and market insights help me make better decisions for my farm every day."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+                Ready to Get Started?
+            </h2>
+            <p class="text-lg sm:text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+                Download Farmers Network today and join millions of farmers worldwide. It's free!
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+                <!-- App Store Button -->
+                <button class="glass-effect rounded-xl px-6 py-4 flex items-center space-x-4 hover-scale w-full sm:w-auto max-w-xs">
+                    <i class="fab fa-apple text-3xl"></i>
+                    <div class="text-left">
+                        <p class="text-xs text-gray-400">Download on the</p>
+                        <p class="text-lg font-semibold">App Store</p>
+                    </div>
+                </button>
+
+                <!-- Google Play Button -->
+                <button class="glass-effect rounded-xl px-6 py-4 flex items-center space-x-4 hover-scale w-full sm:w-auto max-w-xs">
+                    <i class="fab fa-google-play text-3xl text-emerald-400"></i>
+                    <div class="text-left">
+                        <p class="text-xs text-gray-400">Get it on</p>
+                        <p class="text-lg font-semibold">Google Play</p>
+                    </div>
+                </button>
+            </div>
+
+            <!-- QR Code Option -->
+            <div class="glass-effect rounded-2xl p-8 max-w-sm mx-auto">
+                <i class="fas fa-qrcode text-6xl text-emerald-400 mb-4"></i>
+                <p class="text-gray-400">Scan to download</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-12 px-4 border-t border-gray-800">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <!-- Brand -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i class="fas fa-seedling text-2xl text-emerald-400"></i>
+                        <span class="text-xl font-semibold">Farmers Network</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        Connecting farmers worldwide through technology.
+                    </p>
+                </div>
+
+                <!-- Links -->
+                <div>
+                    <h3 class="font-semibold mb-4">Product</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Security</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-4">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+                <p class="mb-4 md:mb-0">© 2024 Farmers Network. All rights reserved.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms</a>
+                    <a href="#" class="hover:text-white transition-colors">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobileMenu');
+            const menuButton = event.target.closest('button[onclick="toggleMobileMenu()"]');
+            
+            if (!menu.contains(event.target) && !menuButton && menu.classList.contains('active')) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Smooth scroll with offset for fixed nav
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offset = 80; // Height of fixed nav
+                    const targetPosition = target.offsetTop - offset;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-gray-900/95');
+            } else {
+                nav.classList.remove('bg-gray-900/95');
+            }
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Apply observer to all sections
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'all 0.6s ease-out';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
