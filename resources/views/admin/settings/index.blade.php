@@ -52,15 +52,15 @@ function getGroupIcon($group) {
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-blue-50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-blue-600 mb-2">{{ $settingsGrouped['general']->count() ?? 0 }}</div>
+            <div class="text-2xl font-bold text-blue-600 mb-2">{{ $settingsGrouped->get('general', collect())->count() }}</div>
             <div class="text-sm text-blue-800">General Settings</div>
         </div>
         <div class="bg-green-50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-green-600 mb-2">{{ $settingsGrouped['system']->count() ?? 0 }}</div>
+            <div class="text-2xl font-bold text-green-600 mb-2">{{ $settingsGrouped->get('system', collect())->count() }}</div>
             <div class="text-sm text-green-800">System Settings</div>
         </div>
         <div class="bg-orange-50 rounded-lg p-4 text-center">
-            <div class="text-2xl font-bold text-orange-600 mb-2">{{ $settingsGrouped['file']->count() ?? 0 }}</div>
+            <div class="text-2xl font-bold text-orange-600 mb-2">{{ $settingsGrouped->get('file', collect())->count() }}</div>
             <div class="text-sm text-orange-800">File Settings</div>
         </div>
     </div>

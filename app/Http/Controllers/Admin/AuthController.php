@@ -36,14 +36,14 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->withErrors([
+            return redirect()->route('admin.login')->withErrors([
                 'email' => 'Invalid credentials provided.'
             ])->withInput();
         }
 
         // Check if user is admin (you can add role field or use email check)
         if (!$this->isAdmin($user)) {
-            return back()->withErrors([
+            return redirect()->route('admin.login')->withErrors([
                 'email' => 'You do not have admin privileges.'
             ])->withInput();
         }

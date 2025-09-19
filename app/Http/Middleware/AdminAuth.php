@@ -17,10 +17,10 @@ class AdminAuth
     {
         // Check if admin is logged in
         if (!session('admin_logged_in')) {
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
-            
+
             return redirect()->route('admin.login')
                            ->with('error', 'Please login to access the admin panel.');
         }

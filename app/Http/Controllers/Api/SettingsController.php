@@ -468,15 +468,15 @@ class SettingsController extends Controller
             // 3. Delete media files
             // 4. Clean up relationships
             
-            // For now, we'll just mark the account as deleted
+            // Revoke all tokens first before marking as deleted
+            $user->tokens()->delete();
+
+            // Mark the account as deleted
             $user->update([
                 'deleted_at' => now(),
                 'email' => $user->email . '_deleted_' . time(),
                 'phone_number' => null
             ]);
-
-            // Revoke all tokens
-            $user->tokens()->delete();
 
             return response()->json([
                 'success' => true,

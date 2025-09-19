@@ -70,9 +70,9 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     
     // Users Management
     Route::resource('users', UserController::class);
-    Route::patch('users/{user}/toggle-block', [UserController::class, 'toggleBlock'])->name('users.toggle-block');
+    Route::patch('users/{userId}/toggle-block', [App\Http\Controllers\Admin\UserController::class, 'toggleBlock'])->name('users.toggle-block')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
     Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
-    Route::get('users/export', [UserController::class, 'export'])->name('users.export');
+    Route::get('users/export', [App\Http\Controllers\Admin\UserController::class, 'export'])->name('users.export')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
     
     // Chats Management
     Route::resource('chats', ChatController::class);

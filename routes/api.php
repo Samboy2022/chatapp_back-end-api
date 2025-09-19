@@ -203,14 +203,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // User settings routes
     Route::prefix('settings')->group(function () {
         Route::get('/profile', [SettingsController::class, 'getProfile']);
-        Route::post('/profile', [SettingsController::class, 'updateProfile']);
+        Route::put('/profile', [SettingsController::class, 'updateProfile']);
         Route::get('/privacy', [SettingsController::class, 'getPrivacy']);
-        Route::post('/privacy', [SettingsController::class, 'updatePrivacy']);
+        Route::put('/privacy', [SettingsController::class, 'updatePrivacy']);
         Route::get('/media-settings', [SettingsController::class, 'getMediaSettings']);
-        Route::post('/media-settings', [SettingsController::class, 'updateMediaSettings']);
+        Route::put('/media-settings', [SettingsController::class, 'updateMediaSettings']);
         Route::get('/notifications', [SettingsController::class, 'getNotificationSettings']);
-        Route::post('/notifications', [SettingsController::class, 'updateNotificationSettings']);
-        Route::post('/delete-account', [SettingsController::class, 'deleteAccount']);
+        Route::put('/notifications', [SettingsController::class, 'updateNotificationSettings']);
+        Route::delete('/delete-account', [SettingsController::class, 'deleteAccount']);
         Route::get('/export-data', [SettingsController::class, 'exportData']);
     });
 

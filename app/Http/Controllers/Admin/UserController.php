@@ -227,8 +227,10 @@ class UserController extends Controller
     /**
      * Block/Unblock user
      */
-    public function toggleBlock(User $user)
+    public function toggleBlock($userId)
     {
+        $user = User::findOrFail($userId);
+
         if ($user->deleted_at) {
             // Unblock user
             $user->update(['deleted_at' => null]);
