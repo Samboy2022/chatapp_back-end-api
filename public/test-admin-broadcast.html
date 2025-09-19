@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="test-token">
+    <title>Admin Panel Broadcast Settings Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🧪 Admin Panel Broadcast Settings Test</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle"></i> Test Instructions</h5>
+                            <p>This page tests the admin panel broadcast settings functionality without requiring authentication.</p>
+                        </div>
+
+                        <!-- Test Results Area -->
+                        <div id="test-results" class="mb-4"></div>
+
+                        <!-- Test Buttons -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>🔧 Configuration Tests</h5>
+                                <div class="btn-group-vertical d-grid gap-2">
+                                    <button class="btn btn-primary" onclick="testApiConfig()">
+                                        <i class="fas fa-cog"></i> Test API Configuration
+                                    </button>
+                                    <button class="btn btn-info" onclick="testBroadcastToggle()">
+                                        <i class="fas fa-toggle-on"></i> Test Broadcast Toggle
+                                    </button>
+                                    <button class="btn btn-warning" onclick="testServiceSwitch()">
+                                        <i class="fas fa-exchange-alt"></i> Test Service Switching
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>📱 Mobile App Tests</h5>
+                                <div class="btn-group-vertical d-grid gap-2">
+                                    <button class="btn btn-success" onclick="testMobileConfig()">
+                                        <i class="fas fa-mobile-alt"></i> Test Mobile App Config
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="testRealTimeFeatures()">
+                                        <i class="fas fa-bolt"></i> Test Real-time Features
+                                    </button>
+                                    <button class="btn btn-dark" onclick="runAllTests()">
+                                        <i class="fas fa-play"></i> Run All Tests
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Current Configuration Display -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-eye"></i> Current Configuration</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="current-config">
+                                    <p class="text-muted">Click "Test API Configuration" to load current settings...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Test functions
+        function showResult(title, success, message, details = null) {
+            const resultsDiv = document.getElementById('test-results');
+            const alertClass = success ? 'alert-success' : 'alert-danger';
+            const icon = success ? 'check-circle' : 'exclamation-triangle';
+            
+            const resultHtml = `
+                <div class="alert ${alertClass} alert-dismissible fade show">
+                    <h6><i class="fas fa-${icon}"></i> ${title}</h6>
+                    <p class="mb-1">${message}</p>
+                    ${details ? `<small class="text-muted">${details}</small>` : ''}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = resultHtml + resultsDiv.innerHTML;
+        }
+
+        async function testApiConfig() {
+            try {
+                const response = await fetch('/api/app-config');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult(
+                        'API Configuration Test',
+                        true,
+                        'API endpoint is working correctly',
+                        `Config version: ${data.data.config_version}, Broadcast enabled: ${data.data.broadcast_enabled}`
+                    );
+                    
+                    // Display current configuration
+                    displayCurrentConfig(data.data);
+                } else {
+                    showResult('API Configuration Test', false, 'API returned error: ' + data.message);
+                }
+            } catch (error) {
+                showResult('API Configuration Test', false, 'Failed to connect to API: ' + error.message);
+            }
+        }
+
+        async function testBroadcastToggle() {
+            try {
+                // First get current state
+                const configResponse = await fetch('/api/app-config');
+                const configData = await configResponse.json();
+                
+                if (!configData.success) {
+                    showResult('Broadcast Toggle Test', false, 'Could not get current configuration');
+                    return;
+                }
+                
+                const currentState = configData.data.broadcast_enabled;
+                const newState = !currentState;
+                
+                showResult(
+                    'Broadcast Toggle Test',
+                    true,
+                    `Current broadcast state: ${currentState ? 'Enabled' : 'Disabled'}`,
+                    `Toggle functionality would change to: ${newState ? 'Enabled' : 'Disabled'}`
+                );
+                
+            } catch (error) {
+                showResult('Broadcast Toggle Test', false, 'Test failed: ' + error.message);
+            }
+        }
+
+        async function testServiceSwitch() {
+            try {
+                const response = await fetch('/api/app-config');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const currentService = data.data.broadcast_service_type || data.data.broadcast_type;
+                    const otherService = currentService === 'reverb' ? 'pusher_cloud' : 'reverb';
+                    
+                    showResult(
+                        'Service Switching Test',
+                        true,
+                        `Current service: ${currentService}`,
+                        `Service switching would change to: ${otherService}`
+                    );
+                } else {
+                    showResult('Service Switching Test', false, 'Could not get current service type');
+                }
+            } catch (error) {
+                showResult('Service Switching Test', false, 'Test failed: ' + error.message);
+            }
+        }
+
+        async function testMobileConfig() {
+            try {
+                const response = await fetch('/api/app-config');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const config = data.data;
+                    const requiredFields = [
+                        'broadcast_enabled',
+                        'broadcast_service_type',
+                        'real_time_features',
+                        'mobile_settings',
+                        'pusher_key',
+                        'websocket_host',
+                        'websocket_port'
+                    ];
+                    
+                    const missingFields = requiredFields.filter(field => !(field in config));
+                    
+                    if (missingFields.length === 0) {
+                        showResult(
+                            'Mobile App Configuration Test',
+                            true,
+                            'All required mobile app configuration fields are present',
+                            `Real-time features: ${Object.keys(config.real_time_features).length} features configured`
+                        );
+                    } else {
+                        showResult(
+                            'Mobile App Configuration Test',
+                            false,
+                            'Missing required fields: ' + missingFields.join(', ')
+                        );
+                    }
+                } else {
+                    showResult('Mobile App Configuration Test', false, 'API returned error: ' + data.message);
+                }
+            } catch (error) {
+                showResult('Mobile App Configuration Test', false, 'Test failed: ' + error.message);
+            }
+        }
+
+        async function testRealTimeFeatures() {
+            try {
+                const response = await fetch('/api/app-config');
+                const data = await response.json();
+                
+                if (data.success && data.data.real_time_features) {
+                    const features = data.data.real_time_features;
+                    const enabledFeatures = Object.entries(features).filter(([key, value]) => value).length;
+                    const totalFeatures = Object.keys(features).length;
+                    
+                    showResult(
+                        'Real-time Features Test',
+                        true,
+                        `Real-time features configuration found`,
+                        `${enabledFeatures}/${totalFeatures} features enabled: ${Object.keys(features).join(', ')}`
+                    );
+                } else {
+                    showResult('Real-time Features Test', false, 'Real-time features configuration not found');
+                }
+            } catch (error) {
+                showResult('Real-time Features Test', false, 'Test failed: ' + error.message);
+            }
+        }
+
+        async function runAllTests() {
+            showResult('Comprehensive Test Suite', true, 'Running all tests...', 'Please wait for all tests to complete');
+            
+            await testApiConfig();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testBroadcastToggle();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testServiceSwitch();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testMobileConfig();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testRealTimeFeatures();
+            
+            showResult('Comprehensive Test Suite', true, 'All tests completed!', 'Check individual test results above');
+        }
+
+        function displayCurrentConfig(config) {
+            const configDiv = document.getElementById('current-config');
+            
+            const configHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>🔧 Broadcast Settings</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Enabled:</strong> <span class="badge bg-${config.broadcast_enabled ? 'success' : 'secondary'}">${config.broadcast_enabled ? 'Yes' : 'No'}</span></li>
+                            <li><strong>Service Type:</strong> <span class="badge bg-info">${config.broadcast_service_type || config.broadcast_type}</span></li>
+                            <li><strong>Pusher Key:</strong> <code>${config.pusher_key}</code></li>
+                            <li><strong>WebSocket Host:</strong> <code>${config.websocket_host}:${config.websocket_port}</code></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>⚡ Real-time Features</h6>
+                        <ul class="list-unstyled">
+                            ${Object.entries(config.real_time_features || {}).map(([feature, enabled]) => 
+                                `<li><strong>${feature.replace(/_/g, ' ')}:</strong> <span class="badge bg-${enabled ? 'success' : 'secondary'}">${enabled ? 'Enabled' : 'Disabled'}</span></li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>📱 Mobile Settings</h6>
+                        <div class="row">
+                            ${Object.entries(config.mobile_settings || {}).map(([setting, value]) => 
+                                `<div class="col-md-3"><strong>${setting.replace(/_/g, ' ')}:</strong> <code>${value}</code></div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-clock"></i> Last updated: ${new Date(config.server_timestamp * 1000).toLocaleString()}
+                        | Config version: ${config.config_version}
+                    </small>
+                </div>
+            `;
+            
+            configDiv.innerHTML = configHtml;
+        }
+
+        // Auto-load configuration on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            testApiConfig();
+        });
+    </script>
+</body>
+</html>

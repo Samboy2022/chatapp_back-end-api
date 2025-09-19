@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings API Documentation - FarmersNetwork</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet">
+    <style>
+        .endpoint-card {
+            border-left: 4px solid #007bff;
+            margin-bottom: 2rem;
+        }
+        .method-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
+        .response-example {
+            background-color: #f8f9fa;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .code-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            overflow-x: auto;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #007bff;
+        }
+        .table-responsive {
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
+        .implementation-section {
+            background-color: #f8f9fa;
+            border-radius: 0.375rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">FarmersNetwork API</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="chat-api.html">Chat API</a>
+                <a class="nav-link" href="call-api.html">Call API</a>
+                <a class="nav-link active" href="settings-api.html">Settings API</a>
+                <a class="nav-link" href="status-api.html">Status API</a>
+                <a class="nav-link" href="websocket.html">WebSocket</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Navigation</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-pills flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#overview">Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#authentication">Authentication</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#endpoints">Endpoints</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#react-native">React Native</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#flutter">Flutter</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#caching">Caching</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#real-time">Real-time Updates</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <h1 class="mb-4">Settings API Documentation</h1>
+
+                <!-- Overview Section -->
+                <section id="overview" class="mb-5">
+                    <h2>Overview</h2>
+                    <p class="lead">
+                        The Settings API provides endpoints for mobile applications to retrieve and manage application configuration settings dynamically. This allows apps to adapt their behavior based on server-side configuration without requiring app updates.
+                    </p>
+                    
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle"></i> Key Features</h6>
+                        <ul class="mb-0">
+                            <li>Dynamic app configuration retrieval</li>
+                            <li>Feature flag management</li>
+                            <li>Localization settings</li>
+                            <li>File upload limits and restrictions</li>
+                            <li>Real-time configuration updates</li>
+                            <li>Efficient caching mechanisms</li>
+                        </ul>
+                    </div>
+
+                    <h4>Base URL</h4>
+                    <div class="code-block">
+                        <code>https://your-domain.com/api/app-settings</code>
+                    </div>
+                </section>
+
+                <!-- Authentication Section -->
+                <section id="authentication" class="mb-5">
+                    <h2>Authentication</h2>
+                    <p>
+                        The Settings API endpoints are <strong>public</strong> and do not require authentication. This allows mobile apps to retrieve essential configuration during startup before user authentication.
+                    </p>
+                    
+                    <div class="alert alert-warning">
+                        <h6><i class="bi bi-exclamation-triangle"></i> Security Note</h6>
+                        <p class="mb-0">Only settings marked as <code>is_public = true</code> in the database are accessible through these endpoints. Sensitive configuration remains protected.</p>
+                    </div>
+                </section>
+
+                <!-- Endpoints Section -->
+                <section id="endpoints" class="mb-5">
+                    <h2>API Endpoints</h2>
+
+                    <!-- Get All Settings -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get All Settings</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/app-settings</code></p>
+                            <p>Retrieves all public settings grouped by category.</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Settings retrieved successfully",
+  "data": {
+    "general": {
+      "app_name": {
+        "key": "app_name",
+        "value": "FarmersNetwork",
+        "type": "string",
+        "label": "Application Name",
+        "description": "The name of your application",
+        "options": null,
+        "updated_at": "2024-01-15T10:30:00.000Z"
+      },
+      "timezone": {
+        "key": "timezone",
+        "value": "UTC",
+        "type": "string",
+        "label": "Timezone",
+        "description": "Default timezone for the application",
+        "options": {
+          "UTC": "UTC",
+          "America/New_York": "Eastern Time",
+          "America/Chicago": "Central Time"
+        },
+        "updated_at": "2024-01-15T10:30:00.000Z"
+      }
+    },
+    "features": {
+      "enable_video_calls": {
+        "key": "enable_video_calls",
+        "value": true,
+        "type": "boolean",
+        "label": "Video Calls",
+        "description": "Enable video calling feature",
+        "options": null,
+        "updated_at": "2024-01-15T10:30:00.000Z"
+      }
+    }
+  },
+  "meta": {
+    "total_groups": 5,
+    "total_settings": 23,
+    "cache_expires_at": "2024-01-15T11:30:00.000Z",
+    "version": "1.0.0"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Get App Config -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get App Configuration</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/app-settings/config</code></p>
+                            <p>Retrieves essential app configuration for startup. This is optimized for mobile app initialization.</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "App configuration retrieved successfully",
+  "data": {
+    "app": {
+      "name": "FarmersNetwork",
+      "description": "A modern messaging application for farmers",
+      "url": "https://farmersnetwork.com",
+      "version": "1.0.0",
+      "environment": "production"
+    },
+    "localization": {
+      "timezone": "UTC",
+      "date_format": "Y-m-d",
+      "time_format": "H:i:s"
+    },
+    "features": {
+      "file_upload": true,
+      "voice_messages": true,
+      "video_calls": true,
+      "group_calls": true,
+      "status_updates": true,
+      "message_encryption": true
+    },
+    "limits": {
+      "max_file_size_mb": 10,
+      "max_group_size": 256,
+      "allowed_file_types": ["jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "txt", "mp3", "mp4", "mov"]
+    }
+  },
+  "meta": {
+    "cache_expires_at": "2024-01-15T11:00:00.000Z",
+    "generated_at": "2024-01-15T10:30:00.000Z"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Get Settings by Group -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Settings by Group</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/app-settings/group/{group}</code></p>
+                            <p>Retrieves all settings for a specific group.</p>
+
+                            <h6>Parameters:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Required</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>group</code></td>
+                                            <td>string</td>
+                                            <td>Yes</td>
+                                            <td>Setting group name (general, file, chat, user, notification)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h6>Example Request:</h6>
+                            <div class="code-block">
+                                <code>GET /api/app-settings/group/features</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Get Setting by Key -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Setting by Key</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/app-settings/{key}</code></p>
+                            <p>Retrieves a specific setting by its key.</p>
+
+                            <h6>Parameters:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Required</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>key</code></td>
+                                            <td>string</td>
+                                            <td>Yes</td>
+                                            <td>Setting key name</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h6>Example Request:</h6>
+                            <div class="code-block">
+                                <code>GET /api/app-settings/app_name</code>
+                            </div>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Setting 'app_name' retrieved successfully",
+  "data": {
+    "key": "app_name",
+    "value": "FarmersNetwork",
+    "type": "string",
+    "group": "general",
+    "label": "Application Name",
+    "description": "The name of your application",
+    "options": null,
+    "updated_at": "2024-01-15T10:30:00.000Z"
+  },
+  "meta": {
+    "cache_expires_at": "2024-01-15T11:30:00.000Z"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Get Multiple Settings -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Multiple Settings</h5>
+                            <span class="badge bg-warning method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/app-settings/multiple</code></p>
+                            <p>Retrieves multiple settings by their keys in a single request.</p>
+
+                            <h6>Request Body:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "keys": ["app_name", "enable_video_calls", "max_file_size", "timezone"]
+}</code></pre>
+                            </div>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Settings retrieved successfully",
+  "data": {
+    "app_name": {
+      "key": "app_name",
+      "value": "FarmersNetwork",
+      "type": "string",
+      "group": "general",
+      "label": "Application Name",
+      "description": "The name of your application",
+      "options": null,
+      "updated_at": "2024-01-15T10:30:00.000Z"
+    },
+    "enable_video_calls": {
+      "key": "enable_video_calls",
+      "value": true,
+      "type": "boolean",
+      "group": "chat",
+      "label": "Video Calls",
+      "description": "Enable video calling feature",
+      "options": null,
+      "updated_at": "2024-01-15T10:30:00.000Z"
+    }
+  },
+  "meta": {
+    "requested_keys": ["app_name", "enable_video_calls", "max_file_size", "timezone"],
+    "found_keys": ["app_name", "enable_video_calls"],
+    "missing_keys": ["max_file_size", "timezone"],
+    "total_found": 2,
+    "total_missing": 2,
+    "cache_expires_at": "2024-01-15T11:30:00.000Z"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Get Settings Version -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Settings Version</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/app-settings/version</code></p>
+                            <p>Retrieves the current settings version hash for cache validation.</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Settings version retrieved successfully",
+  "data": {
+    "version": "a1b2c3d4e5f6",
+    "last_updated": "2024-01-15T10:30:00.000Z",
+    "timestamp": "2024-01-15T10:35:00.000Z"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Get Available Groups -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Available Groups</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/app-settings/groups</code></p>
+                            <p>Retrieves all available setting groups.</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Setting groups retrieved successfully",
+  "data": [
+    {
+      "name": "general",
+      "label": "General",
+      "settings_count": 8
+    },
+    {
+      "name": "file",
+      "label": "File",
+      "settings_count": 4
+    },
+    {
+      "name": "chat",
+      "label": "Chat",
+      "settings_count": 7
+    }
+  ],
+  "meta": {
+    "total_groups": 3,
+    "cache_expires_at": "2024-01-15T11:30:00.000Z"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- React Native Implementation -->
+                <section id="react-native" class="mb-5">
+                    <h2>React Native Implementation</h2>
+
+                    <div class="implementation-section">
+                        <h4>App Startup Configuration</h4>
+                        <p>Fetch essential settings during app initialization:</p>
+
+                        <div class="code-block">
+                            <pre><code class="language-javascript">// services/SettingsService.js
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+class SettingsService {
+  constructor() {
+    this.baseUrl = 'https://your-domain.com/api/app-settings';
+    this.cache = new Map();
+    this.cacheExpiry = new Map();
+  }
+
+  async getAppConfig() {
+    try {
+      // Try to get from cache first
+      const cachedConfig = await AsyncStorage.getItem('app_config');
+      const cacheTimestamp = await AsyncStorage.getItem('app_config_timestamp');
+
+      if (cachedConfig && cacheTimestamp) {
+        const cacheAge = Date.now() - parseInt(cacheTimestamp);
+        if (cacheAge < 30 * 60 * 1000) { // 30 minutes
+          return JSON.parse(cachedConfig);
+        }
+      }
+
+      // Fetch from server
+      const response = await fetch(`${this.baseUrl}/config`);
+      const result = await response.json();
+
+      if (result.success) {
+        // Cache the result
+        await AsyncStorage.setItem('app_config', JSON.stringify(result.data));
+        await AsyncStorage.setItem('app_config_timestamp', Date.now().toString());
+
+        return result.data;
+      }
+
+      throw new Error(result.message || 'Failed to fetch app config');
+    } catch (error) {
+      console.error('Error fetching app config:', error);
+
+      // Return cached data if available, even if expired
+      const cachedConfig = await AsyncStorage.getItem('app_config');
+      if (cachedConfig) {
+        return JSON.parse(cachedConfig);
+      }
+
+      // Return default config as fallback
+      return this.getDefaultConfig();
+    }
+  }
+
+  async checkForUpdates() {
+    try {
+      const response = await fetch(`${this.baseUrl}/version`);
+      const result = await response.json();
+
+      if (result.success) {
+        const cachedVersion = await AsyncStorage.getItem('settings_version');
+
+        if (cachedVersion !== result.data.version) {
+          // Settings have been updated, refresh cache
+          await this.refreshCache();
+          await AsyncStorage.setItem('settings_version', result.data.version);
+          return true; // Settings updated
+        }
+      }
+
+      return false; // No updates
+    } catch (error) {
+      console.error('Error checking for updates:', error);
+      return false;
+    }
+  }
+
+  async refreshCache() {
+    try {
+      const config = await this.getAppConfig();
+
+      // Notify app components about settings update
+      this.notifySettingsUpdate(config);
+
+      return config;
+    } catch (error) {
+      console.error('Error refreshing cache:', error);
+    }
+  }
+
+  getDefaultConfig() {
+    return {
+      app: {
+        name: 'FarmersNetwork',
+        description: 'A modern messaging application',
+        version: '1.0.0'
+      },
+      features: {
+        file_upload: true,
+        voice_messages: true,
+        video_calls: true,
+        group_calls: true,
+        status_updates: true,
+        message_encryption: true
+      },
+      limits: {
+        max_file_size_mb: 10,
+        max_group_size: 256,
+        allowed_file_types: ['jpg', 'jpeg', 'png', 'gif', 'pdf']
+      }
+    };
+  }
+
+  notifySettingsUpdate(config) {
+    // Implement your notification mechanism here
+    // Could use EventEmitter, Redux, Context API, etc.
+  }
+}
+
+export default new SettingsService();</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="implementation-section">
+                        <h4>App.js Integration</h4>
+                        <div class="code-block">
+                            <pre><code class="language-javascript">// App.js
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator } from 'react-native';
+import SettingsService from './services/SettingsService';
+
+export default function App() {
+  const [appConfig, setAppConfig] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    initializeApp();
+
+    // Check for settings updates every 5 minutes
+    const updateInterval = setInterval(() => {
+      SettingsService.checkForUpdates();
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(updateInterval);
+  }, []);
+
+  const initializeApp = async () => {
+    try {
+      const config = await SettingsService.getAppConfig();
+      setAppConfig(config);
+
+      // Configure app based on settings
+      configureApp(config);
+    } catch (error) {
+      console.error('Failed to initialize app:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const configureApp = (config) => {
+    // Configure app features based on settings
+    if (!config.features.video_calls) {
+      // Disable video call features
+    }
+
+    if (!config.features.file_upload) {
+      // Disable file upload features
+    }
+
+    // Set file upload limits
+    global.MAX_FILE_SIZE = config.limits.max_file_size_mb * 1024 * 1024;
+    global.ALLOWED_FILE_TYPES = config.limits.allowed_file_types;
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+        <Text>Loading configuration...</Text>
+      </View>
+    );
+  }
+
+  return (
+    <YourMainAppComponent config={appConfig} />
+  );
+}</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Flutter Implementation -->
+                <section id="flutter" class="mb-5">
+                    <h2>Flutter Implementation</h2>
+
+                    <div class="implementation-section">
+                        <h4>Settings Service</h4>
+                        <p>Create a settings service for Flutter apps:</p>
+
+                        <div class="code-block">
+                            <pre><code class="language-dart">// lib/services/settings_service.dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+class SettingsService {
+  static const String _baseUrl = 'https://your-domain.com/api/app-settings';
+  static const String _configCacheKey = 'app_config';
+  static const String _configTimestampKey = 'app_config_timestamp';
+  static const String _versionCacheKey = 'settings_version';
+
+  static SettingsService? _instance;
+  static SettingsService get instance => _instance ??= SettingsService._();
+
+  SettingsService._();
+
+  Future<Map<String, dynamic>> getAppConfig() async {
+    try {
+      // Try to get from cache first
+      final prefs = await SharedPreferences.getInstance();
+      final cachedConfig = prefs.getString(_configCacheKey);
+      final cacheTimestamp = prefs.getInt(_configTimestampKey);
+
+      if (cachedConfig != null && cacheTimestamp != null) {
+        final cacheAge = DateTime.now().millisecondsSinceEpoch - cacheTimestamp;
+        if (cacheAge < 30 * 60 * 1000) { // 30 minutes
+          return json.decode(cachedConfig);
+        }
+      }
+
+      // Fetch from server
+      final response = await http.get(Uri.parse('$_baseUrl/config'));
+
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+
+        if (result['success'] == true) {
+          // Cache the result
+          await prefs.setString(_configCacheKey, json.encode(result['data']));
+          await prefs.setInt(_configTimestampKey, DateTime.now().millisecondsSinceEpoch);
+
+          return result['data'];
+        }
+      }
+
+      throw Exception('Failed to fetch app config');
+    } catch (error) {
+      print('Error fetching app config: $error');
+
+      // Return cached data if available, even if expired
+      final prefs = await SharedPreferences.getInstance();
+      final cachedConfig = prefs.getString(_configCacheKey);
+      if (cachedConfig != null) {
+        return json.decode(cachedConfig);
+      }
+
+      // Return default config as fallback
+      return _getDefaultConfig();
+    }
+  }
+
+  Future<bool> checkForUpdates() async {
+    try {
+      final response = await http.get(Uri.parse('$_baseUrl/version'));
+
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+
+        if (result['success'] == true) {
+          final prefs = await SharedPreferences.getInstance();
+          final cachedVersion = prefs.getString(_versionCacheKey);
+
+          if (cachedVersion != result['data']['version']) {
+            // Settings have been updated, refresh cache
+            await refreshCache();
+            await prefs.setString(_versionCacheKey, result['data']['version']);
+            return true; // Settings updated
+          }
+        }
+      }
+
+      return false; // No updates
+    } catch (error) {
+      print('Error checking for updates: $error');
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> refreshCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_configCacheKey);
+      await prefs.remove(_configTimestampKey);
+
+      final config = await getAppConfig();
+
+      // Notify app components about settings update
+      _notifySettingsUpdate(config);
+
+      return config;
+    } catch (error) {
+      print('Error refreshing cache: $error');
+      return _getDefaultConfig();
+    }
+  }
+
+  Map<String, dynamic> _getDefaultConfig() {
+    return {
+      'app': {
+        'name': 'FarmersNetwork',
+        'description': 'A modern messaging application',
+        'version': '1.0.0'
+      },
+      'features': {
+        'file_upload': true,
+        'voice_messages': true,
+        'video_calls': true,
+        'group_calls': true,
+        'status_updates': true,
+        'message_encryption': true
+      },
+      'limits': {
+        'max_file_size_mb': 10,
+        'max_group_size': 256,
+        'allowed_file_types': ['jpg', 'jpeg', 'png', 'gif', 'pdf']
+      }
+    };
+  }
+
+  void _notifySettingsUpdate(Map<String, dynamic> config) {
+    // Implement your notification mechanism here
+    // Could use streams, providers, etc.
+  }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="implementation-section">
+                        <h4>Main App Integration</h4>
+                        <div class="code-block">
+                            <pre><code class="language-dart">// lib/main.dart
+import 'package:flutter/material.dart';
+import 'services/settings_service.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Map<String, dynamic>? appConfig;
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+
+    // Check for settings updates every 5 minutes
+    Timer.periodic(Duration(minutes: 5), (timer) {
+      SettingsService.instance.checkForUpdates();
+    });
+  }
+
+  Future<void> _initializeApp() async {
+    try {
+      final config = await SettingsService.instance.getAppConfig();
+      setState(() {
+        appConfig = config;
+        loading = false;
+      });
+
+      // Configure app based on settings
+      _configureApp(config);
+    } catch (error) {
+      print('Failed to initialize app: $error');
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  void _configureApp(Map<String, dynamic> config) {
+    // Configure app features based on settings
+    final features = config['features'] as Map<String, dynamic>;
+    final limits = config['limits'] as Map<String, dynamic>;
+
+    // Set global configuration
+    AppConfig.maxFileSize = (limits['max_file_size_mb'] as int) * 1024 * 1024;
+    AppConfig.allowedFileTypes = List<String>.from(limits['allowed_file_types']);
+    AppConfig.featuresEnabled = features;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (loading) {
+      return MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Loading configuration...'),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return MaterialApp(
+      title: appConfig?['app']['name'] ?? 'FarmersNetwork',
+      home: YourMainAppWidget(config: appConfig),
+    );
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Caching Section -->
+                <section id="caching" class="mb-5">
+                    <h2>Caching Strategy</h2>
+
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle"></i> Caching Best Practices</h6>
+                        <ul class="mb-0">
+                            <li>Cache app configuration locally for offline access</li>
+                            <li>Use version checking to invalidate cache when settings change</li>
+                            <li>Implement fallback to cached data when network is unavailable</li>
+                            <li>Set appropriate cache expiration times (30 minutes recommended)</li>
+                        </ul>
+                    </div>
+
+                    <h4>Cache Invalidation</h4>
+                    <p>Use the version endpoint to check if settings have been updated:</p>
+
+                    <div class="code-block">
+                        <pre><code class="language-javascript">// Check for updates and invalidate cache if needed
+async function checkAndUpdateCache() {
+  try {
+    const versionResponse = await fetch('/api/app-settings/version');
+    const versionData = await versionResponse.json();
+
+    const cachedVersion = await AsyncStorage.getItem('settings_version');
+
+    if (cachedVersion !== versionData.data.version) {
+      // Clear cache and fetch fresh data
+      await AsyncStorage.multiRemove([
+        'app_config',
+        'app_config_timestamp',
+        'settings_version'
+      ]);
+
+      const freshConfig = await SettingsService.getAppConfig();
+      await AsyncStorage.setItem('settings_version', versionData.data.version);
+
+      return freshConfig;
+    }
+
+    return null; // No updates needed
+  } catch (error) {
+    console.error('Error checking cache:', error);
+    return null;
+  }
+}</code></pre>
+                    </div>
+                </section>
+
+                <!-- Real-time Updates Section -->
+                <section id="real-time" class="mb-5">
+                    <h2>Real-time Updates</h2>
+
+                    <p>For real-time settings updates, you can implement WebSocket listeners or periodic polling:</p>
+
+                    <div class="implementation-section">
+                        <h4>WebSocket Integration (React Native)</h4>
+                        <div class="code-block">
+                            <pre><code class="language-javascript">// services/WebSocketService.js
+import SettingsService from './SettingsService';
+
+class WebSocketService {
+  constructor() {
+    this.ws = null;
+    this.reconnectAttempts = 0;
+    this.maxReconnectAttempts = 5;
+  }
+
+  connect() {
+    try {
+      this.ws = new WebSocket('wss://your-domain.com/ws');
+
+      this.ws.onopen = () => {
+        console.log('WebSocket connected');
+        this.reconnectAttempts = 0;
+
+        // Subscribe to settings updates
+        this.ws.send(JSON.stringify({
+          type: 'subscribe',
+          channel: 'settings.updates'
+        }));
+      };
+
+      this.ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === 'settings.updated') {
+          // Settings have been updated, refresh cache
+          SettingsService.refreshCache();
+        }
+      };
+
+      this.ws.onclose = () => {
+        console.log('WebSocket disconnected');
+        this.handleReconnect();
+      };
+
+      this.ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+    } catch (error) {
+      console.error('Failed to connect WebSocket:', error);
+    }
+  }
+
+  handleReconnect() {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectAttempts++;
+      setTimeout(() => {
+        console.log(`Reconnecting... Attempt ${this.reconnectAttempts}`);
+        this.connect();
+      }, 1000 * this.reconnectAttempts);
+    }
+  }
+
+  disconnect() {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+  }
+}
+
+export default new WebSocketService();</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="implementation-section">
+                        <h4>Periodic Polling</h4>
+                        <div class="code-block">
+                            <pre><code class="language-javascript">// Alternative: Periodic polling for updates
+class SettingsUpdateService {
+  constructor() {
+    this.pollInterval = null;
+    this.pollFrequency = 5 * 60 * 1000; // 5 minutes
+  }
+
+  startPolling() {
+    this.pollInterval = setInterval(async () => {
+      try {
+        const hasUpdates = await SettingsService.checkForUpdates();
+
+        if (hasUpdates) {
+          console.log('Settings updated, notifying app components');
+          // Notify your app components about the update
+          this.notifyComponents();
+        }
+      } catch (error) {
+        console.error('Error polling for updates:', error);
+      }
+    }, this.pollFrequency);
+  }
+
+  stopPolling() {
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval);
+      this.pollInterval = null;
+    }
+  }
+
+  notifyComponents() {
+    // Implement your notification mechanism
+    // Could use EventEmitter, Redux actions, etc.
+  }
+}
+
+export default new SettingsUpdateService();</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Error Handling -->
+                <section id="error-handling" class="mb-5">
+                    <h2>Error Handling</h2>
+
+                    <div class="alert alert-warning">
+                        <h6><i class="bi bi-exclamation-triangle"></i> Important Notes</h6>
+                        <ul class="mb-0">
+                            <li>Always implement fallback to cached data when network requests fail</li>
+                            <li>Provide default configuration values for critical settings</li>
+                            <li>Handle network timeouts gracefully</li>
+                            <li>Log errors for debugging but don't crash the app</li>
+                        </ul>
+                    </div>
+
+                    <h4>Common Error Scenarios</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Scenario</th>
+                                    <th>HTTP Status</th>
+                                    <th>Recommended Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Network unavailable</td>
+                                    <td>-</td>
+                                    <td>Use cached data, show offline indicator</td>
+                                </tr>
+                                <tr>
+                                    <td>Server error</td>
+                                    <td>500</td>
+                                    <td>Use cached data, retry after delay</td>
+                                </tr>
+                                <tr>
+                                    <td>Setting not found</td>
+                                    <td>404</td>
+                                    <td>Use default value, log warning</td>
+                                </tr>
+                                <tr>
+                                    <td>Invalid request</td>
+                                    <td>422</td>
+                                    <td>Check request format, use defaults</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

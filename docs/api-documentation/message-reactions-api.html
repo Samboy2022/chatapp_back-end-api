@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Reactions API - FarmersNetwork</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-comments me-2"></i>
+                FarmersNetwork API
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chat-api.html">Chat API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="message-reactions-api.html">Reactions API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact-management-api.html">Contact API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="status-api.html">Status API</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="api-header text-center">
+                        <h1 class="display-4 fw-bold text-primary mb-3">
+                            <i class="fas fa-smile me-3"></i>
+                            Message Reactions API
+                        </h1>
+                        <p class="lead text-muted">
+                            Add emoji reactions to messages with real-time updates and user tracking
+                        </p>
+                        <div class="badge bg-success fs-6 mb-3">
+                            <i class="fas fa-check-circle me-1"></i>
+                            100% Production Ready
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Navigation -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary mb-3">
+                                <i class="fas fa-map me-2"></i>
+                                Quick Navigation
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li><a href="#add-reaction" class="text-decoration-none"><i class="fas fa-plus me-2"></i>Add Reaction</a></li>
+                                        <li><a href="#remove-reaction" class="text-decoration-none"><i class="fas fa-minus me-2"></i>Remove Reaction</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li><a href="#get-reactions" class="text-decoration-none"><i class="fas fa-list me-2"></i>Get Message Reactions</a></li>
+                                        <li><a href="#mobile-examples" class="text-decoration-none"><i class="fas fa-mobile-alt me-2"></i>Mobile Examples</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Reaction -->
+            <section id="add-reaction" class="mb-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-plus me-2"></i>
+                            Add Message Reaction
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-4">
+                            Add an emoji reaction to a message. If the user already reacted, it will update the existing reaction.
+                        </p>
+
+                        <div class="endpoint-card mb-4">
+                            <div class="endpoint-header">
+                                <span class="badge bg-success me-2">POST</span>
+                                <code>/api/chats/{chatId}/messages/{messageId}/react</code>
+                            </div>
+                            <div class="endpoint-body">
+                                <h6 class="fw-bold">Path Parameters:</h6>
+                                <ul>
+                                    <li><code>chatId</code> - ID of the chat containing the message</li>
+                                    <li><code>messageId</code> - ID of the message to react to</li>
+                                </ul>
+
+                                <h6 class="fw-bold mt-4">Request Body:</h6>
+                                <pre><code class="language-json">{
+    "emoji": "👍"
+}</code></pre>
+
+                                <h6 class="fw-bold mt-4">Response (200 OK):</h6>
+                                <pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "id": 1,
+        "message_id": 123,
+        "user_id": 456,
+        "emoji": "👍",
+        "created_at": "2025-07-15T10:30:00Z",
+        "updated_at": "2025-07-15T10:30:00Z",
+        "user": {
+            "id": 456,
+            "name": "John Farmer",
+            "phone_number": "+1234567890"
+        }
+    },
+    "message": "Reaction added successfully"
+}</code></pre>
+
+                                <h6 class="fw-bold mt-4">Supported Emojis:</h6>
+                                <div class="emoji-grid">
+                                    <span class="emoji-item">👍</span>
+                                    <span class="emoji-item">👎</span>
+                                    <span class="emoji-item">❤️</span>
+                                    <span class="emoji-item">😂</span>
+                                    <span class="emoji-item">😮</span>
+                                    <span class="emoji-item">😢</span>
+                                    <span class="emoji-item">😡</span>
+                                    <span class="emoji-item">🎉</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Remove Reaction -->
+            <section id="remove-reaction" class="mb-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-danger text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-minus me-2"></i>
+                            Remove Message Reaction
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-4">
+                            Remove the current user's reaction from a message.
+                        </p>
+
+                        <div class="endpoint-card mb-4">
+                            <div class="endpoint-header">
+                                <span class="badge bg-danger me-2">DELETE</span>
+                                <code>/api/chats/{chatId}/messages/{messageId}/react</code>
+                            </div>
+                            <div class="endpoint-body">
+                                <h6 class="fw-bold">Path Parameters:</h6>
+                                <ul>
+                                    <li><code>chatId</code> - ID of the chat containing the message</li>
+                                    <li><code>messageId</code> - ID of the message to remove reaction from</li>
+                                </ul>
+
+                                <h6 class="fw-bold mt-4">Response (200 OK):</h6>
+                                <pre><code class="language-json">{
+    "success": true,
+    "message": "Reaction removed successfully"
+}</code></pre>
+
+                                <h6 class="fw-bold mt-4">Response (404 Not Found):</h6>
+                                <pre><code class="language-json">{
+    "success": false,
+    "message": "No reaction found to remove"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Get Message Reactions -->
+            <section id="get-reactions" class="mb-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-list me-2"></i>
+                            Get Message Reactions
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-4">
+                            Retrieve all reactions for a specific message with user information.
+                        </p>
+
+                        <div class="endpoint-card mb-4">
+                            <div class="endpoint-header">
+                                <span class="badge bg-info me-2">GET</span>
+                                <code>/api/messages/{messageId}/reactions</code>
+                            </div>
+                            <div class="endpoint-body">
+                                <h6 class="fw-bold">Path Parameters:</h6>
+                                <ul>
+                                    <li><code>messageId</code> - ID of the message to get reactions for</li>
+                                </ul>
+
+                                <h6 class="fw-bold mt-4">Response (200 OK):</h6>
+                                <pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "message_id": 123,
+        "reactions": [
+            {
+                "id": 1,
+                "emoji": "👍",
+                "count": 2,
+                "users": [
+                    {
+                        "id": 456,
+                        "name": "John Farmer",
+                        "avatar_url": "https://example.com/avatar1.jpg"
+                    },
+                    {
+                        "id": 789,
+                        "name": "Sarah Agriculture",
+                        "avatar_url": "https://example.com/avatar2.jpg"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "emoji": "❤️",
+                "count": 1,
+                "users": [
+                    {
+                        "id": 101,
+                        "name": "Mike Harvest",
+                        "avatar_url": "https://example.com/avatar3.jpg"
+                    }
+                ]
+            }
+        ],
+        "total_reactions": 3
+    },
+    "message": "Message reactions retrieved successfully"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mobile Implementation Examples -->
+            <section id="mobile-examples" class="mb-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-secondary text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-mobile-alt me-2"></i>
+                            Mobile Implementation Examples
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-4">
+                            Implementation examples for React Native and Flutter applications.
+                        </p>
+
+                        <!-- React Native Example -->
+                        <div class="mb-4">
+                            <h5 class="text-primary">
+                                <i class="fab fa-react me-2"></i>
+                                React Native Implementation
+                            </h5>
+                            <pre><code class="language-javascript">// MessageReactionService.js
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+class MessageReactionService {
+    constructor() {
+        this.baseURL = 'http://192.168.0.102:8000/api';
+    }
+
+    async getAuthToken() {
+        return await AsyncStorage.getItem('auth_token');
+    }
+
+    // Add reaction to message
+    async addReaction(chatId, messageId, emoji) {
+        try {
+            const token = await this.getAuthToken();
+            const response = await fetch(
+                `${this.baseURL}/chats/${chatId}/messages/${messageId}/react`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ emoji: emoji }),
+                }
+            );
+
+            const result = await response.json();
+            if (result.success) {
+                return result.data;
+            }
+            throw new Error(result.message);
+        } catch (error) {
+            console.error('Add reaction error:', error);
+            throw error;
+        }
+    }
+
+    // Remove reaction from message
+    async removeReaction(chatId, messageId) {
+        try {
+            const token = await this.getAuthToken();
+            const response = await fetch(
+                `${this.baseURL}/chats/${chatId}/messages/${messageId}/react`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const result = await response.json();
+            if (result.success) {
+                return true;
+            }
+            throw new Error(result.message);
+        } catch (error) {
+            console.error('Remove reaction error:', error);
+            throw error;
+        }
+    }
+
+    // Get message reactions
+    async getMessageReactions(messageId) {
+        try {
+            const token = await this.getAuthToken();
+            const response = await fetch(
+                `${this.baseURL}/messages/${messageId}/reactions`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const result = await response.json();
+            if (result.success) {
+                return result.data;
+            }
+            throw new Error(result.message);
+        } catch (error) {
+            console.error('Get reactions error:', error);
+            throw error;
+        }
+    }
+}
+
+// React Native Component Example
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+
+const MessageReactions = ({ messageId, currentUserId }) => {
+    const [reactions, setReactions] = useState([]);
+    const [userReaction, setUserReaction] = useState(null);
+
+    const reactionService = new MessageReactionService();
+
+    useEffect(() => {
+        loadReactions();
+    }, [messageId]);
+
+    const loadReactions = async () => {
+        try {
+            const data = await reactionService.getMessageReactions(messageId);
+            setReactions(data.reactions);
+
+            // Find current user's reaction
+            const currentReaction = data.reactions.find(r =>
+                r.users.some(u => u.id === currentUserId)
+            );
+            setUserReaction(currentReaction?.emoji || null);
+        } catch (error) {
+            console.error('Failed to load reactions:', error);
+        }
+    };
+
+    const handleReaction = async (emoji) => {
+        try {
+            if (userReaction === emoji) {
+                // Remove reaction
+                await reactionService.removeReaction(messageId);
+                setUserReaction(null);
+            } else {
+                // Add/update reaction
+                await reactionService.addReaction(messageId, emoji);
+                setUserReaction(emoji);
+            }
+            loadReactions(); // Refresh reactions
+        } catch (error) {
+            console.error('Reaction failed:', error);
+        }
+    };
+
+    const commonEmojis = ['👍', '❤️', '😂', '😮', '😢', '😡'];
+
+    return (
+        &lt;View style={styles.container}&gt;
+            {/* Reaction Buttons */}
+            &lt;View style={styles.emojiRow}&gt;
+                {commonEmojis.map(emoji =&gt; (
+                    &lt;TouchableOpacity
+                        key={emoji}
+                        style={[
+                            styles.emojiButton,
+                            userReaction === emoji && styles.selectedEmoji
+                        ]}
+                        onPress={() =&gt; handleReaction(emoji)}
+                    &gt;
+                        &lt;Text style={styles.emoji}&gt;{emoji}&lt;/Text&gt;
+                    &lt;/TouchableOpacity&gt;
+                ))}
+            &lt;/View&gt;
+
+            {/* Reaction Summary */}
+            {reactions.length &gt; 0 && (
+                &lt;View style={styles.reactionSummary}&gt;
+                    {reactions.map(reaction =&gt; (
+                        &lt;View key={reaction.emoji} style={styles.reactionItem}&gt;
+                            &lt;Text style={styles.reactionEmoji}&gt;{reaction.emoji}&lt;/Text&gt;
+                            &lt;Text style={styles.reactionCount}&gt;{reaction.count}&lt;/Text&gt;
+                        &lt;/View&gt;
+                    ))}
+                &lt;/View&gt;
+            )}
+        &lt;/View&gt;
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        marginTop: 8,
+    },
+    emojiRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginBottom: 8,
+    },
+    emojiButton: {
+        padding: 8,
+        marginRight: 4,
+        marginBottom: 4,
+        borderRadius: 16,
+        backgroundColor: '#f0f0f0',
+    },
+    selectedEmoji: {
+        backgroundColor: '#007bff',
+    },
+    emoji: {
+        fontSize: 16,
+    },
+    reactionSummary: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
+    reactionItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#e9ecef',
+        borderRadius: 12,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        marginRight: 4,
+        marginBottom: 4,
+    },
+    reactionEmoji: {
+        fontSize: 14,
+        marginRight: 4,
+    },
+    reactionCount: {
+        fontSize: 12,
+        color: '#666',
+    },
+});
+
+export default MessageReactions;</code></pre>
+                        </div>
+
+                        <!-- Flutter Example -->
+                        <div class="mb-4">
+                            <h5 class="text-info">
+                                <i class="fas fa-mobile me-2"></i>
+                                Flutter Implementation
+                            </h5>
+                            <pre><code class="language-dart">// message_reaction_service.dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+class MessageReactionService {
+  static const String baseURL = 'http://192.168.0.102:8000/api';
+
+  Future&lt;String?&gt; getAuthToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
+  }
+
+  // Add reaction to message
+  Future<Map<String, dynamic>> addReaction(int chatId, int messageId, String emoji) async {
+    try {
+      final token = await getAuthToken();
+      final response = await http.post(
+        Uri.parse('$baseURL/chats/$chatId/messages/$messageId/react'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'emoji': emoji}),
+      );
+
+      final result = jsonDecode(response.body);
+      if (result['success']) {
+        return result['data'];
+      }
+      throw Exception(result['message']);
+    } catch (error) {
+      print('Add reaction error: $error');
+      rethrow;
+    }
+  }
+
+  // Remove reaction from message
+  Future<bool> removeReaction(int chatId, int messageId) async {
+    try {
+      final token = await getAuthToken();
+      final response = await http.delete(
+        Uri.parse('$baseURL/chats/$chatId/messages/$messageId/react'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      final result = jsonDecode(response.body);
+      return result['success'];
+    } catch (error) {
+      print('Remove reaction error: $error');
+      rethrow;
+    }
+  }
+
+  // Get message reactions
+  Future&lt;Map&lt;String, dynamic&gt;&gt; getMessageReactions(int messageId) async {
+    try {
+      final token = await getAuthToken();
+      final response = await http.get(
+        Uri.parse('$baseURL/messages/$messageId/reactions'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      final result = jsonDecode(response.body);
+      if (result['success']) {
+        return result['data'];
+      }
+      throw Exception(result['message']);
+    } catch (error) {
+      print('Get reactions error: $error');
+      rethrow;
+    }
+  }
+}
+
+// Flutter Widget Example
+import 'package:flutter/material.dart';
+
+class MessageReactions extends StatefulWidget {
+  final int messageId;
+  final int currentUserId;
+
+  const MessageReactions({
+    Key? key,
+    required this.messageId,
+    required this.currentUserId,
+  }) : super(key: key);
+
+  @override
+  _MessageReactionsState createState() =&gt; _MessageReactionsState();
+}
+
+class _MessageReactionsState extends State&lt;MessageReactions&gt; {
+  final MessageReactionService _reactionService = MessageReactionService();
+  List&lt;Map&lt;String, dynamic&gt;&gt; reactions = [];
+  String? userReaction;
+
+  final List&lt;String&gt; commonEmojis = ['👍', '❤️', '😂', '😮', '😢', '😡'];
+
+  @override
+  void initState() {
+    super.initState();
+    loadReactions();
+  }
+
+  Future&lt;void&gt; loadReactions() async {
+    try {
+      final data = await _reactionService.getMessageReactions(widget.messageId);
+      setState(() {
+        reactions = List&lt;Map&lt;String, dynamic&gt;&gt;.from(data['reactions']);
+
+        // Find current user's reaction
+        for (var reaction in reactions) {
+          final users = List&lt;Map&lt;String, dynamic&gt;&gt;.from(reaction['users']);
+          if (users.any((u) =&gt; u['id'] == widget.currentUserId)) {
+            userReaction = reaction['emoji'];
+            break;
+          }
+        }
+      });
+    } catch (error) {
+      print('Failed to load reactions: $error');
+    }
+  }
+
+  Future&lt;void&gt; handleReaction(String emoji) async {
+    try {
+      if (userReaction == emoji) {
+        // Remove reaction
+        await _reactionService.removeReaction(widget.chatId, widget.messageId);
+        setState(() {
+          userReaction = null;
+        });
+      } else {
+        // Add/update reaction
+        await _reactionService.addReaction(widget.chatId, widget.messageId, emoji);
+        setState(() {
+          userReaction = emoji;
+        });
+      }
+      loadReactions(); // Refresh reactions
+    } catch (error) {
+      print('Reaction failed: $error');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Reaction Buttons
+        Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          children: commonEmojis.map((emoji) {
+            final isSelected = userReaction == emoji;
+            return GestureDetector(
+              onTap: () =&gt; handleReaction(emoji),
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.blue : Colors.grey[200],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  emoji,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+
+        // Reaction Summary
+        if (reactions.isNotEmpty) ...[
+          SizedBox(height: 8),
+          Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: reactions.map((reaction) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      reaction['emoji'],
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      '${reaction['count']}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ],
+    );
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
