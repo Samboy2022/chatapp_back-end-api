@@ -4,152 +4,335 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>ChatWave Admin - Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Farmers Network Admin - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-white: #FFFFFF;
+            --whatsapp-green: #25D366;
+            --whatsapp-dark-green: #128C7E;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --background-light: #F8F9FA;
+            --gradient-green: linear-gradient(135deg, var(--whatsapp-dark-green) 0%, var(--whatsapp-green) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            max-width: 500px;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .login-card {
+            background: var(--primary-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .login-header {
+            background: var(--gradient-green);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .login-logo {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .login-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .login-body {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control-custom:focus {
+            border-color: var(--whatsapp-green);
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            background: var(--whatsapp-green);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-login:hover {
+            background: var(--whatsapp-dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(18, 140, 126, 0.3);
+        }
+
+        .demo-info {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .demo-title {
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .demo-title i {
+            color: var(--whatsapp-green);
+            margin-right: 8px;
+        }
+
+        .demo-credentials {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .demo-credentials strong {
+            color: var(--text-dark);
+        }
+
+        .security-notice {
+            text-align: center;
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(37, 211, 102, 0.1);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .security-notice i {
+            color: var(--whatsapp-green);
+            margin-right: 5px;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Back to home link */
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+
+        .back-home:hover {
+            color: var(--whatsapp-green);
+        }
+
+        .back-home i {
+            margin-right: 8px;
+        }
+
+        /* Alert styles */
+        .alert-custom {
+            border-radius: 12px;
+            border: 1px solid;
+            margin-bottom: 20px;
+        }
+
+        .alert-success-custom {
+            background: rgba(37, 211, 102, 0.1);
+            border-color: var(--whatsapp-green);
+            color: var(--whatsapp-dark-green);
+        }
+
+        .alert-danger-custom {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        /* Logo and branding */
+        .brand-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: -1;
+            opacity: 0.05;
+        }
+
+        .brand-logo i {
+            font-size: 8rem;
+            color: var(--text-dark);
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
-    <!-- Header -->
-    <div class="fixed top-0 left-0 right-0 bg-white shadow-sm border-b border-gray-200 z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-blue-500 text-white p-2 rounded-lg">
-                        <i class="fas fa-comments text-xl"></i>
-                    </div>
-                    <h1 class="text-xl font-bold text-gray-900">ChatWave Admin</h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600">Secure Admin Portal</span>
-                </div>
-            </div>
-        </div>
+<body>
+    <!-- Background Brand Logo -->
+    <div class="brand-logo">
+        <i class="fas fa-leaf"></i>
     </div>
 
-    <!-- Main Content -->
-    <div class="w-full max-w-md mt-16">
-        <!-- Login Card -->
-        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-8 text-center">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mb-4">
-                    <i class="fas fa-shield-alt text-2xl text-white"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white mb-2">Welcome Back</h2>
-                <p class="text-blue-100">Sign in to your admin account</p>
+    <!-- Back to home link -->
+    <a href="{{ route('home') }}" class="back-home">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+
+    <!-- Main Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header Section -->
+            <div class="login-header">
+                
+                <h4 class="login-title">Farmers Network Admin</h4>
+                
             </div>
 
-            <!-- Form -->
-            <div class="px-8 py-8">
+            <!-- Form Section -->
+            <div class="login-body">
+                <!-- Success Message -->
                 @if (session('success'))
-                    <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-3"></i>
-                            <span class="text-green-800 text-sm">{{ session('success') }}</span>
-                        </div>
+                    <div class="alert-custom alert-success-custom">
+                        <i class="fas fa-check-circle"></i>
+                        {{ session('success') }}
                     </div>
                 @endif
 
+                <!-- Error Message -->
                 @if (session('error'))
-                    <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-exclamation-triangle text-red-400 mr-3"></i>
-                            <span class="text-red-800 text-sm">{{ session('error') }}</span>
-                        </div>
+                    <div class="alert-custom alert-danger-custom">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {{ session('error') }}
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('admin.login.submit') }}" class="space-y-6">
+                <form method="POST" action="{{ route('admin.login.submit') }}">
                     @csrf
 
                     <!-- Email Field -->
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                            Email Address
+                    <div class="form-group">
+                        <label class="form-label" for="email">
+                            <i class="fas fa-envelope me-2"></i>Email Address
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-envelope text-gray-400"></i>
-                            </div>
-                            <input type="email"
-                                   id="email"
-                                   name="email"
-                                   value="{{ old('email') }}"
-                                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('email') border-red-300 @enderror"
-                                   placeholder="Enter your email"
-                                   required
-                                   autofocus>
-                        </div>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               value="{{ old('email') }}"
+                               class="form-control-custom @error('email') is-invalid @enderror"
+                               placeholder="Enter your admin email"
+                               required
+                               autofocus>
                         @error('email')
-                            <p class="mt-1 text-sm text-red-600">
-                                <i class="fas fa-exclamation-circle mr-1"></i>
-                                {{ $message }}
-                            </p>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <!-- Password Field -->
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                            Password
+                    <div class="form-group">
+                        <label class="form-label" for="password">
+                            <i class="fas fa-lock me-2"></i>Password
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-lock text-gray-400"></i>
-                            </div>
-                            <input type="password"
-                                   id="password"
-                                   name="password"
-                                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('password') border-red-300 @enderror"
-                                   placeholder="Enter your password"
-                                   required>
-                        </div>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               class="form-control-custom @error('password') is-invalid @enderror"
+                               placeholder="Enter your admin password"
+                               required>
                         @error('password')
-                            <p class="mt-1 text-sm text-red-600">
-                                <i class="fas fa-exclamation-circle mr-1"></i>
-                                {{ $message }}
-                            </p>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <!-- Submit Button -->
-                    <div>
-                        <button type="submit"
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 shadow-sm">
-                            <i class="fas fa-sign-in-alt"></i>
-                            <span>Sign In to Admin Panel</span>
+                    <div class="form-group">
+                        <button type="submit" class="btn-login">
+                            <i class="fas fa-sign-in-alt me-2"></i>Access Admin Panel
                         </button>
                     </div>
                 </form>
 
-                <!-- Demo Credentials -->
-                <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                        <span class="text-sm font-medium text-gray-700">Demo Credentials</span>
-                    </div>
-                    <div class="text-xs text-gray-600 space-y-1">
-                        <div><strong>Email:</strong> admin@chatwave.com</div>
-                        <div><strong>Password:</strong> password</div>
-                    </div>
-                </div>
-
-                <!-- Security Notice -->
-                <div class="mt-6 text-center">
-                    <div class="flex items-center justify-center space-x-2 text-sm text-gray-500">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Secure Admin Access Only</span>
-                    </div>
-                </div>
+               
             </div>
         </div>
 
         <!-- Footer -->
-        <div class="text-center mt-8">
-            <p class="text-sm text-gray-500">
-                ChatWave Admin Panel • Version 1.0
-            </p>
+        <div class="login-footer">
+            <p>&copy; {{ date('Y') }} Farmers Network. Admin Portal.</p>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>
