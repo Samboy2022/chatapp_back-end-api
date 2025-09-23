@@ -148,6 +148,71 @@ Authorization: Bearer {your_access_token}
 }
 ```
 
+## Stream Video Integration
+
+### Stream Video Token Generation
+
+**Endpoint:** `POST /api/stream/token`
+
+**Description:** Generate Stream video token for authenticated user.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "api_key": "your_stream_api_key",
+    "user_id": 123,
+    "expires_at": "2025-07-16T10:30:00.000000Z",
+    "call_id": "optional_call_id",
+    "room_id": "optional_room_id"
+  },
+  "message": "Stream video token generated successfully"
+}
+```
+
+**Endpoint:** `GET /api/stream/config`
+
+**Description:** Get Stream configuration for frontend.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "api_key": "your_stream_api_key",
+    "token_validity_hours": 24,
+    "features": {
+      "video_calling": true,
+      "screen_sharing": true,
+      "recording": false
+    }
+  },
+  "message": "Stream configuration retrieved successfully"
+}
+```
+
+**Endpoint:** `GET /api/calls/{call_id}/stream-tokens`
+
+**Description:** Get Stream video tokens for a specific call.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "call_id": 456,
+    "caller_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "receiver_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "api_key": "your_stream_api_key",
+    "expires_at": "2025-07-16T10:30:00.000000Z",
+    "room_id": "call_456"
+  },
+  "message": "Stream video tokens retrieved successfully"
+}
+```
+
 ## Call Management Endpoints
 
 ### 3. Initiate Call
@@ -188,11 +253,19 @@ Authorization: Bearer {your_access_token}
       "id": 123,
       "name": "Jane Smith",
       "avatar_url": "https://example.com/avatar2.jpg"
+    },
+    "stream_tokens": {
+      "caller_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "receiver_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "api_key": "your_stream_api_key",
+      "expires_at": "2025-07-16T10:30:00.000000Z"
     }
   },
   "message": "Call initiated successfully"
 }
 ```
+
+**Note:** For video calls, Stream video tokens are automatically generated and included in the response for both caller and receiver.
 
 **Broadcast Event:** `CallInitiated` event is sent to `call.{receiver_id}` channel.
 
