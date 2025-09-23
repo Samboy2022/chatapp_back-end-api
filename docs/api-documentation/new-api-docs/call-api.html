@@ -123,6 +123,94 @@
                 </div>
             </div>
 
+            <!-- Stream Token (new) -->
+            <div id="stream-token" class="bg-white rounded-lg shadow-sm overflow-hidden mt-8">
+                <div class="bg-indigo-700 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-medium">POST / GET</span>
+                        <span class="font-mono text-lg">/stream/token</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Stream Video Token (Backend & Flutter usage)</h3>
+
+                    <p class="text-gray-600 mb-4">The Stream token endpoint issues short-lived credentials required by the Stream Video SDK to join or create WebRTC rooms. Your Laravel backend must mint tokens (it holds the <code>STREAM_API_SECRET</code>). The client requests a token from the backend and then uses that token to connect to Stream for media transport (audio and/or video).</p>
+
+                    <h4 class="font-semibold text-gray-900 mb-2">Backend - Endpoints</h4>
+                    <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                        <p class="text-sm"><strong>POST</strong> <code>/api/stream/token</code> — Generate a token for the authenticated user. Accepts optional <code>call_id</code> and <code>room_id</code> in the request body.</p>
+                        <p class="text-sm mt-2"><strong>GET</strong> <code>/api/stream/config</code> — Returns the Stream API key and feature flags the client needs to initialize the SDK.</p>
+                    </div>
+
+                    <h4 class="font-semibold text-gray-900 mb-2">Example Request (backend)</h4>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto mb-4">
+                        <pre><code>POST http://127.0.0.1:8000/api/stream/token
+Authorization: Bearer {USER_API_TOKEN}
+Content-Type: application/json
+
+{}
+</code></pre>
+                    </div>
+
+                    <h4 class="font-semibold text-gray-900 mb-2">Example Success Response</h4>
+                    <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto mb-4">
+                        <pre><code>{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOi...",
+    "api_key": "your_stream_api_key",
+    "user_id": 123,
+    "expires_at": "2025-09-24T10:30:00.000000Z",
+    "call_id": null,
+    "room_id": null
+  },
+  "message": "Stream video token generated successfully"
+}</code></pre>
+                    </div>
+
+                    <h4 class="font-semibold text-gray-900 mb-2">How it works (summary)</h4>
+                    <ol class="list-decimal list-inside text-sm text-gray-700 mb-4">
+                        <li>Client authenticates with your Laravel backend and calls <code>/api/stream/token</code>.</li>
+                        <li>Backend validates the request, creates (or retrieves) the call record if applicable, and mints a short-lived Stream token using your <code>STREAM_API_SECRET</code>.</li>
+                        <li>Backend returns the token and Stream API key (via <code>/api/stream/config</code> or embedded in the token response).</li>
+                        <li>Client initializes Stream Video SDK with the API key and token, then creates/joins a room for audio/video transport.</li>
+                    </ol>
+
+                    <h4 class="font-semibold text-gray-900 mb-2">Flutter client example</h4>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto mb-4">
+                        <pre><code>// 1) Request a Stream token from your backend
+final resp = await http.post(
+  Uri.parse('$baseUrl/api/stream/token'),
+  headers: {
+    'Authorization': 'Bearer $token',
+    'Content-Type': 'application/json',
+  },
+  body: jsonEncode({});
+);
+
+final body = jsonDecode(resp.body);
+final streamToken = body['data']['token'];
+final apiKey = body['data']['api_key'];
+
+// 2) Initialize StreamVideoClient and join a call/room
+final client = StreamVideoClient(apiKey, user: User.regular(userId: currentUserId));
+final call = client.makeCall(callType: StreamCallType.defaultType(), id: 'call_123');
+await client.connect(token: streamToken);
+await call.join();
+</code></pre>
+                    </div>
+
+                    <h4 class="font-semibold text-gray-900 mb-2">Audio-only vs Audio+Video</h4>
+                    <p class="text-sm text-gray-700 mb-3">Use the same token for both modes. To do audio-only, the client simply does not publish a video track (or unpublishes it) — Stream handles media transport. For video calls, publish both audio and video tracks.</p>
+
+                    <h4 class="font-semibold text-gray-900 mb-2">Security notes</h4>
+                    <ul class="list-disc list-inside text-sm text-gray-700">
+                        <li>Never expose <code>STREAM_API_SECRET</code> in the client. Mint tokens on the server only.</li>
+                        <li>Keep tokens short-lived (the backend issues them with an expiry, typically 1–24 hours).</li>
+                        <li>Authorize token requests: only authenticated users should be able to request tokens for themselves. Admin-only endpoints (e.g. <code>/api/stream/token/user</code>) can mint tokens for other users.</li>
+                    </ul>
+                </div>
+            </div>
             <!-- Answer Call -->
             <div id="answer" class="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div class="bg-green-600 text-white px-6 py-4">

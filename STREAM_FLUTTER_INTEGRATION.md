@@ -4,6 +4,29 @@
 
 This guide shows how to integrate Stream Video SDK in your Flutter app with the Laravel backend.
 
+## What Stream handles vs what your Laravel backend handles
+
+Make these responsibilities explicit up front so implementers know which system to rely on.
+
+- What Stream (Stream Video SDK + Stream servers) will handle:
+  - Real-time media transport (WebRTC) for both audio and video calls: capture, encoding/decoding, network traversal (STUN/TURN), adaptive bitrate, and media interoperability across devices.
+  - Call/room lifecycle and signaling needed to establish peer connections (creating/joining rooms or calls, participant presence, basic moderation features provided by Stream).
+  - Low-level media features: microphone/camera tracks, mute/unmute, device selection, echo cancellation and other media optimizations provided by the SDK.
+  - Optional cloud features if enabled: server-side recording, storage of call recordings, playback support, and infrastructure for scaling real-time traffic.
+
+- What your Laravel backend will handle:
+  - Authentication and issuing short-lived Stream tokens (the backend holds `STREAM_API_SECRET` and mints tokens for authenticated users).
+  - Application/business logic: creating call records, persisting call metadata (participants, timestamps, call IDs), access control, billing, and analytics.
+  - Push notifications, in-app notifications, and any bridging between your app's event system and Stream events if you need additional app-level signaling.
+  - Integrations with your database and admin features (user management, call history, moderation tools).
+
+Important: This integration uses Stream for both video and audio calls. "Video calls" means the call includes video + audio media streams. "Audio calls" means audio-only media streams (you can simply stop/not publish the video track on the client). Choose the appropriate call type or client settings for audio-only vs audio+video usage in your app.
+
+Quick checklist when integrating:
+- Keep `STREAM_API_SECRET` only on the server. The client receives short-lived tokens from your backend.
+- Decide where call metadata is stored (Stream, your DB, or both). Typically store user- and business-critical metadata in your Laravel DB.
+- Use Stream SDK client APIs to publish/unpublish video tracks for toggling between audio-only and video calls.
+
 ## Backend Setup
 
 ### 1. Environment Configuration
