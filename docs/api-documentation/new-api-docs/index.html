@@ -24,7 +24,7 @@
                 <div class="flex items-center space-x-4">
                     <div class="text-sm text-gray-600">
                         <i class="fas fa-clock mr-1"></i>
-                        Updated: 2025-09-15
+                        Updated: 2025-09-27
                     </div>
                     <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                         <i class="fas fa-play mr-2"></i>View Demo
@@ -46,7 +46,7 @@
                 </p>
                 <div class="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
                     <div class="flex items-center space-x-4 text-sm">
-                        <span><i class="fas fa-globe mr-1"></i>http://127.0.0.1:8000/api</span>
+                        <span><i class="fas fa-globe mr-1"></i>https://yourdomain.com/api</span>
                         <span><i class="fas fa-key mr-1"></i>Bearer Token</span>
                         <span><i class="fas fa-server mr-1"></i>REST API</span>
                     </div>
@@ -61,7 +61,7 @@
                 <div class="text-gray-600">API Categories</div>
             </div>
             <div class="bg-white rounded-lg p-6 text-center shadow-sm">
-                <div class="text-3xl font-bold text-green-600 mb-2">40+</div>
+                <div class="text-3xl font-bold text-green-600 mb-2">50+</div>
                 <div class="text-gray-600">API Endpoints</div>
             </div>
             <div class="bg-white rounded-lg p-6 text-center shadow-sm">
@@ -185,7 +185,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Setup</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Laravel Backend Setup</h3>
                     <div class="space-y-3">
                         <div class="flex items-start space-x-3">
                             <div class="bg-blue-100 rounded-full p-1 mt-0.5">
@@ -193,7 +193,7 @@
                             </div>
                             <div>
                                 <p class="font-medium text-gray-900">Start Laravel Server</p>
-                                <p class="text-sm text-gray-600">php artisan serve --host=127.0.0.1 --port=8000</p>
+                                <p class="text-sm text-gray-600">php artisan serve --host=0.0.0.0 --port=8000</p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-3">
@@ -201,8 +201,8 @@
                                 <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
                             </div>
                             <div>
-                                <p class="font-medium text-gray-900">Register User</p>
-                                <p class="text-sm text-gray-600">POST /auth/register</p>
+                                <p class="font-medium text-gray-900">Run Migrations</p>
+                                <p class="text-sm text-gray-600">php artisan migrate</p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-3">
@@ -210,19 +210,109 @@
                                 <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
                             </div>
                             <div>
-                                <p class="font-medium text-gray-900">Get Token</p>
-                                <p class="text-sm text-gray-600">POST /auth/login</p>
+                                <p class="font-medium text-gray-900">Seed Database</p>
+                                <p class="text-sm text-gray-600">php artisan db:seed</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Sample Request</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Flutter Dependencies</h3>
                     <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-                        <div class="text-green-400 mb-2"># Get user profile</div>
-                        <div>curl -X GET http://127.0.0.1:8000/api/auth/user \</div>
-                        <div class="ml-4">-H "Authorization: Bearer YOUR_TOKEN"</div>
+                        <div class="text-blue-400 mb-2"># pubspec.yaml</div>
+                        <div>dependencies:</div>
+                        <div class="ml-2">flutter_bloc: ^8.1.3</div>
+                        <div class="ml-2">dio: ^5.3.2</div>
+                        <div class="ml-2">flutter_secure_storage: ^9.0.0</div>
+                        <div class="ml-2">connectivity_plus: ^5.0.2</div>
+                        <div class="ml-2">cached_network_image: ^3.3.0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flutter Integration Dependencies -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">📦 Flutter Project Structure</h2>
+
+            <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto mb-6">
+                <pre><code>lib/
+├── blocs/
+│   ├── auth/
+│   │   ├── auth_bloc.dart
+│   │   ├── auth_event.dart
+│   │   └── auth_state.dart
+│   ├── chat/
+│   └── contact/
+├── repositories/
+│   ├── auth_repository.dart
+│   ├── chat_repository.dart
+│   └── contact_repository.dart
+├── models/
+│   ├── user.dart
+│   ├── chat.dart
+│   ├── message.dart
+│   └── api_response.dart
+├── services/
+│   └── api_service.dart
+├── screens/
+│   ├── login_screen.dart
+│   ├── home_screen.dart
+│   └── chat_screen.dart
+└── widgets/
+    └── chat_message.dart</code></pre>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">🔐 Authentication Flow</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center mt-0.5">
+                                <span class="text-blue-600 font-bold text-sm">1</span>
+                            </div>
+                            <div>
+                                <p class="font-medium">User Registration/Login</p>
+                                <p class="text-sm text-gray-600">POST /api/auth/register or /api/auth/login</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center mt-0.5">
+                                <span class="text-blue-600 font-bold text-sm">2</span>
+                            </div>
+                            <div>
+                                <p class="font-medium">Store Bearer Token</p>
+                                <p class="text-sm text-gray-600">Save token in FlutterSecureStorage</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center mt-0.5">
+                                <span class="text-blue-600 font-bold text-sm">3</span>
+                            </div>
+                            <div>
+                                <p class="font-medium">API Requests</p>
+                                <p class="text-sm text-gray-600">Include Authorization header in all requests</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">📱 Mobile App URLs</h3>
+                    <div class="space-y-3">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="font-medium text-gray-900">Android Emulator:</div>
+                            <div class="font-mono text-sm text-gray-600">http://10.0.2.2:8000/api</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="font-medium text-gray-900">iOS Simulator:</div>
+                            <div class="font-mono text-sm text-gray-600">http://localhost:8000/api</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="font-medium text-gray-900">Production:</div>
+                            <div class="font-mono text-sm text-gray-600">https://yourdomain.com/api</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -255,6 +345,1092 @@
                     </div>
                     <h3 class="font-semibold text-gray-900 mb-2">Mobile Ready</h3>
                     <p class="text-sm text-gray-600">Optimized for React Native, Flutter, and mobile apps</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flutter Integration Guide -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🚀 Flutter Integration Guide (BLoC + Repository)</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">📋 Integration Roadmap</h3>
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-semibold text-green-600 mb-3">✅ Phase 1: Foundation (Week 1)</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>API Service Layer - HTTP client setup</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Authentication System - Login/Register/User Profile</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Token Management - Secure storage & auto-refresh</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-3">🔄 Phase 2: Core Features (Week 2)</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center"><i class="fas fa-clock text-blue-500 mr-2"></i>Chat List & Private Messaging</li>
+                            <li class="flex items-center"><i class="fas fa-clock text-blue-500 mr-2"></i>User Profile Management</li>
+                            <li class="flex items-center"><i class="fas fa-clock text-blue-500 mr-2"></i>Contact Synchronization</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-3">🔄 Phase 3: Advanced Features (Week 3)</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center"><i class="fas fa-clock text-purple-500 mr-2"></i>Group Chat System</li>
+                            <li class="flex items-center"><i class="fas fa-clock text-purple-500 mr-2"></i>Status Updates with Media</li>
+                            <li class="flex items-center"><i class="fas fa-clock text-purple-500 mr-2"></i>Voice/Video Calling</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-orange-600 mb-3">🔄 Phase 4: Polish (Week 4)</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center"><i class="fas fa-clock text-orange-500 mr-2"></i>Real-time WebSocket Features</li>
+                            <li class="flex items-center"><i class="fas fa-clock text-orange-500 mr-2"></i>Media Sharing & Upload</li>
+                            <li class="flex items-center"><i class="fas fa-clock text-orange-500 mr-2"></i>Push Notifications</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">🏗️ Base Repository Setup</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/base_repository.dart
+abstract class BaseRepository {
+  final String baseUrl = 'https://yourdomain.com/api';
+  final Dio _dio = Dio();
+
+  BaseRepository() {
+    _setupDio();
+  }
+
+  void _setupDio() {
+    _dio.options.baseUrl = baseUrl;
+    _dio.options.connectTimeout = Duration(seconds: 30);
+    _dio.options.receiveTimeout = Duration(seconds: 30);
+    _dio.options.headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    // Add interceptors for token management
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final token = await _getToken();
+        if (token != null) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+        handler.next(options);
+      },
+      onError: (error, handler) async {
+        if (error.response?.statusCode == 401) {
+          await _refreshToken();
+          handler.resolve(await _dio.fetch(error.requestOptions));
+        } else {
+          handler.next(error);
+        }
+      },
+    ));
+  }
+
+  Future<String?> _getToken() async {
+    final storage = FlutterSecureStorage();
+    return await storage.read(key: 'auth_token');
+  }
+
+  Future<void> _refreshToken() async {
+    // Implement token refresh logic
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">🔐 Authentication Implementation</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/auth_repository.dart
+class AuthRepository extends BaseRepository {
+  // Login
+  Future<ApiResponse<LoginResponse>> login(String login, String password) async {
+    try {
+      final response = await _dio.post('/auth/login', data: {
+        'login': login,    // email or phone
+        'password': password,
+      });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          // Store token
+          final token = data['data']['token'];
+          final storage = FlutterSecureStorage();
+          await storage.write(key: 'auth_token', value: token);
+
+          return ApiResponse.success(LoginResponse.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Login failed');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Get User Profile
+  Future<ApiResponse<User>> getCurrentUser() async {
+    try {
+      final response = await _dio.get('/auth/user');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(User.fromJson(data['data']['user']));
+        }
+      }
+
+      return ApiResponse.error('Failed to get user data');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">📱 Chat Integration</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/chat_repository.dart
+class ChatRepository extends BaseRepository {
+  // Get user's chats
+  Future<ApiResponse<List<Chat>>> getChats() async {
+    try {
+      final response = await _dio.get('/chats');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          final chats = (data['data']['chats'] as List)
+            .map((chat) => Chat.fromJson(chat))
+            .toList();
+          return ApiResponse.success(chats);
+        }
+      }
+
+      return ApiResponse.error('Failed to load chats');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Send message
+  Future<ApiResponse<Message>> sendMessage(int chatId, String content) async {
+    try {
+      final response = await _dio.post('/chats/$chatId/messages', data: {
+        'content': content,
+        'message_type': 'text'
+      });
+
+      if (response.statusCode == 201) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Message.fromJson(data['data']['message']));
+        }
+      }
+
+      return ApiResponse.error('Failed to send message');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">⚠️ Common Pitfalls to Avoid</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-red-600 mb-3">❌ DON'T:</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center"><i class="fas fa-times text-red-500 mr-2"></i>Store tokens in SharedPreferences</li>
+                            <li class="flex items-center"><i class="fas fa-times text-red-500 mr-2"></i>Hardcode API URLs</li>
+                            <li class="flex items-center"><i class="fas fa-times text-red-500 mr-2"></i>Ignore SSL certificates</li>
+                            <li class="flex items-center"><i class="fas fa-times text-red-500 mr-2"></i>No error handling</li>
+                            <li class="flex items-center"><i class="fas fa-times text-red-500 mr-2"></i>No token refresh logic</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-green-600 mb-3">✅ DO:</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Use FlutterSecureStorage for tokens</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Environment-specific configurations</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Implement retry logic</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Handle offline scenarios</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Use proper BLoC state management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-blue-900 mb-4">🚨 Critical Integration Notes</h3>
+                <ul class="space-y-3 text-blue-800">
+                    <li class="flex items-start space-x-2">
+                        <i class="fas fa-exclamation-triangle mt-1"></i>
+                        <div>
+                            <strong>Headers Required:</strong> Always include <code>Authorization: Bearer YOUR_TOKEN</code> and <code>Accept: application/json</code>
+                        </div>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <i class="fas fa-exclamation-triangle mt-1"></i>
+                        <div>
+                            <strong>Token Format:</strong> Use <code>flutter_secure_storage</code> for token storage, never <code>shared_preferences</code>
+                        </div>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <i class="fas fa-exclamation-triangle mt-1"></i>
+                        <div>
+                            <strong>Base URL:</strong> Use <code>https://yourdomain.com/api</code> for production, <code>http://10.0.2.2:8000/api</code> for Android emulator
+                        </div>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <i class="fas fa-exclamation-triangle mt-1"></i>
+                        <div>
+                            <strong>Error Handling:</strong> All endpoints return JSON format, even errors: <code>{"success": false, "message": "Error description"}</code>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Complete Flutter Implementation Guide -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">📱 Complete Flutter Implementation Guide</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">🔐 Authentication Implementation</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/blocs/auth/auth_bloc.dart
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final AuthRepository _authRepository;
+
+  AuthBloc(this._authRepository) : super(AuthInitial()) {
+    on<AuthLoginRequested>(_onLoginRequested);
+    on<AuthUserRequested>(_onUserRequested);
+    on<AuthLogoutRequested>(_onLogoutRequested);
+  }
+
+  Future<void> _onLoginRequested(
+    AuthLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    final result = await _authRepository.login(event.login, event.password);
+
+    if (result.isSuccess) {
+      emit(AuthAuthenticated(result.data!));
+    } else {
+      emit(AuthError(result.error!));
+    }
+  }
+
+  Future<void> _onUserRequested(
+    AuthUserRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    final result = await _authRepository.getCurrentUser();
+
+    if (result.isSuccess) {
+      emit(AuthUserLoaded(result.data!));
+    } else {
+      emit(AuthError(result.error!));
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">💬 Chat Implementation</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/blocs/chat/chat_bloc.dart
+class ChatBloc extends Bloc<ChatEvent, ChatState> {
+  final ChatRepository _chatRepository;
+
+  ChatBloc(this._chatRepository) : super(ChatInitial()) {
+    on<ChatListRequested>(_onChatListRequested);
+    on<MessageSent>(_onMessageSent);
+  }
+
+  Future<void> _onMessageSent(
+    MessageSent event,
+    Emitter<ChatState> emit,
+  ) async {
+    final result = await _chatRepository.sendMessage(event.chatId, event.content);
+
+    if (result.isSuccess) {
+      // Add message to current chat state
+      final currentState = state;
+      if (currentState is ChatMessagesLoaded) {
+        final updatedMessages = [result.data!, ...currentState.messages];
+        emit(ChatMessagesLoaded(
+          currentState.chat,
+          updatedMessages,
+          currentState.hasMore,
+        ));
+      }
+    } else {
+      emit(ChatError(result.error!));
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">📱 Login Screen Implementation</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/screens/login_screen.dart
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  String _login = '';
+  String _password = '';
+  bool _isLoading = false;
+
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    final authBloc = BlocProvider.of<AuthBloc>(context);
+    authBloc.add(AuthLoginRequested(_login, _password));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Login')),
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthAuthenticated) {
+            Navigator.pushReplacementNamed(context, '/home');
+          } else if (state is AuthError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Email or Phone'),
+                onChanged: (value) => _login = value,
+                validator: (value) => value!.isEmpty ? 'Required' : null,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                onChanged: (value) => _password = value,
+                validator: (value) => value!.isEmpty ? 'Required' : null,
+              ),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  if (state is AuthLoading) {
+                    return CircularProgressIndicator();
+                  }
+                  return ElevatedButton(
+                    onPressed: _handleLogin,
+                    child: Text('Login'),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">🌐 Environment Configuration</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-900 mb-2">Development</h4>
+                        <div class="font-mono text-sm text-gray-600">
+                            Base URL: http://10.0.2.2:8000/api<br>
+                            Debug: true<br>
+                            SSL: false
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-900 mb-2">Staging</h4>
+                        <div class="font-mono text-sm text-gray-600">
+                            Base URL: https://staging.yourdomain.com/api<br>
+                            Debug: false<br>
+                            SSL: true
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-900 mb-2">Production</h4>
+                        <div class="font-mono text-sm text-gray-600">
+                            Base URL: https://yourdomain.com/api<br>
+                            Debug: false<br>
+                            SSL: true
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-yellow-800 mb-4">⚠️ Integration Checklist</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="font-semibold text-yellow-800 mb-2">✅ Must Do:</h4>
+                        <ul class="space-y-1 text-sm text-yellow-700">
+                            <li>• Use FlutterSecureStorage for tokens</li>
+                            <li>• Include Authorization header in all requests</li>
+                            <li>• Handle 401 errors (token refresh)</li>
+                            <li>• Implement proper loading states</li>
+                            <li>• Add network connectivity checks</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-yellow-800 mb-2">❌ Must Avoid:</h4>
+                        <ul class="space-y-1 text-sm text-yellow-700">
+                            <li>• Hardcoding API URLs</li>
+                            <li>• Storing tokens in SharedPreferences</li>
+                            <li>• Ignoring SSL certificate validation</li>
+                            <li>• No error handling for network failures</li>
+                            <li>• Synchronous API calls</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 2: Core Features Implementation -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🔄 Phase 2: Core Features (Chat & Profile)</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">💬 Chat Repository Implementation</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/chat_repository.dart
+class ChatRepository extends BaseRepository {
+  // Get user's chats
+  Future<ApiResponse<List<Chat>>> getChats() async {
+    try {
+      final response = await _dio.get('/chats');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          final chats = (data['data']['chats'] as List)
+            .map((chat) => Chat.fromJson(chat))
+            .toList();
+          return ApiResponse.success(chats);
+        }
+      }
+
+      return ApiResponse.error('Failed to load chats');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Send message
+  Future<ApiResponse<Message>> sendMessage(int chatId, String content) async {
+    try {
+      final response = await _dio.post('/chats/$chatId/messages', data: {
+        'content': content,
+        'message_type': 'text'
+      });
+
+      if (response.statusCode == 201) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Message.fromJson(data['data']['message']));
+        }
+      }
+
+      return ApiResponse.error('Failed to send message');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Get messages with pagination
+  Future<ApiResponse<MessageList>> getMessages(int chatId, {int page = 1}) async {
+    try {
+      final response = await _dio.get('/chats/$chatId/messages?page=$page');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(MessageList.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to load messages');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">👤 Profile Management</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/profile_repository.dart
+class ProfileRepository extends BaseRepository {
+  // Update profile
+  Future<ApiResponse<User>> updateProfile({
+    String? name,
+    String? about,
+    String? avatarUrl,
+  }) async {
+    try {
+      final response = await _dio.put('/auth/profile', data: {
+        'name': name,
+        'about': about,
+        'avatar_url': avatarUrl,
+      });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(User.fromJson(data['data']['user']));
+        }
+      }
+
+      return ApiResponse.error('Failed to update profile');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Update privacy settings
+  Future<ApiResponse<User>> updatePrivacy({
+    String? lastSeenPrivacy,
+    String? profilePhotoPrivacy,
+    String? aboutPrivacy,
+    bool? readReceiptsEnabled,
+  }) async {
+    try {
+      final response = await _dio.put('/auth/privacy', data: {
+        'privacy_last_seen': lastSeenPrivacy,
+        'privacy_profile_photo': profilePhotoPrivacy,
+        'privacy_about': aboutPrivacy,
+        'read_receipts': readReceiptsEnabled,
+      });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(User.fromJson(data['data']['user']));
+        }
+      }
+
+      return ApiResponse.error('Failed to update privacy');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">📞 Contact Synchronization</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/contact_repository.dart
+class ContactRepository extends BaseRepository {
+  // Sync device contacts
+  Future<ApiResponse<List<Contact>>> syncContacts(List<ContactData> contacts) async {
+    try {
+      final response = await _dio.post('/contacts/sync', data: {
+        'contacts': contacts.map((c) => c.toJson()).toList()
+      });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          final syncedContacts = (data['data']['contacts'] as List)
+            .map((contact) => Contact.fromJson(contact))
+            .toList();
+          return ApiResponse.success(syncedContacts);
+        }
+      }
+
+      return ApiResponse.error('Failed to sync contacts');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Search users
+  Future<ApiResponse<List<User>>> searchUsers(String query) async {
+    try {
+      final response = await _dio.get('/search/users?q=$query');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          final users = (data['data']['users'] as List)
+            .map((user) => User.fromJson(user))
+            .toList();
+          return ApiResponse.success(users);
+        }
+      }
+
+      return ApiResponse.error('Search failed');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 3: Advanced Features Implementation -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🔄 Phase 3: Advanced Features (Groups & Media)</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">👥 Group Chat Implementation</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/group_repository.dart
+class GroupRepository extends BaseRepository {
+  // Create group
+  Future<ApiResponse<Chat>> createGroup({
+    required String name,
+    String? description,
+    List<int>? participantIds,
+  }) async {
+    try {
+      final response = await _dio.post('/groups', data: {
+        'name': name,
+        'description': description,
+        'participants': participantIds,
+        'type': 'group',
+      });
+
+      if (response.statusCode == 201) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Chat.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to create group');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Send group message
+  Future<ApiResponse<Message>> sendGroupMessage(int groupId, String message) async {
+    try {
+      final response = await _dio.post('/groups/$groupId/message', data: {
+        'message': message,
+        'type': 'text'
+      });
+
+      if (response.statusCode == 201) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Message.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to send group message');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Add member to group
+  Future<ApiResponse<bool>> addMember(int groupId, int userId) async {
+    try {
+      final response = await _dio.post('/groups/$groupId/users', data: {
+        'user_id': userId
+      });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(true);
+        }
+      }
+
+      return ApiResponse.error('Failed to add member');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">📱 Status Updates Implementation</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/status_repository.dart
+class StatusRepository extends BaseRepository {
+  // Create status
+  Future<ApiResponse<Status>> createStatus({
+    required String type,
+    required String content,
+    String? mediaUrl,
+    String? backgroundColor,
+    String? textColor,
+    String? fontFamily,
+    String? privacy = 'everyone',
+  }) async {
+    try {
+      final data = {
+        'type': type,
+        'content': content,
+        'privacy': privacy,
+      };
+
+      if (mediaUrl != null) data['media_url'] = mediaUrl;
+      if (backgroundColor != null) data['background_color'] = backgroundColor;
+      if (textColor != null) data['text_color'] = textColor;
+      if (fontFamily != null) data['font_family'] = fontFamily;
+
+      final response = await _dio.post('/status', data: data);
+
+      if (response.statusCode == 201) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Status.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to create status');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Get statuses
+  Future<ApiResponse<List<StatusGroup>>> getStatuses() async {
+    try {
+      final response = await _dio.get('/status');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          final statuses = (data['data'] as List)
+            .map((group) => StatusGroup.fromJson(group))
+            .toList();
+          return ApiResponse.success(statuses);
+        }
+      }
+
+      return ApiResponse.error('Failed to load statuses');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Mark status as viewed
+  Future<ApiResponse<bool>> markAsViewed(int statusId) async {
+    try {
+      final response = await _dio.post('/status/$statusId/view');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(true);
+        }
+      }
+
+      return ApiResponse.error('Failed to mark as viewed');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">📞 Voice/Video Calling Implementation</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/call_repository.dart
+class CallRepository extends BaseRepository {
+  // Initiate call
+  Future<ApiResponse<Call>> initiateCall({
+    required int receiverId,
+    required String callType, // 'voice' or 'video'
+  }) async {
+    try {
+      final response = await _dio.post('/calls', data: {
+        'receiver_id': receiverId,
+        'type': callType
+      });
+
+      if (response.statusCode == 201) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Call.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to initiate call');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Answer call
+  Future<ApiResponse<Call>> answerCall(int callId) async {
+    try {
+      final response = await _dio.post('/calls/$callId/accept');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Call.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to answer call');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // End call
+  Future<ApiResponse<Call>> endCall(int callId) async {
+    try {
+      final response = await _dio.post('/calls/$callId/end');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Call.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to end call');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Get call statistics
+  Future<ApiResponse<CallStatistics>> getCallStatistics() async {
+    try {
+      final response = await _dio.get('/calls/statistics');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(CallStatistics.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to load statistics');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 4: Real-time & Polish -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🔄 Phase 4: Real-time Features & Polish</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">🔴 Real-time WebSocket Integration</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/services/websocket_service.dart
+class WebSocketService {
+  static const String _baseUrl = 'ws://yourdomain.com:8080';
+  WebSocketChannel? _channel;
+  final StreamController<Map<String, dynamic>> _messageController =
+    StreamController<Map<String, dynamic>>.broadcast();
+
+  Stream<Map<String, dynamic>> get messages => _messageController.stream;
+
+  Future<void> connect(String token) async {
+    try {
+      _channel = WebSocketChannel.connect(
+        Uri.parse('$_baseUrl?token=$token'),
+      );
+
+      _channel!.stream.listen(
+        (data) {
+          final message = json.decode(data);
+          _messageController.add(message);
+        },
+        onError: (error) {
+          print('WebSocket error: $error');
+        },
+        onDone: () {
+          print('WebSocket connection closed');
+        },
+      );
+    } catch (e) {
+      print('Failed to connect to WebSocket: $e');
+    }
+  }
+
+  void sendMessage(Map<String, dynamic> data) {
+    if (_channel != null) {
+      _channel!.sink.add(json.encode(data));
+    }
+  }
+
+  void disconnect() {
+    _channel?.sink.close();
+    _messageController.close();
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">📸 Media Upload Implementation</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/repositories/media_repository.dart
+class MediaRepository extends BaseRepository {
+  // Upload image
+  Future<ApiResponse<Media>> uploadImage(File imageFile, String type) async {
+    try {
+      final formData = FormData.fromMap({
+        'media': await MultipartFile.fromFile(imageFile.path),
+        'type': type,
+      });
+
+      final response = await _dio.post('/media/upload', data: formData);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Media.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to upload image');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Upload avatar
+  Future<ApiResponse<Media>> uploadAvatar(File avatarFile) async {
+    try {
+      final formData = FormData.fromMap({
+        'avatar': await MultipartFile.fromFile(avatarFile.path),
+      });
+
+      final response = await _dio.post('/media/upload/avatar', data: formData);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(Media.fromJson(data['data']));
+        }
+      }
+
+      return ApiResponse.error('Failed to upload avatar');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+
+  // Delete media
+  Future<ApiResponse<bool>> deleteMedia(String mediaUrl) async {
+    try {
+      final response = await _dio.delete('/media/delete', data: {
+        'media_url': mediaUrl
+      });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return ApiResponse.success(true);
+        }
+      }
+
+      return ApiResponse.error('Failed to delete media');
+    } catch (e) {
+      return ApiResponse.error('Network error: $e');
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">🔔 Push Notifications Setup</h3>
+                <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                    <pre><code>// lib/services/notification_service.dart
+class NotificationService {
+  static const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    description: 'This channel is used for important notifications.',
+    importance: Importance.high,
+  );
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+  Future<void> init() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
+
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    await flutterLocalNotificationsPlugin.show(
+      id,
+      title,
+      body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channelDescription: channel.description,
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+      ),
+    );
+  }
+}</code></pre>
                 </div>
             </div>
         </div>

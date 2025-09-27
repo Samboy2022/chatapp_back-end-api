@@ -16,57 +16,68 @@ use App\Http\Controllers\Api\WebSocketController;
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\StreamController;
+use App\Http\Controllers\Api\BroadcastSettingsController;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API-ONLY Routes (No Web Middleware)
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
+| These routes are specifically for API access only and will always
+| return JSON responses. No session, CSRF, or web middleware applied.
 |
 */
 
-// Public routes (no authentication required)
-Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-});
-
-// Public test route for connection testing
-Route::get('/test', function () {
+// API Health & Status
+Route::get('/health', [HealthController::class, 'index']);
+Route::get('/health/broadcast', [HealthController::class, 'broadcast']);
+Route::get('/status', function () {
     return response()->json([
         'success' => true,
-        'message' => 'API connection successful!',
-        'timestamp' => now(),
-        'version' => '1.0.0'
+        'message' => 'API Server is running',
+        'data' => [
+            'server' => 'api-only',
+            'timestamp' => now()->toISOString(),
+            'version' => '1.0.0'
+        ]
     ]);
 });
 
-// Health check endpoints (public)
-Route::get('/health', [HealthController::class, 'index']);
-Route::get('/health/broadcast', [HealthController::class, 'broadcast']);
+// Public API routes (no authentication required)
+Route::prefix('public')->group(function () {
+    Route::get('/test', function () {
+        return response()->json([
+            'success' => true,
+            'message' => 'API-only server connection successful!',
+            'timestamp' => now(),
+            'version' => '1.0.0',
+            'server' => 'api-only'
+        ]);
+    });
 
-// App configuration endpoints (public)
-Route::get('/app-config', [AppConfigController::class, 'getConfig']);
-Route::get('/app-config/validate', [AppConfigController::class, 'validateConfig']);
-Route::post('/app-config/clear-cache', [AppConfigController::class, 'clearCache']);
-Route::get('/app-config/history', [AppConfigController::class, 'getConfigHistory']);
+    Route::prefix('auth')->group(function () {
+        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/login', [AuthController::class, 'login']);
+    });
 
-// Broadcast settings endpoints (public for mobile apps)
-Route::prefix('broadcast-settings')->group(function () {
-    Route::get('/', [BroadcastSettingsController::class, 'index']);
-    Route::get('/connection-info', [BroadcastSettingsController::class, 'connectionInfo']);
-    Route::get('/status', [BroadcastSettingsController::class, 'status']);
-    Route::get('/health', [BroadcastSettingsController::class, 'health']);
-    Route::post('/test', [BroadcastSettingsController::class, 'testConnection']);
-    Route::get('/call-signaling', [BroadcastSettingsController::class, 'callSignalingConfig']);
+    // App configuration endpoints (public for mobile apps)
+    Route::get('/app-config', [AppConfigController::class, 'getConfig']);
+    Route::get('/app-config/validate', [AppConfigController::class, 'validateConfig']);
+
+    // Broadcast settings endpoints (public for mobile apps)
+    Route::prefix('broadcast-settings')->group(function () {
+        Route::get('/', [BroadcastSettingsController::class, 'index']);
+        Route::get('/connection-info', [BroadcastSettingsController::class, 'connectionInfo']);
+        Route::get('/status', [BroadcastSettingsController::class, 'status']);
+        Route::get('/health', [BroadcastSettingsController::class, 'health']);
+        Route::post('/test', [BroadcastSettingsController::class, 'testConnection']);
+        Route::get('/call-signaling', [BroadcastSettingsController::class, 'callSignalingConfig']);
+    });
 });
 
-// Protected routes (authentication required)
+// Protected API routes (authentication required)
 Route::middleware('auth:sanctum')->group(function () {
-    
+
     // Auth routes
     Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -93,7 +104,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [ChatController::class, 'index']);
         Route::post('/', [ChatController::class, 'store']);
     });
-    
+
     // Chat message routes - MUST come before general chat routes to avoid conflicts
     Route::prefix('chats/{chatId}/messages')->group(function () {
         Route::get('/', [MessageController::class, 'index']);
@@ -105,7 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{messageId}/react', [MessageController::class, 'react']);
         Route::delete('/{messageId}/react', [MessageController::class, 'removeReaction']);
     });
-    
+
     // Chat management routes - MUST come after message routes
     Route::prefix('chats/{chatId}')->group(function () {
         Route::get('/', [ChatController::class, 'show']);
@@ -243,7 +254,8 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json([
             'message' => 'Authenticated API is working!',
             'user' => $request->user(),
-            'timestamp' => now()
+            'timestamp' => now(),
+            'server' => 'api-only'
         ]);
     });
 });
@@ -259,26 +271,23 @@ Route::prefix('app-settings')->group(function () {
     Route::post('/multiple', [AppSettingsController::class, 'getMultiple']);
 });
 
-// Admin API routes for testing (no CSRF protection)
-Route::prefix('admin')->group(function () {
-    Route::post('settings/clear-cache', [App\Http\Controllers\Admin\SettingController::class, 'clearCache']);
-    Route::post('settings/optimize', [App\Http\Controllers\Admin\SettingController::class, 'optimizeSystem']);
-    Route::post('settings/test-email', [App\Http\Controllers\Admin\SettingController::class, 'testEmail']);
-    Route::post('settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'backupDatabase']);
-    Route::get('settings/export', [App\Http\Controllers\Admin\SettingController::class, 'exportSettings']);
-    Route::post('settings/import', [App\Http\Controllers\Admin\SettingController::class, 'importSettings']);
-    Route::post('settings/update', [App\Http\Controllers\Admin\SettingController::class, 'update']);
-
-    // Call monitoring API routes
-    Route::get('calls/active', [App\Http\Controllers\Admin\CallController::class, 'activeCalls']);
-    Route::get('calls/realtime-stats', [App\Http\Controllers\Admin\CallController::class, 'realtimeStats']);
-    Route::get('calls/recent-activity', [App\Http\Controllers\Admin\CallController::class, 'recentActivity']);
-});
-
-// Fallback route for API
+// Fallback route for API-only server
 Route::fallback(function () {
     return response()->json([
         'success' => false,
-        'message' => 'API route not found'
+        'message' => 'API endpoint not found',
+        'server' => 'api-only',
+        'available_endpoints' => [
+            'health' => '/api/health',
+            'auth' => '/api/auth/*',
+            'chats' => '/api/chats/*',
+            'messages' => '/api/messages/*',
+            'status' => '/api/status/*',
+            'calls' => '/api/calls/*',
+            'contacts' => '/api/contacts/*',
+            'settings' => '/api/settings/*',
+            'broadcast-settings' => '/api/broadcast-settings/*',
+            'public' => '/api/public/*'
+        ]
     ], 404);
 });
