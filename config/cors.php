@@ -20,10 +20,12 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => array_merge([
+        'http://localhost:8000',
         'http://localhost:8081',
         'http://localhost:19000',
         'http://localhost:19001',
         'http://localhost:19002',
+        'http://127.0.0.1:8000',
         'http://127.0.0.1:8081',
         'http://127.0.0.1:19000',
         'http://127.0.0.1:19001',

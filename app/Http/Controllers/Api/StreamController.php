@@ -50,7 +50,7 @@ class StreamController extends Controller
                 'data' => [
                     'token' => $token,
                     'api_key' => $config['api_key'],
-                    'user_id' => $userId,
+                    'user_id' => (string) $userId,  // ✅ FIXED: Cast to string for Stream SDK compatibility
                     'expires_at' => now()->addHours(24)->toISOString(),
                     'call_id' => $request->call_id,
                     'room_id' => $request->room_id
@@ -143,7 +143,7 @@ class StreamController extends Controller
                 'data' => [
                     'token' => $token,
                     'api_key' => $config['api_key'],
-                    'user_id' => $request->user_id,
+                    'user_id' => (string) $request->user_id,  // ✅ FIXED: Cast to string for Stream SDK compatibility
                     'expires_at' => now()->addHours(24)->toISOString(),
                     'call_id' => $request->call_id,
                     'room_id' => $request->room_id

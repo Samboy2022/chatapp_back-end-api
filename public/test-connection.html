@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #5568d3; }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success { background: #d1fae5; color: #065f46; }
+        .error { background: #fee2e2; color: #991b1b; }
+        .info { background: #dbeafe; color: #1e40af; }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #e5e7eb;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔧 API Connection Test</h1>
+        <p>Test if your API is accessible from the browser</p>
+        
+        <label>API URL:</label>
+        <input type="text" id="apiUrl" value="http://localhost:8000">
+        
+        <button onclick="testConnection()">Test Connection</button>
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="testCORS()">Test CORS</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function showResult(message, type = 'info') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + type;
+            resultDiv.textContent = message;
+        }
+
+        async function testConnection() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            showResult('Testing connection...', 'info');
+            
+            try {
+                const response = await fetch(`${apiUrl}/api/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                showResult(`✅ Connection successful!\n\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 'success');
+            } catch (error) {
+                showResult(`❌ Connection failed!\n\nError: ${error.message}\n\nPossible causes:\n1. Server not running\n2. Wrong URL\n3. CORS issue\n4. Firewall blocking`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            showResult('Testing login...', 'info');
+            
+            try {
+                const response = await fetch(`${apiUrl}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        login: 'streamtest@example.com',
+                        password: 'password123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Login successful!\n\nStatus: ${response.status}\nToken: ${data.data.token.substring(0, 50)}...\nUser: ${data.data.user.name}`, 'success');
+                } else {
+                    showResult(`⚠️ Login failed!\n\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Login request failed!\n\nError: ${error.message}\n\nThis is likely a CORS or network issue.`, 'error');
+            }
+        }
+
+        async function testCORS() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            showResult('Testing CORS...', 'info');
+            
+            try {
+                // Test OPTIONS request (preflight)
+                const response = await fetch(`${apiUrl}/api/health`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                };
+                
+                showResult(`CORS Headers:\n${JSON.stringify(corsHeaders, null, 2)}\n\nOrigin: ${window.location.origin}`, 'info');
+            } catch (error) {
+                showResult(`❌ CORS test failed!\n\nError: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-test on load
+        window.onload = function() {
+            setTimeout(testConnection, 500);
+        };
+    </script>
+</body>
+</html>

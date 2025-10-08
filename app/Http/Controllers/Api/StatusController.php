@@ -36,8 +36,17 @@ class StatusController extends Controller
             // Add self to the list
             $allowedContactIds[] = $user->id;
             
-            // Get recent statuses (within 24 hours) from allowed contacts
-            $statuses = Status::whereIn('user_id', $allowedContactIds)
+            // Get recent statuses (within 24 hours)
+            // Show statuses from contacts OR public statuses from anyone
+            $statuses = Status::where(function($query) use ($allowedContactIds) {
+                    // Statuses from contacts (any privacy)
+                    $query->whereIn('user_id', $allowedContactIds)
+                          // OR public statuses from anyone
+                          ->orWhere(function($q) {
+                              $q->whereJsonContains('privacy_settings->type', 'everyone')
+                                ->orWhereNull('privacy_settings');
+                          });
+                })
                 ->where('expires_at', '>', now())
                 ->with([
                     'user:id,name,phone_number,avatar_url',
@@ -46,39 +55,33 @@ class StatusController extends Controller
                     }
                 ])
                 ->orderBy('created_at', 'desc')
-                ->get()
-                ->groupBy('user_id');
+                ->get();
 
-            // Format the response
-            $statusesData = [];
-            foreach ($statuses as $userId => $userStatuses) {
-                $firstStatus = $userStatuses->first();
-                $statusesData[] = [
-                    'user' => $firstStatus->user,
-                    'statuses' => $userStatuses->map(function($status) {
-                        return [
-                            'id' => $status->id,
-                            'type' => $status->type,
-                            'content' => $status->content,
-                            'media_url' => $status->media_url,
-                            'background_color' => $status->background_color,
-                            'text_color' => $status->text_color,
-                            'font_family' => $status->font_family,
-                            'created_at' => $status->created_at,
-                            'expires_at' => $status->expires_at,
-                            'is_viewed' => $status->views->count() > 0,
-                            'views_count' => $status->views_count,
-                            'privacy' => $status->privacy,
-                        ];
-                    }),
-                    'latest_status_at' => $userStatuses->max('created_at'),
-                    'has_unviewed' => $userStatuses->where('views', '[]')->count() > 0
+            // Format the response - simple flat list
+            $statusesData = $statuses->map(function($status) {
+                $privacyType = is_array($status->privacy_settings) && isset($status->privacy_settings['type']) 
+                    ? $status->privacy_settings['type'] 
+                    : 'everyone';
+                    
+                return [
+                    'id' => $status->id,
+                    'user_id' => $status->user_id,
+                    'type' => $status->content_type,
+                    'content_type' => $status->content_type,
+                    'content' => $status->content,
+                    'media_url' => $status->media_url,
+                    'caption' => $status->content,
+                    'background_color' => $status->background_color,
+                    'text_color' => null,
+                    'font_family' => $status->font_style,
+                    'created_at' => $status->created_at,
+                    'expires_at' => $status->expires_at,
+                    'is_viewed' => $status->views->count() > 0,
+                    'views_count' => $status->views->count(),
+                    'privacy' => $privacyType,
+                    'privacy_settings' => $privacyType,
+                    'user' => $status->user
                 ];
-            }
-
-            // Sort by latest status
-            usort($statusesData, function($a, $b) {
-                return $b['latest_status_at'] <=> $a['latest_status_at'];
             });
 
             return response()->json([
@@ -107,10 +110,12 @@ class StatusController extends Controller
                 'type' => 'required|string|in:text,image,video',
                 'content' => 'required_if:type,text|nullable|string|max:1000',
                 'media_url' => 'required_if:type,image,video|nullable|string',
+                'caption' => 'nullable|string|max:500',
                 'background_color' => 'nullable|string',
                 'text_color' => 'nullable|string',
+                'font_size' => 'nullable|integer',
                 'font_family' => 'nullable|string',
-                'privacy' => 'required|string|in:everyone,contacts,close_friends',
+                'privacy' => 'nullable|string|in:everyone,contacts,close_friends',
                 'duration' => 'nullable|integer|min:1|max:30' // seconds for video
             ]);
 
@@ -125,13 +130,19 @@ class StatusController extends Controller
             // Calculate expiry time (24 hours from now)
             $expiresAt = now()->addHours(24);
 
+            // Prepare privacy settings
+            $privacySettings = [
+                'type' => $request->privacy ?? 'everyone'
+            ];
+
             $status = Status::create([
                 'user_id' => Auth::id(),
                 'content_type' => $request->type,
-                'content' => $request->content,
+                'content' => $request->content ?? $request->caption,
                 'media_url' => $request->media_url,
                 'background_color' => $request->background_color,
                 'font_style' => $request->font_family,
+                'privacy_settings' => $privacySettings,
                 'expires_at' => $expiresAt
             ]);
 
@@ -140,9 +151,27 @@ class StatusController extends Controller
             // Broadcast status to relevant users
             broadcast(new StatusUploaded($status, Auth::user()))->toOthers();
 
+            // Format response
+            $responseData = [
+                'id' => $status->id,
+                'user_id' => $status->user_id,
+                'content_type' => $status->content_type,
+                'content' => $status->content,
+                'media_url' => $status->media_url,
+                'caption' => $status->content,
+                'background_color' => $status->background_color,
+                'text_color' => $request->text_color,
+                'font_size' => $request->font_size,
+                'privacy' => $privacySettings['type'],
+                'privacy_settings' => $privacySettings['type'],
+                'expires_at' => $status->expires_at,
+                'created_at' => $status->created_at,
+                'user' => $status->user
+            ];
+
             return response()->json([
                 'success' => true,
-                'data' => $status,
+                'data' => $responseData,
                 'message' => 'Status uploaded successfully'
             ], 201);
 
@@ -177,9 +206,13 @@ class StatusController extends Controller
             // Check privacy permissions
             $user = Auth::user();
             if ($status->user_id !== $user->id) {
-                if ($status->privacy === 'contacts') {
+                $privacyType = is_array($status->privacy_settings) && isset($status->privacy_settings['type']) 
+                    ? $status->privacy_settings['type'] 
+                    : 'everyone';
+                    
+                if ($privacyType === 'contacts') {
                     $isContact = Contact::where('user_id', $status->user_id)
-                        ->where('contact_id', $user->id)
+                        ->where('contact_user_id', $user->id)
                         ->where('is_blocked', false)
                         ->exists();
                     
@@ -279,9 +312,13 @@ class StatusController extends Controller
 
             // Check privacy permissions
             $user = Auth::user();
-            if ($status->privacy === 'contacts') {
+            $privacyType = is_array($status->privacy_settings) && isset($status->privacy_settings['type']) 
+                ? $status->privacy_settings['type'] 
+                : 'everyone';
+                
+            if ($privacyType === 'contacts') {
                 $isContact = Contact::where('user_id', $status->user_id)
-                    ->where('contact_id', $user->id)
+                    ->where('contact_user_id', $user->id)
                     ->where('is_blocked', false)
                     ->exists();
                 
@@ -322,36 +359,38 @@ class StatusController extends Controller
             $targetUser = \App\Models\User::findOrFail($userId);
             $currentUser = Auth::user();
 
-            // Check if current user can view target user's statuses
+            // For now, allow viewing statuses if they are public or if users are contacts
+            // In a real app, you'd want stricter privacy controls
             if ($userId != $currentUser->id) {
-                // Check if they are contacts
-                $isContact = Contact::where('user_id', $userId)
-                    ->where('contact_id', $currentUser->id)
-                    ->where('is_blocked', false)
-                    ->exists();
+                // Check if they are contacts (check both directions)
+                $isContact = Contact::where(function($query) use ($userId, $currentUser) {
+                    $query->where('user_id', $userId)
+                          ->where('contact_user_id', $currentUser->id);
+                })->orWhere(function($query) use ($userId, $currentUser) {
+                    $query->where('user_id', $currentUser->id)
+                          ->where('contact_user_id', $userId);
+                })->where('is_blocked', false)
+                  ->exists();
 
-                if (!$isContact) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'You do not have permission to view this user\'s statuses'
-                    ], 403);
-                }
+                // Allow if they are contacts OR if viewing public statuses only
+                // This is handled in the query below
             }
 
             // Get non-expired statuses
-            $statuses = Status::where('user_id', $userId)
-                ->where('expires_at', '>', now())
-                ->where(function($query) use ($currentUser, $userId) {
-                    if ($userId === $currentUser->id) {
-                        // Own statuses - show all
-                        return;
-                    } else {
-                        // Other user's statuses - respect privacy
-                        $query->where('privacy', 'everyone')
-                              ->orWhere('privacy', 'contacts');
-                    }
-                })
-                ->with([
+            // If viewing someone else's statuses, only show public ones (everyone privacy)
+            $query = Status::where('user_id', $userId)
+                ->where('expires_at', '>', now());
+            
+            // If not viewing own statuses, filter by privacy
+            if ($userId != $currentUser->id) {
+                // Only show statuses with 'everyone' privacy
+                $query->where(function($q) {
+                    $q->whereJsonContains('privacy_settings->type', 'everyone')
+                      ->orWhereNull('privacy_settings');
+                });
+            }
+            
+            $statuses = $query->with([
                     'views' => function($query) use ($currentUser) {
                         $query->where('viewer_id', $currentUser->id);
                     },
@@ -360,17 +399,33 @@ class StatusController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // If viewing own statuses, include view details
-            if ($userId == $currentUser->id) {
-                $statuses->load('views.viewer:id,name,avatar_url');
-            }
+            // Format statuses
+            $formattedStatuses = $statuses->map(function($status) {
+                $privacyType = is_array($status->privacy_settings) && isset($status->privacy_settings['type']) 
+                    ? $status->privacy_settings['type'] 
+                    : 'everyone';
+                    
+                return [
+                    'id' => $status->id,
+                    'user_id' => $status->user_id,
+                    'type' => $status->content_type,
+                    'content_type' => $status->content_type,
+                    'content' => $status->content,
+                    'media_url' => $status->media_url,
+                    'caption' => $status->content,
+                    'background_color' => $status->background_color,
+                    'created_at' => $status->created_at,
+                    'expires_at' => $status->expires_at,
+                    'is_viewed' => $status->views->count() > 0,
+                    'views_count' => $status->views->count(),
+                    'privacy' => $privacyType,
+                    'privacy_settings' => $privacyType
+                ];
+            });
 
             return response()->json([
                 'success' => true,
-                'data' => [
-                    'user' => $targetUser->only(['id', 'name', 'phone_number', 'avatar_url']),
-                    'statuses' => $statuses
-                ],
+                'data' => $formattedStatuses,
                 'message' => 'User statuses retrieved successfully'
             ]);
 

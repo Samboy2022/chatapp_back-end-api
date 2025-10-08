@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\CloudinaryService;
-use App\Models\MediaFile;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class MediaController extends Controller
+class MediaControllerCloudinary extends Controller
 {
     protected $cloudinary;
 
@@ -69,42 +68,23 @@ class MediaController extends Controller
                 ], 500);
             }
 
-            // Save to database
-            $mediaFile = MediaFile::create([
-                'user_id' => $userId,
-                'public_id' => $result['public_id'],
-                'url' => $result['url'],
-                'thumbnail_url' => $result['thumbnail_url'] ?? null,
-                'type' => $type,
-                'format' => $result['format'] ?? 'unknown',
-                'resource_type' => $result['resource_type'] ?? 'auto',
-                'size' => $result['bytes'] ?? 0,
-                'size_formatted' => $this->formatBytes($result['bytes'] ?? 0),
-                'width' => $result['width'] ?? null,
-                'height' => $result['height'] ?? null,
-                'folder' => 'media/' . $type . 's',
-                'chat_id' => $request->chat_id,
-                'usage_type' => 'message',
-            ]);
-
             // Prepare response
             $response = [
                 'success' => true,
                 'data' => [
-                    'id' => $mediaFile->id,
-                    'public_id' => $mediaFile->public_id,
-                    'url' => $mediaFile->url,
-                    'thumbnail_url' => $mediaFile->thumbnail_url,
-                    'type' => $mediaFile->type,
-                    'format' => $mediaFile->format,
-                    'resource_type' => $mediaFile->resource_type,
-                    'size' => $mediaFile->size,
-                    'size_formatted' => $mediaFile->size_formatted,
-                    'width' => $mediaFile->width,
-                    'height' => $mediaFile->height,
+                    'public_id' => $result['public_id'],
+                    'url' => $result['url'],
+                    'thumbnail_url' => $result['thumbnail_url'] ?? null,
+                    'type' => $type,
+                    'format' => $result['format'],
+                    'resource_type' => $result['resource_type'],
+                    'size' => $result['bytes'],
+                    'size_formatted' => $this->formatBytes($result['bytes']),
+                    'width' => $result['width'] ?? null,
+                    'height' => $result['height'] ?? null,
                     'uploaded_by' => $userId,
-                    'uploaded_at' => $mediaFile->created_at->toISOString(),
-                    'chat_id' => $mediaFile->chat_id
+                    'uploaded_at' => now()->toISOString(),
+                    'chat_id' => $request->chat_id
                 ],
                 'message' => 'File uploaded successfully'
             ];
@@ -152,26 +132,6 @@ class MediaController extends Controller
                 ], 500);
             }
 
-            // Save to database
-            $mediaFile = MediaFile::create([
-                'user_id' => $userId,
-                'public_id' => $result['public_id'],
-                'url' => $result['avatar_url'],
-                'thumbnail_url' => $result['thumbnail_url'],
-                'type' => 'image',
-                'format' => $result['format'] ?? 'unknown',
-                'resource_type' => 'image',
-                'size' => $result['bytes'] ?? 0,
-                'size_formatted' => $this->formatBytes($result['bytes'] ?? 0),
-                'width' => $result['width'] ?? null,
-                'height' => $result['height'] ?? null,
-                'folder' => 'avatars',
-                'usage_type' => 'avatar',
-                'metadata' => [
-                    'small_url' => $result['small_url']
-                ]
-            ]);
-
             // Update user avatar in database
             $user = Auth::user();
             $user->avatar_url = $result['avatar_url'];
@@ -180,10 +140,9 @@ class MediaController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'id' => $mediaFile->id,
-                    'public_id' => $mediaFile->public_id,
-                    'avatar_url' => $mediaFile->url,
-                    'thumbnail_url' => $mediaFile->thumbnail_url,
+                    'public_id' => $result['public_id'],
+                    'avatar_url' => $result['avatar_url'],
+                    'thumbnail_url' => $result['thumbnail_url'],
                     'small_url' => $result['small_url'],
                 ],
                 'message' => 'Avatar uploaded successfully'
@@ -367,134 +326,5 @@ class MediaController extends Controller
         }
         
         return round($bytes, $precision) . ' ' . $units[$i];
-    }
-
-    /**
-     * Get user's media files
-     */
-    public function getUserMedia(Request $request): JsonResponse
-    {
-        try {
-            $userId = Auth::id();
-            $type = $request->query('type'); // Optional filter by type
-            $limit = $request->query('limit', 50);
-
-            $query = MediaFile::byUser($userId)
-                ->orderBy('created_at', 'desc');
-
-            if ($type) {
-                $query->ofType($type);
-            }
-
-            $media = $query->limit($limit)->get();
-
-            return response()->json([
-                'success' => true,
-                'data' => $media,
-                'count' => $media->count()
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve media',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Get chat media files
-     */
-    public function getChatMedia(Request $request, $chatId): JsonResponse
-    {
-        try {
-            $type = $request->query('type'); // Optional filter by type
-            $limit = $request->query('limit', 50);
-
-            $query = MediaFile::byChat($chatId)
-                ->orderBy('created_at', 'desc');
-
-            if ($type) {
-                $query->ofType($type);
-            }
-
-            $media = $query->limit($limit)->get();
-
-            return response()->json([
-                'success' => true,
-                'data' => $media,
-                'count' => $media->count()
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve chat media',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Get media file by ID
-     */
-    public function getMediaById($id): JsonResponse
-    {
-        try {
-            $media = MediaFile::findOrFail($id);
-
-            return response()->json([
-                'success' => true,
-                'data' => $media
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Media file not found',
-                'error' => $e->getMessage()
-            ], 404);
-        }
-    }
-
-    /**
-     * Get media statistics
-     */
-    public function getMediaStats(): JsonResponse
-    {
-        try {
-            $userId = Auth::id();
-
-            $stats = [
-                'total_files' => MediaFile::byUser($userId)->count(),
-                'total_size' => MediaFile::byUser($userId)->sum('size'),
-                'by_type' => [
-                    'images' => MediaFile::byUser($userId)->ofType('image')->count(),
-                    'videos' => MediaFile::byUser($userId)->ofType('video')->count(),
-                    'audios' => MediaFile::byUser($userId)->ofType('audio')->count(),
-                    'documents' => MediaFile::byUser($userId)->ofType('document')->count(),
-                ],
-                'recent_uploads' => MediaFile::byUser($userId)
-                    ->orderBy('created_at', 'desc')
-                    ->limit(5)
-                    ->get()
-            ];
-
-            // Format total size
-            $stats['total_size_formatted'] = $this->formatBytes($stats['total_size']);
-
-            return response()->json([
-                'success' => true,
-                'data' => $stats
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve media statistics',
-                'error' => $e->getMessage()
-            ], 500);
-        }
     }
 }

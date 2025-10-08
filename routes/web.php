@@ -11,7 +11,8 @@ use App\Http\Controllers\Admin\CallController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ApiDocumentationController;
-use App\Http\Controllers\Admin\BroadcastSettingsController;
+use App\Http\Controllers\Api\BroadcastSettingsController;
+use App\Http\Controllers\ApiTesterController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -27,6 +28,10 @@ Route::get('/features', [HomeController::class, 'features'])->name('features');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
+
+// API Tester Routes
+Route::get('/api-tester', [ApiTesterController::class, 'index'])->name('api-tester');
+Route::get('/api-tester/status', [ApiTesterController::class, 'status'])->name('api-tester.status');
 
 // Broadcasting Authentication Routes (for WebSocket authentication)
 Broadcast::routes(['middleware' => ['auth:sanctum']]);

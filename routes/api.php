@@ -16,6 +16,9 @@ use App\Http\Controllers\Api\WebSocketController;
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\StreamController;
+use App\Http\Controllers\Api\DiscoverController;
+use App\Http\Controllers\Api\ContactListController;
+use App\Http\Controllers\Api\BroadcastSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -176,6 +179,20 @@ Route::middleware('auth:sanctum')->group(function () {
     // Chat creation route
     Route::post('/chats/create-or-get', [SearchController::class, 'createOrGetChat']);
 
+    // User discovery routes
+    Route::prefix('discover')->group(function () {
+        Route::get('/users', [DiscoverController::class, 'getAllUsers']);
+        Route::get('/users/online', [DiscoverController::class, 'getOnlineUsers']);
+        Route::get('/users/recent', [DiscoverController::class, 'getRecentUsers']);
+    });
+
+    // Contact list routes (any user can see all users)
+    Route::prefix('contacts')->group(function () {
+        Route::get('/list', [ContactListController::class, 'getAllUsers']);
+        Route::get('/online', [ContactListController::class, 'getOnlineUsers']);
+        Route::get('/search', [ContactListController::class, 'searchUsers']);
+    });
+
     // Media routes
     Route::prefix('media')->group(function () {
         Route::post('/upload', [MediaController::class, 'upload']);
@@ -183,6 +200,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/upload/chat-avatar', [MediaController::class, 'uploadChatAvatar']);
         Route::post('/upload/status', [MediaController::class, 'uploadStatusMedia']);
         Route::delete('/delete', [MediaController::class, 'delete']);
+        
+        // Media retrieval routes
+        Route::get('/user', [MediaController::class, 'getUserMedia']);
+        Route::get('/chat/{chatId}', [MediaController::class, 'getChatMedia']);
+        Route::get('/stats', [MediaController::class, 'getMediaStats']);
+        Route::get('/{id}', [MediaController::class, 'getMediaById']);
     });
 
     // Call routes

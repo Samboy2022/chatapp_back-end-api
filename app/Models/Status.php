@@ -21,11 +21,7 @@ class Status extends Model
         'background_color',
         'font_style',
         'privacy_settings',
-        'expires_at',
-        'type',
-        'text_color',
-        'font_family',
-        'privacy'
+        'expires_at'
     ];
 
     protected $casts = [

@@ -30,7 +30,7 @@ class StreamService
 
             // Create token payload
             $payload = [
-                'user_id' => $userId,
+                'user_id' => (string) $userId,  // ✅ FIXED: Cast to string for Stream SDK compatibility
                 'exp' => $exp,
                 'iat' => now()->timestamp,
                 'iss' => 'laravel-app',
