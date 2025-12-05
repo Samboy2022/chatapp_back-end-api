@@ -177,8 +177,13 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255|unique:users,email,' . $request->user()->id,
+            'phone_number' => 'sometimes|string|max:20|unique:users,phone_number,' . $request->user()->id,
+            'country_code' => 'sometimes|string|max:5',
             'about' => 'sometimes|string|max:500',
             'avatar_url' => 'sometimes|url|max:500',
+            'current_password' => 'sometimes|required_with:new_password|string',
+            'new_password' => 'sometimes|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -191,13 +196,59 @@ class AuthController extends Controller
 
         try {
             $user = $request->user();
-            $user->update($request->only(['name', 'about', 'avatar_url']));
+            $updateData = [];
+
+            // Update basic profile fields
+            if ($request->has('name')) {
+                $updateData['name'] = $request->name;
+            }
+
+            if ($request->has('email')) {
+                $updateData['email'] = $request->email;
+            }
+
+            if ($request->has('phone_number')) {
+                $updateData['phone_number'] = $request->phone_number;
+            }
+
+            if ($request->has('country_code')) {
+                $updateData['country_code'] = $request->country_code;
+            }
+
+            if ($request->has('about')) {
+                $updateData['about'] = $request->about;
+            }
+
+            if ($request->has('avatar_url')) {
+                $updateData['avatar_url'] = $request->avatar_url;
+            }
+
+            // Handle password change
+            if ($request->filled('new_password')) {
+                // Verify current password
+                if (!Hash::check($request->current_password, $user->password)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Current password is incorrect'
+                    ], 422);
+                }
+                
+                $updateData['password'] = Hash::make($request->new_password);
+            }
+
+            // Update user
+            if (!empty($updateData)) {
+                $user->update($updateData);
+            }
+
+            // Refresh user data
+            $user->refresh();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Profile updated successfully',
                 'data' => [
-                    'user' => $user
+                    'user' => $user->makeHidden(['password', 'remember_token'])
                 ]
             ], 200);
 

@@ -205,7 +205,7 @@ class MediaController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'avatar' => 'required|image|max:5120',
+                'chat_avatar' => 'required|image|max:5120',
                 'chat_id' => 'required|exists:chats,id'
             ]);
 
@@ -217,7 +217,7 @@ class MediaController extends Controller
                 ], 422);
             }
 
-            $file = $request->file('avatar');
+            $file = $request->file('chat_avatar');
             $chatId = $request->chat_id;
 
             // Upload to Cloudinary
@@ -257,7 +257,7 @@ class MediaController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'file' => 'required|file|max:50000', // 50MB max
+                'media' => 'required|file|max:50000', // 50MB max
                 'type' => 'required|string|in:image,video'
             ]);
 
@@ -269,7 +269,7 @@ class MediaController extends Controller
                 ], 422);
             }
 
-            $file = $request->file('file');
+            $file = $request->file('media');
             $type = $request->type;
             $userId = Auth::id();
 
@@ -316,7 +316,8 @@ class MediaController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'public_id' => 'required|string',
+                'public_id' => 'required_without:file_path|string',
+                'file_path' => 'required_without:public_id|string',
                 'resource_type' => 'nullable|string|in:image,video,raw'
             ]);
 
@@ -328,9 +329,35 @@ class MediaController extends Controller
                 ], 422);
             }
 
+            // Support both public_id and file_path for backward compatibility
             $publicId = $request->public_id;
+            
+            // If file_path is provided, extract public_id from it
+            if (!$publicId && $request->file_path) {
+                // Extract public_id from file path (e.g., /storage/avatars/avatar.jpg -> avatars/avatar)
+                $filePath = $request->file_path;
+                $publicId = preg_replace('/^\/?(storage\/)?/', '', $filePath);
+                $publicId = preg_replace('/\.[^.]+$/', '', $publicId); // Remove extension
+            }
+
             $resourceType = $request->resource_type ?? 'image';
 
+            // Try to find and delete from database first
+            $mediaFile = MediaFile::where('public_id', $publicId)->first();
+            if ($mediaFile) {
+                // Check if user owns the file
+                if ($mediaFile->user_id !== Auth::id()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Unauthorized to delete this file'
+                    ], 403);
+                }
+                
+                $resourceType = $mediaFile->resource_type;
+                $mediaFile->delete();
+            }
+
+            // Delete from Cloudinary
             $result = $this->cloudinary->delete($publicId, $resourceType);
 
             if (!$result['success']) {

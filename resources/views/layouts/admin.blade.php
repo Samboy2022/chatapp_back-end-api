@@ -1,338 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin Dashboard') - ChatWave</title>
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Icons8 Illustrations -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        whatsapp: {
-                            primary: '#25D366',
-                            light: '#DCF8C6',
-                            dark: '#128C7E',
-                            text: '#075E54'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        .sidebar-gradient {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-        }
-        .whatsapp-shadow {
-            box-shadow: 0 4px 6px -1px rgba(37, 211, 102, 0.1), 0 2px 4px -1px rgba(37, 211, 102, 0.06);
-        }
-        .nav-item-active {
-            background: rgba(255, 255, 255, 0.15);
-            border-left: 3px solid #DCF8C6;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-    </style>
-
+    <title>@yield('title', 'Admin Dashboard') - {{ $appSettings['app_name'] ?? 'Admin' }}</title>
+    
+    {{-- Vite CSS --}}
+    @vite(['resources/css/admin.css'])
+    
+    {{-- Phosphor Icons --}}
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
     @stack('styles')
-</head>
-<body class="bg-gray-50">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <nav class="w-64 sidebar-gradient text-white shadow-xl">
-            <div class="flex flex-col h-full">
-                <!-- Logo Section -->
-                <div class="p-6 border-b border-white border-opacity-20">
-                    <div class="flex items-center space-x-3">
-                        <div class="bg-white bg-opacity-20 p-2 rounded-lg">
-                            <i class="fab fa-whatsapp text-2xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg">ChatWave</h3>
-                            <p class="text-xs text-green-100">Admin Panel</p>
-                        </div>
+  </head>
+  <body class="bg-gray-50 font-sans antialiased">
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+    <!-- Sidebar -->
+    <aside
+      class="sidebar fixed left-0 top-0 h-full w-56 bg-white border-r border-gray-200 z-50 flex flex-col md:translate-x-0"
+    >
+      <!-- Logo -->
+      <div class="h-14 flex items-center px-4 border-b border-gray-200 flex-shrink-0">
+        <div class="flex items-center space-x-2">
+          @if(isset($appSettings['logo_url']) && $appSettings['logo_url'])
+            <img src="{{ $appSettings['logo_url'] }}" alt="Logo" class="w-7 h-7 rounded-lg object-cover">
+          @else
+            <div class="w-7 h-7 bg-green-700 rounded-lg flex items-center justify-center">
+              <span class="text-white text-xs font-bold">{{ substr($appSettings['app_name'] ?? 'A', 0, 1) }}</span>
+            </div>
+          @endif
+          <span class="font-bold text-green-900 text-sm">{{ $appSettings['app_name'] ?? 'Admin' }}</span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 overflow-y-auto py-3 px-3" style="scrollbar-width: thin;">
+        <a
+          href="{{ route('admin.dashboard') }}"
+          class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph-bold ph-squares-four text-base"></i>
+          <span>Dashboard</span>
+        </a>
+        <a
+          href="{{ route('admin.users.index') }}"
+          class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-users-three text-base"></i>
+          <span>Users</span>
+        </a>
+        <a
+          href="{{ route('admin.chats.index') }}"
+          class="nav-item {{ request()->routeIs('admin.chats.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-chat-circle-dots text-base"></i>
+          <span>Chats</span>
+        </a>
+        <a
+          href="{{ route('admin.messages.index') }}"
+          class="nav-item {{ request()->routeIs('admin.messages.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-envelope text-base"></i>
+          <span>Messages</span>
+        </a>
+        <a
+          href="{{ route('admin.statuses.index') }}"
+          class="nav-item {{ request()->routeIs('admin.statuses.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-camera text-base"></i>
+          <span>Status Updates</span>
+        </a>
+        <a
+          href="{{ route('admin.calls.index') }}"
+          class="nav-item {{ request()->routeIs('admin.calls.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-phone text-base"></i>
+          <span>Calls</span>
+        </a>
+        <a
+          href="{{ route('admin.reports.index') }}"
+          class="nav-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-file-text text-base"></i>
+          <span>Reports</span>
+        </a>
+        <a
+          href="{{ route('admin.realtime-settings.index') }}"
+          class="nav-item {{ request()->routeIs('admin.realtime-settings.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-broadcast text-base"></i>
+          <span>Realtime</span>
+        </a>
+        <a
+          href="{{ route('admin.settings.index') }}"
+          class="nav-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-gear-six text-base"></i>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <!-- User Section -->
+      <div class="p-3 border-t border-gray-200">
+        <div class="flex items-center space-x-2 p-2 bg-green-50 rounded-xl">
+          @if(session('admin_user') && isset(session('admin_user')['avatar_url']))
+            <img
+                src="{{ session('admin_user')['avatar_url'] }}"
+                alt="User"
+                class="w-7 h-7 rounded-full border-2 border-green-700"
+            />
+          @else
+            <div class="w-7 h-7 bg-green-700 rounded-full flex items-center justify-center text-white text-xs">
+                {{ substr(session('admin_user')['name'] ?? 'A', 0, 1) }}
+            </div>
+          @endif
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold text-gray-900 truncate">{{ session('admin_user')['name'] ?? 'Admin User' }}</p>
+            <p class="text-xs text-gray-500 truncate">{{ session('admin_user')['email'] ?? 'admin@example.com' }}</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="md:ml-56">
+      <!-- Sticky Header -->
+      <header
+        class="sticky top-0 z-30 bg-white border-b border-gray-200 h-14 flex items-center px-4 md:px-6"
+      >
+        <div class="flex items-center justify-between w-full">
+          <!-- Left: Menu + Search -->
+          <div class="flex items-center space-x-3">
+            <button
+              id="menuToggle"
+              class="md:hidden p-1.5 hover:bg-gray-100 rounded-lg transition"
+            >
+              <i class="ph-bold ph-list text-xl text-gray-700"></i>
+            </button>
+            <div class="hidden sm:flex items-center space-x-2 bg-gray-100 px-3 py-1.5 rounded-xl">
+              <i class="ph ph-magnifying-glass text-gray-500"></i>
+              <input
+                type="text"
+                placeholder="Search..."
+                class="bg-transparent border-none outline-none text-sm text-gray-700 w-48"
+              />
+            </div>
+          </div>
+
+          <!-- Right: Actions -->
+          <div class="flex items-center space-x-2">
+            <button class="p-1.5 hover:bg-gray-100 rounded-lg transition relative">
+              <i class="ph-bold ph-bell text-lg text-gray-700"></i>
+              <span
+                class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"
+              ></span>
+            </button>
+
+            <!-- Profile Dropdown -->
+            <div class="relative">
+              <button
+                id="profileBtn"
+                class="flex items-center space-x-2 p-1.5 hover:bg-gray-100 rounded-lg transition"
+              >
+                @if(session('admin_user') && isset(session('admin_user')['avatar_url']))
+                    <img
+                    src="{{ session('admin_user')['avatar_url'] }}"
+                    alt="User"
+                    class="w-7 h-7 rounded-full border-2 border-green-700"
+                    />
+                @else
+                    <div class="w-7 h-7 bg-green-700 rounded-full flex items-center justify-center text-white text-xs">
+                        {{ substr(session('admin_user')['name'] ?? 'A', 0, 1) }}
                     </div>
-                </div>
+                @endif
+                <i class="ph ph-caret-down text-gray-600 text-sm hidden sm:block transition-transform" id="caretIcon"></i>
+              </button>
 
-                <!-- Navigation Menu -->
-                <div class="flex-1 py-4 custom-scrollbar overflow-y-auto">
-                    <ul class="space-y-1 px-4">
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.dashboard') }}">
-                                <i class="fas fa-tachometer-alt"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.users.index') }}">
-                                <i class="fas fa-users"></i>
-                                <span>Users</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('admin.chats.*') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.chats.index') }}">
-                                <i class="fas fa-comments"></i>
-                                <span>Chats</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('admin.messages.*') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.messages.index') }}">
-                                <i class="fas fa-envelope"></i>
-                                <span>Messages</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('admin.statuses.*') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.statuses.index') }}">
-                                <i class="fas fa-circle"></i>
-                                <span>Status Updates</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('admin.calls.*') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.calls.index') }}">
-                                <i class="fas fa-phone"></i>
-                                <span>Calls</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.reports.index') }}">
-                                <i class="fas fa-chart-bar"></i>
-                                <span>Reports</span>
-                            </a>
-                        </li>
-                        <!-- <li>
-                            <a class="nav-link {{ request()->routeIs('admin.api-documentation.*') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.api-documentation.index') }}">
-                                <i class="fas fa-code"></i>
-                                <span>API Docs</span>
-                            </a>
-                        </li> -->
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('admin.realtime-settings.*') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.realtime-settings.index') }}">
-                                <i class="fas fa-broadcast-tower"></i>
-                                <span>Realtime</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('admin.settings.*') ? 'nav-item-active' : '' }} flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200"
-                               href="{{ route('admin.settings.index') }}">
-                                <i class="fas fa-cog"></i>
-                                <span>Settings</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+              <!-- Dropdown -->
+              <div
+                id="profileDropdown"
+                class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2"
+              >
+                <a
+                  href="{{ route('admin.profile.index') }}"
+                  class="dropdown-item flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 rounded-lg mx-2"
+                >
+                  <i class="ph ph-user text-base"></i>
+                  <span>My Profile</span>
+                </a>
+                <a
+                  href="{{ route('admin.settings.index') }}"
+                  class="dropdown-item flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 rounded-lg mx-2"
+                >
+                  <i class="ph ph-gear-six text-base"></i>
+                  <span>Settings</span>
+                </a>
+                <div class="border-t border-gray-200 my-2"></div>
+                <form method="POST" action="{{ route('admin.logout') }}">
+                    @csrf
+                    <button
+                      type="submit"
+                      class="w-full dropdown-item flex items-center space-x-2 px-3 py-2 text-sm text-red-600 rounded-lg mx-2"
+                    >
+                      <i class="ph ph-sign-out text-base"></i>
+                      <span>Logout</span>
+                    </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
 
-                <!-- Bottom Section -->
-                <div class="p-4 border-t border-white border-opacity-20">
-                    <!-- Website Link -->
-                    <!-- <a href="{{ route('home') }}"
-                       target="_blank"
-                       class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-white hover:bg-opacity-10 transition-all duration-200 mb-2">
-                        <i class="fas fa-external-link-alt"></i>
-                        <span>View Website</span>
-                    </a> -->
-
-                    <!-- User Profile -->
-                    @if(session('admin_user'))
-                    <div class="bg-white bg-opacity-10 rounded-lg p-3 mb-3">
-                        <div class="flex items-center space-x-3">
-                            @if(session('admin_user')['avatar_url'])
-                                <img src="{{ session('admin_user')['avatar_url'] }}"
-                                     alt="Admin"
-                                     class="w-10 h-10 rounded-full">
-                            @else
-                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-white"></i>
-                                </div>
-                            @endif
-                            <div class="flex-1">
-                                <div class="font-medium text-sm">{{ session('admin_user')['name'] }}</div>
-                                <div class="text-xs text-green-100">{{ session('admin_user')['email'] }}</div>
-                            </div>
-                        </div>
+      <!-- Page Content -->
+      <main class="p-4 md:p-6">
+        @if(session('success'))
+            <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6 rounded-r-lg animate-fadeIn">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="ph-bold ph-check-circle text-green-400 text-xl"></i>
                     </div>
-                    @endif
-
-                    <!-- Logout Form -->
-                    <form method="POST" action="{{ route('admin.logout') }}">
-                        @csrf
-                        <button type="submit"
-                                class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-white text-opacity-80 hover:text-white hover:bg-red-500 hover:bg-opacity-20 transition-all duration-200">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-800">{{ session('success') }}</p>
+                    </div>
+                    <div class="ml-auto">
+                        <button type="button" class="text-green-400 hover:text-green-600" onclick="this.parentElement.parentElement.parentElement.remove()">
+                            <i class="ph-bold ph-x"></i>
                         </button>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </nav>
+        @endif
 
-        <!-- Main Content -->
-        <main class="flex-1 bg-gray-50 overflow-y-auto">
-            <div class="container mx-auto px-6 py-8">
-                <!-- Header -->
-                <div class="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">@yield('page-title', 'Dashboard')</h1>
-                        <p class="text-gray-600 mt-2">Manage your ChatWave application</p>
+        @if(session('error'))
+            <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-r-lg animate-fadeIn">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="ph-bold ph-warning-circle text-red-400 text-xl"></i>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        @yield('toolbar-buttons')
-                        <!-- Mobile Menu Toggle (for responsive design) -->
-                        <button class="md:hidden bg-whatsapp-primary text-white p-2 rounded-lg">
-                            <i class="fas fa-bars"></i>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-800">{{ session('error') }}</p>
+                    </div>
+                    <div class="ml-auto">
+                        <button type="button" class="text-red-400 hover:text-red-600" onclick="this.parentElement.parentElement.parentElement.remove()">
+                            <i class="ph-bold ph-x"></i>
                         </button>
                     </div>
                 </div>
-
-                <!-- Alerts -->
-                @if(session('success'))
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6 rounded-r-lg">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-check-circle text-green-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-green-800">{{ session('success') }}</p>
-                            </div>
-                            <div class="ml-auto">
-                                <button type="button" class="text-green-400 hover:text-green-600">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                @if(session('error'))
-                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-r-lg">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-exclamation-triangle text-red-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-red-800">{{ session('error') }}</p>
-                            </div>
-                            <div class="ml-auto">
-                                <button type="button" class="text-red-400 hover:text-red-600">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                @if($errors->any())
-                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-r-lg">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-exclamation-triangle text-red-400"></i>
-                            </div>
-                            <div class="ml-3 flex-1">
-                                <p class="text-sm font-medium text-red-800">Please fix the following errors:</p>
-                                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
-                                    @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                            <div class="ml-auto">
-                                <button type="button" class="text-red-400 hover:text-red-600">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                <!-- Breadcrumb (optional) -->
-                @yield('breadcrumb')
-
-                <!-- Main Content Area -->
-                <div class="space-y-6">
-                    @yield('content')
-                </div>
             </div>
-        </main>
+        @endif
+
+        @yield('content')
+      </main>
     </div>
 
-    <!-- Chart.js for dashboard charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Custom JavaScript for enhanced UX -->
     <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Remove active class from all links
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('nav-item-active'));
-                // Add active class to clicked link
-                if (this.getAttribute('href') !== '#') {
-                    this.classList.add('nav-item-active');
-                }
-            });
+      // Mobile menu toggle
+      const menuToggle = document.getElementById("menuToggle");
+      const sidebar = document.querySelector(".sidebar");
+      const overlay = document.getElementById("overlay");
+
+      if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+          sidebar.classList.toggle("open");
+          overlay.classList.toggle("hidden");
         });
 
-        // Auto-hide alerts after 5 seconds
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.bg-green-50, .bg-red-50');
-            alerts.forEach(alert => {
-                alert.style.transition = 'opacity 0.5s ease-out';
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 500);
-            });
-        }, 5000);
-
-        // Mobile sidebar toggle (for responsive design)
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('hidden');
-        }
-
-        // Add loading states for forms
-        document.addEventListener('DOMContentLoaded', function() {
-            const forms = document.querySelectorAll('form');
-            forms.forEach(form => {
-                form.addEventListener('submit', function() {
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
-                        submitBtn.disabled = true;
-                    }
-                });
-            });
+        overlay.addEventListener("click", () => {
+          sidebar.classList.remove("open");
+          overlay.classList.add("hidden");
         });
+      }
+
+      // Profile dropdown
+      const profileBtn = document.getElementById("profileBtn");
+      const profileDropdown = document.getElementById("profileDropdown");
+      const caretIcon = document.getElementById("caretIcon");
+
+      if (profileBtn) {
+        profileBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          profileDropdown.classList.toggle("show");
+          if (caretIcon) {
+            caretIcon.style.transform = profileDropdown.classList.contains("show")
+              ? "rotate(180deg)"
+              : "rotate(0deg)";
+          }
+        });
+
+        document.addEventListener("click", () => {
+          profileDropdown.classList.remove("show");
+          if (caretIcon) {
+            caretIcon.style.transform = "rotate(0deg)";
+          }
+        });
+      }
     </script>
-
     @stack('scripts')
-</body>
+  </body>
 </html>

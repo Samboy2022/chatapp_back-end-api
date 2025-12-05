@@ -3,1039 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmers Network - Connect & Collaborate</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-white: #FFFFFF;
-            --primary-green: #22c55e;
-            --primary-green-dark: #16a34a;
-            --secondary-green: #10b981;
-            --accent-blue: #3b82f6;
-            --text-dark: #1f2937;
-            --text-light: #6b7280;
-            --text-muted: #9ca3af;
-            --background-light: #f8fafc;
-            --background-gray: #f1f5f9;
-            --gradient-primary: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            --gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            --gradient-hero: linear-gradient(135deg, #22c55e 0%, #10b981 50%, #3b82f6 100%);
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            --border-radius: 12px;
-            --border-radius-lg: 20px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--primary-white);
-            color: var(--text-dark);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* Navigation */
-        .navbar {
-            background: var(--primary-white);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            padding: 15px 0;
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: var(--whatsapp-dark-green);
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-brand i {
-            color: var(--whatsapp-green);
-            margin-right: 10px;
-        }
-
-        .nav-link {
-            color: var(--text-dark);
-            font-weight: 500;
-            margin: 0 10px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-link:hover {
-            color: var(--whatsapp-green);
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--whatsapp-green);
-            transition: width 0.3s ease;
-        }
-
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
-        .btn-primary {
-            background: var(--whatsapp-green);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: var(--whatsapp-dark-green);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(18, 140, 126, 0.2);
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            padding: 140px 0 120px;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80') center/cover no-repeat;
-            opacity: 0.05;
-            z-index: 0;
-        }
-
-        .hero-content {
-            max-width: 650px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            font-weight: 800;
-            margin-bottom: 24px;
-            line-height: 1.1;
-            color: var(--text-dark);
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            margin-bottom: 40px;
-            color: var(--text-light);
-            line-height: 1.6;
-            font-weight: 400;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 40px;
-        }
-
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: var(--border-radius-lg);
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-md);
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--primary-green);
-            border: 2px solid var(--primary-green);
-            padding: 10px 20px;
-            border-radius: var(--border-radius-lg);
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-outline:hover {
-            background: var(--primary-green);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .hero-visual {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-visual img {
-            max-width: 100%;
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-xl);
-            transition: transform 0.3s ease;
-        }
-
-        .hero-visual:hover img {
-            transform: scale(1.02);
-        }
-
-        .floating-elements {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .floating-element {
-            position: absolute;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
-            animation: float 8s ease-in-out infinite;
-        }
-
-        .floating-element:nth-child(1) {
-            width: 100px;
-            height: 100px;
-            top: 20%;
-            right: 10%;
-            animation-delay: 0s;
-        }
-
-        .floating-element:nth-child(2) {
-            width: 60px;
-            height: 60px;
-            top: 60%;
-            right: 20%;
-            animation-delay: 2s;
-        }
-
-        .floating-element:nth-child(3) {
-            width: 80px;
-            height: 80px;
-            top: 40%;
-            left: 5%;
-            animation-delay: 4s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-30px) rotate(120deg); }
-            66% { transform: translateY(-15px) rotate(240deg); }
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 40px;
-            margin-top: 30px;
-        }
-
-        .stat-item-inline {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .stat-item-inline .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary-green);
-            line-height: 1;
-        }
-
-        .stat-item-inline .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-top: 5px;
-        }
-
-        .hero-visual-elements {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-        }
-
-        .visual-element {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            transition: transform 0.3s ease;
-            animation: floatElement 6s ease-in-out infinite;
-        }
-
-        .visual-element img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .visual-element-1 {
-            top: -20px;
-            right: -40px;
-            animation-delay: 0s;
-        }
-
-        .visual-element-2 {
-            bottom: 20px;
-            left: -30px;
-            animation-delay: 2s;
-        }
-
-        .visual-element-3 {
-            top: 50%;
-            right: -20px;
-            animation-delay: 4s;
-        }
-
-        @keyframes floatElement {
-            0%, 100% { transform: translateY(0px) scale(1); }
-            50% { transform: translateY(-20px) scale(1.05); }
-        }
-
-        /* Features Section */
-        .features {
-            padding: 120px 0;
-            background: var(--primary-white);
-            position: relative;
-        }
-
-        .features::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.02) 0%, rgba(59, 130, 246, 0.02) 100%);
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 80px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .section-title h2 {
-            font-size: 3.2rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            position: relative;
-            display: inline-block;
-            color: var(--text-dark);
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .section-title h2::after {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 6px;
-            background: var(--gradient-primary);
-            border-radius: 3px;
-        }
-
-        .section-title p {
-            color: var(--text-light);
-            max-width: 600px;
-            margin: 40px auto 0;
-            font-size: 1.2rem;
-            line-height: 1.6;
-        }
-
-        .feature-card {
-            background: var(--primary-white);
-            border-radius: var(--border-radius);
-            padding: 30px 25px;
-            margin-bottom: 25px;
-            height: 100%;
-            border: 1px solid var(--background-gray);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-green);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 20px;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            background: rgba(34, 197, 94, 0.1);
-            color: var(--primary-green);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover .feature-icon {
-            background: var(--primary-green);
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-            line-height: 1.3;
-        }
-
-        .feature-card p {
-            color: var(--text-light);
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
-        .feature-grid {
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Community Section */
-        .community {
-            padding: 120px 0;
-            background: linear-gradient(135deg, var(--background-light) 0%, #e2e8f0 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .community::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
-            opacity: 0.03;
-            z-index: 0;
-        }
-
-        .stats-container {
-            background: var(--gradient-primary);
-            border-radius: var(--border-radius-lg);
-            padding: 60px 40px;
-            color: white;
-            box-shadow: var(--shadow-xl);
-            position: relative;
-            z-index: 2;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 30px 20px;
-            position: relative;
-        }
-
-        .stat-item:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 1px;
-            height: 60%;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .stat-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 25px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .stat-item:hover .stat-icon {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            line-height: 1;
-            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-text {
-            font-size: 1.3rem;
-            font-weight: 600;
-            opacity: 0.9;
-        }
-
-        .community-cta {
-            text-align: center;
-            margin-top: 60px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .community-cta h3 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--text-dark);
-        }
-
-        .community-cta p {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            margin-bottom: 30px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Download Section */
-        .download {
-            padding: 120px 0;
-            background: var(--primary-white);
-            position: relative;
-        }
-
-        .download::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
-        }
-
-        .download-content {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .download-content h2 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 25px;
-            color: var(--text-dark);
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .download-content p {
-            font-size: 1.3rem;
-            color: var(--text-light);
-            margin-bottom: 50px;
-            line-height: 1.6;
-        }
-
-        .download-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 50px;
-            flex-wrap: wrap;
-        }
-
-        .store-btn {
-            display: flex;
-            align-items: center;
-            background: var(--primary-white);
-            border: 2px solid var(--background-gray);
-            border-radius: var(--border-radius);
-            padding: 15px 25px;
-            text-decoration: none;
-            color: var(--text-dark);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            min-width: 220px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .store-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            background: var(--primary-green);
-            color: white;
-            border-color: var(--primary-green);
-        }
-
-        .store-icon {
-            width: 40px;
-            height: 40px;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--background-light);
-            border-radius: var(--border-radius);
-            transition: all 0.3s ease;
-        }
-
-        .store-btn:hover .store-icon {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .store-icon img {
-            width: 24px;
-            height: 24px;
-        }
-
-        .store-text {
-            text-align: left;
-            flex: 1;
-        }
-
-        .store-text p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 3px;
-            font-weight: 500;
-        }
-
-        .store-text div {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--text-dark);
-        }
-
-        .store-btn:hover .store-text p,
-        .store-btn:hover .store-text div {
-            color: white;
-        }
-
-        .download-info {
-            margin-top: 40px;
-        }
-
-        .download-info p {
-            font-size: 1rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--text-dark);
-            padding: 70px 0 30px;
-            color: white;
-        }
-
-        .footer-logo {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: inline-block;
-            color: white;
-        }
-
-        .footer-logo i {
-            color: var(--whatsapp-green);
-        }
-
-        .footer p {
-            color: rgba(255, 255, 255, 0.7);
-            max-width: 300px;
-        }
-
-        .footer h4 {
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            position: relative;
-            padding-bottom: 10px;
-            color: white;
-        }
-
-        .footer h4::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 2px;
-            background: var(--whatsapp-green);
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-            list-style: none;
-        }
-
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--whatsapp-green);
-            padding-left: 5px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            background: var(--whatsapp-green);
-            color: white;
-            transform: translateY(-5px);
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 30px;
-            margin-top: 50px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .hero h1 {
-                font-size: 3.5rem;
-            }
-
-            .section-title h2 {
-                font-size: 2.8rem;
-            }
-        }
-
-        @media (max-width: 991px) {
-            .hero {
-                padding: 100px 0 80px;
-            }
-
-            .hero h1 {
-                font-size: 3rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
-            .hero-buttons {
-                justify-content: center;
-                gap: 15px;
-            }
-
-            .btn-primary,
-            .btn-outline {
-                padding: 14px 28px;
-                font-size: 1rem;
-            }
-
-            .section-title h2 {
-                font-size: 2.5rem;
-            }
-
-            .feature-card {
-                padding: 30px 25px;
-                margin-bottom: 25px;
-            }
-
-            .stats-container {
-                padding: 40px 30px;
-            }
-
-            .stat-item:not(:last-child)::after {
-                display: none;
-            }
-
-            .download-content h2 {
-                font-size: 2.5rem;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .hero {
-                padding: 80px 0 60px;
-                text-align: center;
-            }
-
-            .hero-content {
-                margin-bottom: 40px;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-            }
-
-            .hero-stats {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .section-title {
-                margin-bottom: 60px;
-            }
-
-            .section-title h2 {
-                font-size: 2.2rem;
-            }
-
-            .section-title p {
-                font-size: 1.1rem;
-            }
-
-            .feature-card {
-                padding: 25px 20px;
-            }
-
-            .stat-number {
-                font-size: 2.5rem;
-            }
-
-            .stat-text {
-                font-size: 1.1rem;
-            }
-
-            .download {
-                padding: 80px 0;
-            }
-
-            .download-content h2 {
-                font-size: 2rem;
-            }
-
-            .download-content p {
-                font-size: 1.1rem;
-            }
-
-            .download-buttons {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-
-            .store-btn {
-                min-width: 280px;
-                padding: 18px 30px;
-            }
-
-            .community-cta h3 {
-                font-size: 2rem;
-            }
-
-            .community-cta p {
-                font-size: 1.1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .section-title h2 {
-                font-size: 1.8rem;
-            }
-
-            .download-content h2 {
-                font-size: 1.8rem;
-            }
-
-            .store-btn {
-                min-width: 250px;
-                padding: 16px 25px;
-            }
-
-            .store-text div {
-                font-size: 1.2rem;
-            }
-
-            .btn-primary,
-            .btn-outline {
-                padding: 12px 24px;
-                font-size: 0.95rem;
-            }
-        }
-    </style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $appSettings['app_name'] ?? 'Farmers Network' }} - {{ $appSettings['app_description'] ?? 'Connect & Collaborate' }}</title>
+    
+    {{-- Vite CSS --}}
+    @vite(['resources/css/landing.css'])
+    
+    {{-- Phosphor Icons --}}
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
-<body>
+<body class="bg-gray-50 font-sans antialiased">
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-leaf"></i>
-                Farmers Network
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#community">Community</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#download">Download</a>
-                    </li>
-                </ul>
-                <div class="ms-lg-3 mt-3 mt-lg-0">
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Admin Panel</a>
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-2">
+                    @if(isset($appSettings['logo_url']) && $appSettings['logo_url'])
+                        <img src="{{ $appSettings['logo_url'] }}" alt="Logo" class="w-8 h-8 rounded-lg">
+                    @else
+                        <div class="w-8 h-8 bg-green-700 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">{{ substr($appSettings['app_name'] ?? 'F', 0, 1) }}</span>
+                        </div>
+                    @endif
+                    <span class="font-bold text-gray-900 text-lg">{{ $appSettings['app_name'] ?? 'Farmers Network' }}</span>
+                </a>
+
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-sm font-medium text-gray-600 hover:text-green-700 transition-colors">Features</a>
+                    <a href="#stats" class="text-sm font-medium text-gray-600 hover:text-green-700 transition-colors">Community</a>
+                    <a href="#download" class="text-sm font-medium text-gray-600 hover:text-green-700 transition-colors">Download</a>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="flex items-center space-x-3">
+                    <a href="#download" class="flex items-center gap-2 px-4 py-2.5 bg-green-700 hover:bg-green-800 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-green-700/20">
+                        <i class="ph ph-download-simple"></i>
+                        Download Now
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="floating-elements">
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
+    <section class="relative pt-32 pb-20 overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 -z-10">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-green-200 rounded-full blur-3xl opacity-30 animate-pulse-slow"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-green-300 rounded-full blur-3xl opacity-20 animate-pulse-slow" style="animation-delay: 2s;"></div>
         </div>
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="hero-content">
-                        <h1>Connect, Collaborate & Grow Together</h1>
-                        <p>Transform your farming experience with our cutting-edge communication platform. Connect with farmers worldwide, share knowledge, and build thriving agricultural communities.</p>
-                        <div class="hero-buttons">
-                            <button class="btn-primary">Get Started Free</button>
-                            <a href="#features" class="btn-outline">Explore Features</a>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Content -->
+                <div class="text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-full text-green-700 text-sm font-medium mb-6">
+                        <i class="ph-fill ph-star"></i>
+                        Trusted by 250,000+ farmers worldwide
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                        Connect, Collaborate & 
+                        <span class="text-green-700">Grow Together</span>
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0">
+                        Transform your farming experience with our cutting-edge communication platform. Connect with farmers worldwide, share knowledge, and build thriving agricultural communities.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="#download" class="flex items-center justify-center gap-2 px-6 py-3.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl transition-all shadow-lg shadow-green-700/30 hover:shadow-xl hover:-translate-y-0.5">
+                            <i class="ph-bold ph-download-simple text-lg"></i>
+                            Get Started Free
+                        </a>
+                        <a href="#features" class="flex items-center justify-center gap-2 px-6 py-3.5 bg-white border border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-green-300 hover:text-green-700 transition-all">
+                            <i class="ph ph-play-circle text-lg"></i>
+                            Explore Features
+                        </a>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="flex items-center justify-center lg:justify-start gap-8 mt-12 pt-8 border-t border-gray-100">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-gray-900">250K+</p>
+                            <p class="text-sm text-gray-500">Active Users</p>
                         </div>
-                        <div class="hero-stats">
-                            <div class="stat-item-inline">
-                                <span class="stat-number">{{ number_format($stats['total_users'] ?? 250000) }}+</span>
-                                <span class="stat-label">Active Farmers</span>
-                            </div>
-                            <div class="stat-item-inline">
-                                <span class="stat-number">{{ number_format($stats['total_countries'] ?? 120) }}+</span>
-                                <span class="stat-label">Countries</span>
-                            </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-gray-900">120+</p>
+                            <p class="text-sm text-gray-500">Countries</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-gray-900">4.9</p>
+                            <p class="text-sm text-gray-500">App Rating</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="hero-visual">
-                        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Modern farming technology and community" class="hero-main-img">
-                        <div class="hero-visual-elements">
-                            <div class="visual-element visual-element-1">
-                                <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Wheat field">
+
+                <!-- Hero Visual -->
+                <div class="relative">
+                    <div class="relative z-10">
+                        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&h=500&fit=crop" 
+                             alt="Farming Community" 
+                             class="rounded-2xl shadow-2xl w-full">
+                    </div>
+                    <!-- Floating Cards -->
+                    <div class="absolute -top-4 -left-4 bg-white rounded-xl shadow-lg p-4 animate-float z-20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="ph-bold ph-users text-green-700"></i>
                             </div>
-                            <div class="visual-element visual-element-2">
-                                <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Farm workers">
+                            <div>
+                                <p class="text-xs text-gray-500">New Members</p>
+                                <p class="text-lg font-bold text-gray-900">+1,234</p>
                             </div>
-                            <div class="visual-element visual-element-3">
-                                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Modern greenhouse">
+                        </div>
+                    </div>
+                    <div class="absolute -bottom-4 -right-4 bg-white rounded-xl shadow-lg p-4 animate-float-delay z-20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="ph-bold ph-chat-circle-dots text-green-700"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Messages Today</p>
+                                <p class="text-lg font-bold text-gray-900">45.2K</p>
                             </div>
                         </div>
                     </div>
@@ -1045,214 +134,205 @@
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>Powerful Features</h2>
-                <p>Everything you need to connect, communicate, and collaborate with the global farming community</p>
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Section Header -->
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-full text-green-700 text-sm font-medium mb-4">
+                    <i class="ph-bold ph-sparkle"></i>
+                    Powerful Features
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything You Need to Connect</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Our platform provides all the tools you need to communicate, collaborate, and grow your farming network.</p>
             </div>
 
-            <div class="feature-grid">
-                <div class="row">
-                    <!-- Feature 1 -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-comments"></i>
-                            </div>
-                            <h3>Real-time Messaging</h3>
-                            <p>Send and receive messages instantly with real-time delivery and read receipts. Stay connected with your farming community anytime, anywhere.</p>
-                        </div>
-                    </div>
+            <!-- Features Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                    <!-- Feature 2 -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-video"></i>
-                            </div>
-                            <h3>Video & Voice Calls</h3>
-                            <p>High-quality video and voice calling with crystal clear audio and HD video. Consult with experts or connect with fellow farmers face-to-face.</p>
-                        </div>
+                <!-- Feature 1 -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-700 transition-colors">
+                        <i class="ph-bold ph-chat-circle-dots text-2xl text-green-700 group-hover:text-white transition-colors"></i>
                     </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Real-time Messaging</h3>
+                    <p class="text-gray-600 text-sm">Instant messaging with read receipts, typing indicators, and seamless synchronization across all devices.</p>
+                </div>
 
-                    <!-- Feature 3 -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <h3>End-to-End Security</h3>
-                            <p>Your conversations are protected with industry-standard encryption. Share farming insights and data with complete peace of mind.</p>
-                        </div>
+                <!-- Feature 2 -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
+                        <i class="ph-bold ph-users-three text-2xl text-blue-600 group-hover:text-white transition-colors"></i>
                     </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Group Communities</h3>
+                    <p class="text-gray-600 text-sm">Create and join farming communities with up to 256 members. Share knowledge and collaborate on projects.</p>
+                </div>
 
-                    <!-- Feature 4 -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <h3>Group Chats</h3>
-                            <p>Create group conversations with up to 256 members and advanced admin controls. Coordinate with your entire farming cooperative.</p>
-                        </div>
+                <!-- Feature 3 -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
+                        <i class="ph-bold ph-video-camera text-2xl text-purple-600 group-hover:text-white transition-colors"></i>
                     </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Video & Voice Calls</h3>
+                    <p class="text-gray-600 text-sm">Crystal-clear HD video and voice calls. Connect face-to-face with farmers around the world.</p>
+                </div>
 
-                    <!-- Feature 5 -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-file-upload"></i>
-                            </div>
-                            <h3>File Sharing</h3>
-                            <p>Share photos, videos, documents, and any file type up to 100MB instantly. Exchange crop reports, weather data, and market information.</p>
-                        </div>
+                <!-- Feature 4 -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-600 transition-colors">
+                        <i class="ph-bold ph-image text-2xl text-orange-600 group-hover:text-white transition-colors"></i>
                     </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Media Sharing</h3>
+                    <p class="text-gray-600 text-sm">Share photos, videos, and documents easily. Perfect for sharing crop updates and farming techniques.</p>
+                </div>
 
-                    <!-- Feature 6 -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-camera"></i>
-                            </div>
-                            <h3>Status Updates</h3>
-                            <p>Share your farming moments with 24-hour disappearing status updates and stories. Showcase your harvest, equipment, or daily farm life.</p>
-                        </div>
+                <!-- Feature 5 -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
+                    <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-red-600 transition-colors">
+                        <i class="ph-bold ph-broadcast text-2xl text-red-600 group-hover:text-white transition-colors"></i>
                     </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Status Updates</h3>
+                    <p class="text-gray-600 text-sm">Share your daily farming activities with status updates that disappear after 24 hours.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
+                    <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-teal-600 transition-colors">
+                        <i class="ph-bold ph-shield-check text-2xl text-teal-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">End-to-End Encryption</h3>
+                    <p class="text-gray-600 text-sm">Your conversations are protected with industry-standard encryption. Your data stays private.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Community Section -->
-    <section id="community" class="community">
-        <div class="container">
-            <div class="section-title">
-                <h2>Our Growing Community</h2>
-                <p>Join thousands of farmers who are already connecting and growing together</p>
+    <!-- Stats Section -->
+    <section id="stats" class="py-20 bg-green-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Join Our Growing Community</h2>
+                <p class="text-lg text-green-100 max-w-2xl mx-auto">Thousands of farmers trust our platform every day to connect and collaborate.</p>
             </div>
 
-            <div class="stats-container">
-                <div class="row">
-                    <div class="col-md-3 col-sm-6">
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-number">{{ number_format($stats['total_users'] ?? 250000) }}+</div>
-                            <div class="stat-text">Active Farmers</div>
-                        </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/20">
+                    <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="ph-bold ph-users text-3xl text-white"></i>
                     </div>
-
-                    <div class="col-md-3 col-sm-6">
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-globe-americas"></i>
-                            </div>
-                            <div class="stat-number">{{ number_format($stats['total_countries'] ?? 120) }}+</div>
-                            <div class="stat-text">Countries</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6">
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-comments"></i>
-                            </div>
-                            <div class="stat-number">{{ number_format($stats['total_messages'] ?? 5000000) }}+</div>
-                            <div class="stat-text">Daily Messages</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6">
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-hands-helping"></i>
-                            </div>
-                            <div class="stat-number">{{ number_format($stats['total_groups'] ?? 15000) }}+</div>
-                            <div class="stat-text">Farming Groups</div>
-                        </div>
-                    </div>
+                    <p class="text-4xl font-bold text-white mb-1">250K+</p>
+                    <p class="text-green-100 text-sm">Active Users</p>
                 </div>
-            </div>
 
-            <div class="community-cta">
-                <h3>Join the Community Today</h3>
-                <p>Connect with fellow farmers and start growing your network. Be part of the largest agricultural community worldwide.</p>
-                <a href="{{ route('admin.login') }}" class="btn-primary">Login as Admin</a>
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/20">
+                    <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="ph-bold ph-chat-circle-dots text-3xl text-white"></i>
+                    </div>
+                    <p class="text-4xl font-bold text-white mb-1">10M+</p>
+                    <p class="text-green-100 text-sm">Messages Sent</p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/20">
+                    <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="ph-bold ph-globe text-3xl text-white"></i>
+                    </div>
+                    <p class="text-4xl font-bold text-white mb-1">120+</p>
+                    <p class="text-green-100 text-sm">Countries</p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/20">
+                    <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="ph-bold ph-star text-3xl text-white"></i>
+                    </div>
+                    <p class="text-4xl font-bold text-white mb-1">4.9</p>
+                    <p class="text-green-100 text-sm">App Store Rating</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Download Section -->
-    <section id="download" class="download">
-        <div class="container">
-            <div class="download-content">
-                <h2>Download Farmers Network Today</h2>
-                <p>Join the largest agricultural community and start connecting with farmers around the world. Get started with just a few taps and transform your farming experience.</p>
+    <section id="download" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div class="grid lg:grid-cols-2">
+                    <!-- Content -->
+                    <div class="p-8 lg:p-12 flex flex-col justify-center">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-full text-green-700 text-sm font-medium mb-6 w-fit">
+                            <i class="ph-bold ph-device-mobile"></i>
+                            Available on all platforms
+                        </div>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                            Download {{ $appSettings['app_name'] ?? 'Farmers Network' }} Today
+                        </h2>
+                        <p class="text-lg text-gray-600 mb-8">
+                            Get started in minutes. Download our app and join the largest agricultural community in the world.
+                        </p>
 
-                <div class="download-buttons">
-                    <a href="#" class="store-btn app-store">
-                        <div class="store-icon">
-                            <img src="https://img.icons8.com/color/100/mac-os.png" alt="App Store">
+                        <!-- Download Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="#" class="flex items-center gap-4 px-6 py-4 bg-gray-900 hover:bg-gray-800 text-white rounded-xl transition-all group">
+                                <i class="ph-bold ph-apple-logo text-3xl"></i>
+                                <div class="text-left">
+                                    <p class="text-xs text-gray-400">Download on the</p>
+                                    <p class="text-lg font-semibold">App Store</p>
+                                </div>
+                            </a>
+                            <a href="#" class="flex items-center gap-4 px-6 py-4 bg-gray-900 hover:bg-gray-800 text-white rounded-xl transition-all group">
+                                <i class="ph-bold ph-google-play-logo text-3xl"></i>
+                                <div class="text-left">
+                                    <p class="text-xs text-gray-400">Get it on</p>
+                                    <p class="text-lg font-semibold">Google Play</p>
+                                </div>
+                            </a>
                         </div>
-                        <div class="store-text">
-                            <p>Download on the</p>
-                            <div>App Store</div>
-                        </div>
-                    </a>
 
-                    <a href="#" class="store-btn play-store">
-                        <div class="store-icon">
-                            <img src="https://img.icons8.com/color/100/google-play.png" alt="Google Play">
-                        </div>
-                        <div class="store-text">
-                            <p>Get it on</p>
-                            <div>Google Play</div>
-                        </div>
-                    </a>
-                </div>
+                        <p class="text-sm text-gray-500 mt-6">
+                            <i class="ph ph-check-circle text-green-600"></i>
+                            Free to download • No credit card required
+                        </p>
+                    </div>
 
-                <div class="download-info">
-                    <p>Available on iOS, Android, and Web platforms</p>
+                    <!-- Image -->
+                    <div class="relative bg-gradient-to-br from-green-600 to-green-800 p-8 lg:p-12 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-10">
+                            <div class="absolute top-10 left-10 w-32 h-32 border-2 border-white rounded-full"></div>
+                            <div class="absolute bottom-10 right-10 w-48 h-48 border-2 border-white rounded-full"></div>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=500&fit=crop" 
+                             alt="Mobile App" 
+                             class="relative z-10 rounded-2xl shadow-2xl max-w-xs">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-5 mb-lg-0">
-                    <a href="#" class="footer-logo">
-                        <i class="fas fa-leaf"></i> Farmers Network
-                    </a>
-                    <p>Connecting the agricultural community worldwide. Share knowledge, collaborate, and grow together with farmers across the globe.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                    <div class="mt-3">
-                        <img src="https://img.icons8.com/color/100/farm.png" alt="Farm Icon" style="width:2rem; height:2rem;">
-                    </div>
-                </div>
+    @include('partials.footer')
 
-                <div class="col-lg-2 col-md-4 mb-5 mb-md-0">
-                    <h4>Quick Links</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#community">Community</a></li>
-                        <li><a href="#download">Download</a></li>
-                        <li><a href="#">FAQs</a></li>
-                    </ul>
-                </div>
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
 
-                <div class="col-lg-2 col-md-4 mb-5 mb-md-0">
-                    <h4>Developer</h4>
-                    <ul class="footer-links">
-                        <li><a href="docs/api-documentation/new-api-docs/index.html
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-white', 'shadow-md');
+                nav.classList.remove('bg-white/80');
+            } else {
+                nav.classList.remove('shadow-md');
+                nav.classList.add('bg-white/80');
+            }
+        });
+    </script>
+</body>
+</html>
+

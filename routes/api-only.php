@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\StreamController;
 use App\Http\Controllers\Api\BroadcastSettingsController;
+use App\Http\Controllers\Api\AppSettingsController;
 
 /*
 |--------------------------------------------------------------------------

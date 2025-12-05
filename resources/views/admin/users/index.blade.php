@@ -3,239 +3,178 @@
 @section('title', 'Users Management')
 @section('page-title', 'Users Management')
 
-@section('toolbar-buttons')
-    <a href="{{ route('admin.users.create') }}"
-       class="bg-whatsapp-primary hover:bg-whatsapp-dark text-white px-4 py-2 rounded-lg transition-colors duration-200 inline-flex items-center font-medium">
-        <i class="fas fa-plus mr-2"></i> Add New User
-    </a>
-    <a href="{{ route('admin.users.export', request()->query()) }}"
-       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 inline-flex items-center font-medium ml-3">
-        <i class="fas fa-download mr-2"></i> Export CSV
-    </a>
-@endsection
-
 @section('content')
-    <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-lg whatsapp-shadow p-6 mb-6">
-        <div class="flex items-center space-x-3 mb-6">
-            <div class="bg-whatsapp-light p-2 rounded-lg">
-                <i class="fas fa-filter text-whatsapp-primary"></i>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-900">Filter & Search Users</h3>
-        </div>
-
-        <form method="GET" action="{{ route('admin.users.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div>
-                <label for="search" class="block text-sm font-medium text-whatsapp-text mb-2">Search</label>
-                <input type="text"
-                       id="search"
+    <!-- Action Bar -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <!-- Search & Filter Toggle -->
+        <div class="flex items-center gap-2 flex-1 max-w-2xl">
+            <div class="relative flex-1">
+                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                <input type="text" 
+                       form="filter-form"
                        name="search"
                        value="{{ request('search') }}"
-                       placeholder="Name, email, or phone..."
-                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-whatsapp-primary focus:border-whatsapp-primary transition-colors">
+                       placeholder="Search users by name, email or phone..." 
+                       class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 transition-all text-sm">
             </div>
+            <button type="button" 
+                    onclick="document.getElementById('filter-panel').classList.toggle('hidden')"
+                    class="p-2.5 bg-white border border-gray-200 rounded-xl hover:border-green-600 hover:text-green-700 transition-colors text-gray-600">
+                <i class="ph ph-funnel text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.users.export', request()->query()) }}" 
+               class="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-green-600 hover:text-green-600 transition-all text-sm font-medium text-gray-700">
+                <i class="ph ph-download-simple text-lg"></i>
+                <span class="hidden sm:inline">Export</span>
+            </a>
+            <a href="{{ route('admin.users.create') }}" 
+               class="flex items-center gap-2 px-4 py-2.5 bg-green-700 hover:bg-green-800 text-white rounded-xl transition-all text-sm font-medium shadow-lg shadow-green-700/30">
+                <i class="ph ph-plus text-lg"></i>
+                <span class="hidden sm:inline">Add User</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Panel (Hidden by default) -->
+    <div id="filter-panel" class="hidden bg-white border border-gray-100 rounded-2xl p-5 mb-6 shadow-sm">
+        <form id="filter-form" method="GET" action="{{ route('admin.users.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Preserve search if typed in main bar -->
+            @if(request('search'))
+                <input type="hidden" name="search" value="{{ request('search') }}">
+            @endif
 
             <div>
-                <label for="status" class="block text-sm font-medium text-whatsapp-text mb-2">Status</label>
-                <select id="status"
-                        name="status"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-whatsapp-primary focus:border-whatsapp-primary transition-colors bg-white">
-                    <option value="">All Users</option>
-                    <option value="online" {{ request('status') === 'online' ? 'selected' : '' }}>Online</option>
-                    <option value="offline" {{ request('status') === 'offline' ? 'selected' : '' }}>Offline</option>
-                    <option value="blocked" {{ request('status') === 'blocked' ? 'selected' : '' }}>Blocked</option>
+                <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Role</label>
+                <select name="role" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 text-sm">
+                    <option value="">All Roles</option>
+                    <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="user" {{ request('role') === 'user' ? 'selected' : '' }}>User</option>
                 </select>
             </div>
 
             <div>
-                <label for="sort_by" class="block text-sm font-medium text-whatsapp-text mb-2">Sort By</label>
-                <select id="sort_by"
-                        name="sort_by"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-whatsapp-primary focus:border-whatsapp-primary transition-colors bg-white">
-                    <option value="created_at" {{ request('sort_by') === 'created_at' ? 'selected' : '' }}>Join Date</option>
-                    <option value="name" {{ request('sort_by') === 'name' ? 'selected' : '' }}>Name</option>
-                    <option value="last_seen_at" {{ request('sort_by') === 'last_seen_at' ? 'selected' : '' }}>Last Seen</option>
+                <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Status</label>
+                <select name="status" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 text-sm">
+                    <option value="">All Status</option>
+                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="banned" {{ request('status') === 'banned' ? 'selected' : '' }}>Banned</option>
                 </select>
             </div>
 
             <div>
-                <label for="sort_order" class="block text-sm font-medium text-whatsapp-text mb-2">Order</label>
-                <select id="sort_order"
-                        name="sort_order"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-whatsapp-primary focus:border-whatsapp-primary transition-colors bg-white">
-                    <option value="desc" {{ request('sort_order') === 'desc' ? 'selected' : '' }}>Descending</option>
-                    <option value="asc" {{ request('sort_order') === 'asc' ? 'selected' : '' }}>Ascending</option>
-                </select>
+                <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Joined After</label>
+                <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 text-sm">
             </div>
 
-            <div class="flex items-end">
-                <button type="submit"
-                        class="w-full bg-whatsapp-primary hover:bg-whatsapp-dark text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center font-medium">
-                    <i class="fas fa-search mr-2"></i>
-                    Search
+            <div class="flex items-end gap-2">
+                <button type="submit" class="flex-1 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors text-sm font-medium">
+                    Apply Filters
                 </button>
+                <a href="{{ route('admin.users.index') }}" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                    Reset
+                </a>
             </div>
         </form>
     </div>
 
     <!-- Users Table -->
-    <div class="bg-white rounded-xl shadow-lg whatsapp-shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-whatsapp-light p-2 rounded-lg">
-                        <i class="fas fa-users text-whatsapp-primary"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Users Directory</h3>
-                        <p class="text-sm text-whatsapp-text">Total: {{ number_format($users->total()) }} users</p>
-                    </div>
-                </div>
-                <div class="text-sm text-whatsapp-text">
-                    Showing {{ $users->firstItem() }}-{{ $users->lastItem() }} of {{ $users->total() }}
-                </div>
-            </div>
-        </div>
-
+    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
-                <thead class="bg-whatsapp-light">
+                <thead class="bg-gray-50/50 border-b border-gray-100">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-whatsapp-primary uppercase tracking-wider">User</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-whatsapp-primary uppercase tracking-wider">Contact Info</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-whatsapp-primary uppercase tracking-wider">Stats</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-whatsapp-primary uppercase tracking-wider">Last Seen</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-whatsapp-primary uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-whatsapp-primary uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Active</th>
+                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody class="divide-y divide-gray-100">
                     @forelse($users as $user)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-gray-50/50 transition-colors group">
                         <td class="px-6 py-4">
-                            <div class="flex items-center space-x-4">
+                            <div class="flex items-center gap-3">
                                 @if($user->avatar_url)
-                                    <img src="{{ $user->avatar_url }}" class="w-12 h-12 rounded-full" alt="{{ $user->name }}">
+                                    <img src="{{ $user->avatar_url }}" alt="" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm">
                                 @else
-                                    <div class="w-12 h-12 bg-whatsapp-light rounded-full flex items-center justify-center">
-                                        <span class="text-whatsapp-primary font-semibold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-700 to-green-500 flex items-center justify-center text-white font-semibold shadow-sm shadow-green-700/20">
+                                        {{ strtoupper(substr($user->name, 0, 1)) }}
                                     </div>
                                 @endif
                                 <div>
                                     <div class="font-medium text-gray-900">{{ $user->name }}</div>
-                                    <div class="text-sm text-whatsapp-text">ID: {{ $user->id }}</div>
-                                    <div class="text-sm text-whatsapp-text">Joined: {{ $user->created_at->format('M d, Y') }}</div>
+                                    <div class="text-xs text-gray-500">{{ $user->email }}</div>
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="space-y-1">
-                                <div class="flex items-center text-sm text-gray-600">
-                                    <i class="fas fa-envelope text-whatsapp-primary mr-2"></i>
-                                    {{ $user->email }}
-                                </div>
-                                @if($user->phone_number)
-                                    <div class="flex items-center text-sm text-gray-600">
-                                        <i class="fas fa-phone text-whatsapp-primary mr-2"></i>
-                                        {{ $user->country_code }}{{ $user->phone_number }}
-                                    </div>
-                                @endif
-                            </div>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium {{ $user->is_admin ? 'bg-purple-50 text-purple-600 border border-purple-100' : 'bg-gray-50 text-gray-600 border border-gray-100' }}">
+                                <i class="ph {{ $user->is_admin ? 'ph-shield-check' : 'ph-user' }}"></i>
+                                {{ $user->is_admin ? 'Admin' : 'User' }}
+                            </span>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="space-y-2">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-whatsapp-light text-whatsapp-primary">
-                                    <i class="fas fa-comments mr-1"></i>
-                                    {{ $user->chats_count }} chats
-                                </span>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    <i class="fas fa-envelope mr-1"></i>
-                                    {{ $user->messages_count }} messages
-                                </span>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                                    <i class="fas fa-phone mr-1"></i>
-                                    {{ $user->sent_calls_count + $user->received_calls_count }} calls
-                                </span>
-                            </div>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium {{ $user->is_banned ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-600 border border-green-100' }}">
+                                <i class="ph {{ $user->is_banned ? 'ph-prohibit' : 'ph-check-circle' }}"></i>
+                                {{ $user->is_banned ? 'Banned' : 'Active' }}
+                            </span>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-600">{{ $user->created_at->format('M j, Y') }}</div>
+                            <div class="text-xs text-gray-400">{{ $user->created_at->format('g:i A') }}</div>
+                        </td>
+                        <td class="px-6 py-4">
                             @if($user->last_seen_at)
-                                {{ $user->last_seen_at->diffForHumans() }}
-                            @else
-                                <span class="text-gray-400">Never</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4">
-                            @if($user->deleted_at)
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                    <i class="fas fa-ban mr-1"></i>
-                                    Blocked
-                                </span>
-                            @elseif($user->is_online)
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <i class="fas fa-circle text-green-500 mr-1"></i>
-                                    Online
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    <i class="fas fa-circle text-gray-400 mr-1"></i>
-                                    Offline
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center space-x-2">
-                                <a href="{{ route('admin.users.show', $user) }}"
-                                   class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-colors"
-                                   title="View">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('admin.users.edit', $user) }}"
-                                   class="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 p-2 rounded-lg transition-colors"
-                                   title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button type="button"
-                                        class="p-2 rounded-lg transition-colors {{ $user->deleted_at ? 'bg-green-100 hover:bg-green-200 text-green-600' : 'bg-red-100 hover:bg-red-200 text-red-600' }}"
-                                        onclick="toggleBlock({{ $user->id }}, '{{ $user->deleted_at ? 'unblock' : 'block' }}')"
-                                        title="{{ $user->deleted_at ? 'Unblock' : 'Block' }}">
-                                    <i class="fas fa-{{ $user->deleted_at ? 'unlock' : 'lock' }}"></i>
-                                </button>
-                                <div class="relative">
-                                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-lg transition-colors"
-                                            onclick="toggleDropdown({{ $user->id }})"
-                                            title="More Actions">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div id="dropdown-{{ $user->id }}" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 hidden">
-                                        <div class="py-1">
-                                            <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                    onclick="resetPassword({{ $user->id }})">
-                                                <i class="fas fa-key mr-2"></i> Reset Password
-                                            </button>
-                                            <hr class="my-1">
-                                            <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                                                    onclick="deleteUser({{ $user->id }})">
-                                                <i class="fas fa-trash mr-2"></i> Delete User
-                                            </button>
-                                        </div>
-                                    </div>
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-1.5 h-1.5 rounded-full {{ $user->last_seen_at->diffInMinutes(now()) < 5 ? 'bg-green-500' : 'bg-gray-300' }}"></div>
+                                    <span class="text-sm text-gray-600">{{ $user->last_seen_at->diffForHumans() }}</span>
                                 </div>
+                            @else
+                                <span class="text-sm text-gray-400">Never</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-2 transition-opacity">
+                                <a href="{{ route('admin.users.show', $user) }}" 
+                                   class="p-2 text-gray-500 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+                                   title="View Details">
+                                    <i class="ph ph-eye text-lg"></i>
+                                </a>
+                                <a href="{{ route('admin.users.edit', $user) }}" 
+                                   class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                   title="Edit User">
+                                    <i class="ph ph-pencil-simple text-lg"></i>
+                                </a>
+                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Delete User"
+                                            onclick="return confirm('Are you sure you want to delete this user? This action cannot be undone.')">
+                                        <i class="ph ph-trash text-lg"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
                         <td colspan="6" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center">
-                                <div class="bg-whatsapp-light p-4 rounded-full mb-4">
-                                    <i class="fas fa-users text-whatsapp-primary text-4xl"></i>
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                                    <i class="ph ph-users text-3xl text-gray-400"></i>
                                 </div>
-                                <h3 class="text-lg font-medium text-gray-900 mb-2">No Users Found</h3>
-                                <p class="text-whatsapp-text mb-4">No users match your current search criteria.</p>
-                                <a href="{{ route('admin.users.create') }}"
-                                   class="bg-whatsapp-primary hover:bg-whatsapp-dark text-white px-4 py-2 rounded-lg transition-colors inline-flex items-center font-medium">
-                                    <i class="fas fa-plus mr-2"></i> Add First User
+                                <h3 class="text-lg font-medium text-gray-900 mb-1">No Users Found</h3>
+                                <p class="text-sm text-gray-500 mb-4">Try adjusting your search or filters</p>
+                                <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors text-sm font-medium">
+                                    Add New User
                                 </a>
                             </div>
                         </td>
@@ -350,3 +289,4 @@ function deleteUser(userId) {
 }
 </script>
 @endpush
+

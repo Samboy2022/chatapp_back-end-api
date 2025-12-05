@@ -6,7 +6,7 @@
 @section('content')
 <div class="space-y-6">
     <!-- Health Overview -->
-    <div class="bg-white rounded-xl shadow-lg whatsapp-shadow p-6">
+    <div class="bg-white rounded-xl shadow-lg  p-6">
         <div class="flex items-center space-x-3 mb-6">
             <div class="bg-green-100 p-2 rounded-lg">
                 <i class="fas fa-heartbeat text-green-600"></i>
@@ -94,7 +94,7 @@
     <!-- Detailed Health Information -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- System Information -->
-        <div class="bg-white rounded-xl shadow-lg whatsapp-shadow p-6">
+        <div class="bg-white rounded-xl shadow-lg  p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <i class="fas fa-server mr-2 text-blue-600"></i>
                 System Information
@@ -139,7 +139,7 @@
         </div>
 
         <!-- Recent Errors & Issues -->
-        <div class="bg-white rounded-xl shadow-lg whatsapp-shadow p-6">
+        <div class="bg-white rounded-xl shadow-lg  p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <i class="fas fa-exclamation-triangle mr-2 text-yellow-600"></i>
                 Recent Issues
@@ -190,7 +190,7 @@
     </div>
 
     <!-- Performance Metrics -->
-    <div class="bg-white rounded-xl shadow-lg whatsapp-shadow p-6">
+    <div class="bg-white rounded-xl shadow-lg  p-6">
         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <i class="fas fa-chart-line mr-2 text-blue-600"></i>
             Performance Metrics
@@ -213,7 +213,7 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="bg-white rounded-xl shadow-lg whatsapp-shadow p-6">
+    <div class="bg-white rounded-xl shadow-lg  p-6">
         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <i class="fas fa-tools mr-2 text-gray-600"></i>
             Quick Actions
@@ -255,3 +255,4 @@
     </div>
 </div>
 @endsection
+

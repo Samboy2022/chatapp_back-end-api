@@ -4,19 +4,19 @@
 @section('page-title', 'User Profile Details')
 
 @section('content')
-<div class="bg-white rounded-xl shadow-lg whatsapp-shadow p-6">
+<div class="bg-white rounded-xl shadow-lg p-6">
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-whatsapp-light rounded-full flex items-center justify-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
                 @if($user->avatar_url)
                     <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-16 h-16 rounded-full object-cover">
                 @else
-                    <i class="fas fa-user text-whatsapp-primary text-2xl"></i>
+                    <i class="fas fa-user text-green-700 text-2xl"></i>
                 @endif
             </div>
             <div>
                 <h2 class="text-2xl font-bold text-gray-900">{{ $user->name }}</h2>
-                <p class="text-whatsapp-text">{{ $user->email }}</p>
+                <p class="text-green-800">{{ $user->email }}</p>
                 <p class="text-sm text-gray-600">{{ $user->phone_number }}</p>
                 <div class="flex items-center space-x-4 mt-2">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
@@ -198,3 +198,4 @@
     </div>
 </div>
 @endsection
+

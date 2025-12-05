@@ -23,6 +23,245 @@ class SettingController extends Controller
         return view('admin.settings.index', compact('settingsGrouped'));
     }
 
+    /**
+     * Get all settings as JSON for real-time updates
+     */
+    public function getSettings()
+    {
+        try {
+            $settings = \App\Models\Setting::all()->map(function ($setting) {
+                return [
+                    'id' => $setting->id,
+                    'key' => $setting->key,
+                    'value' => $setting->value,
+                    'typed_value' => $setting->typed_value,
+                    'type' => $setting->type,
+                    'group' => $setting->group,
+                    'label' => $setting->label,
+                    'description' => $setting->description,
+                    'options' => $setting->options,
+                    'is_public' => $setting->is_public
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $settings->groupBy('group')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update a single setting via AJAX
+     */
+    public function updateSingle(Request $request)
+    {
+        try {
+            $key = $request->input('key');
+            $value = $request->input('value');
+
+            $setting = \App\Models\Setting::where('key', $key)->first();
+
+            if (!$setting) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Setting not found'
+                ], 404);
+            }
+
+            // Handle boolean conversion
+            if ($setting->type === 'boolean') {
+                $value = filter_var($value, FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
+            }
+
+            $setting->value = $value;
+            $setting->save();
+
+            // Clear cache for this setting
+            Cache::forget("setting.{$key}");
+            Cache::forget('settings.all');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Setting updated successfully',
+                'data' => [
+                    'key' => $setting->key,
+                    'value' => $setting->value,
+                    'typed_value' => $setting->typed_value
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Setting update failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update setting: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Create a new setting
+     */
+    public function create(Request $request)
+    {
+        $request->validate([
+            'key' => 'required|string|unique:settings,key',
+            'value' => 'nullable|string',
+            'type' => 'required|in:string,boolean,integer,float,json,text',
+            'group' => 'required|string',
+            'label' => 'required|string',
+            'description' => 'nullable|string',
+            'is_public' => 'boolean'
+        ]);
+
+        try {
+            $setting = \App\Models\Setting::create([
+                'key' => $request->key,
+                'value' => $request->value ?? '',
+                'type' => $request->type,
+                'group' => $request->group,
+                'label' => $request->label,
+                'description' => $request->description,
+                'options' => $request->options,
+                'is_public' => $request->is_public ?? false
+            ]);
+
+            Cache::forget('settings.all');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Setting created successfully',
+                'data' => $setting
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create setting: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete a setting
+     */
+    public function delete(Request $request)
+    {
+        try {
+            $key = $request->input('key');
+            $setting = \App\Models\Setting::where('key', $key)->first();
+
+            if (!$setting) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Setting not found'
+                ], 404);
+            }
+
+            Cache::forget("setting.{$key}");
+            Cache::forget('settings.all');
+
+            $setting->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Setting deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete setting: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Upload application logo
+     */
+    public function uploadLogo(Request $request)
+    {
+        $request->validate([
+            'logo' => 'required|image|mimes:jpeg,jpg,png,gif|max:2048'
+        ]);
+
+        try {
+            $file = $request->file('logo');
+            
+            // Delete old logo if exists
+            $oldLogo = \App\Models\Setting::get('logo_url');
+            if ($oldLogo) {
+                $oldPath = str_replace('/storage/', '', parse_url($oldLogo, PHP_URL_PATH));
+                if ($oldPath && Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+
+            // Store new logo
+            $filename = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('logos', $filename, 'public');
+            $url = Storage::disk('public')->url($path);
+
+            // Update setting
+            \App\Models\Setting::set('logo_url', $url, 'string', 'general');
+            
+            // Clear cache
+            Cache::forget('setting.logo_url');
+            Cache::forget('settings.all');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Logo uploaded successfully',
+                'url' => $url
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Logo upload failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload logo: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Remove application logo
+     */
+    public function removeLogo()
+    {
+        try {
+            $logoUrl = \App\Models\Setting::get('logo_url');
+            
+            if ($logoUrl) {
+                // Delete file
+                $path = str_replace('/storage/', '', parse_url($logoUrl, PHP_URL_PATH));
+                if ($path && Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
+                
+                // Clear setting
+                \App\Models\Setting::set('logo_url', '', 'string', 'general');
+                
+                // Clear cache
+                Cache::forget('setting.logo_url');
+                Cache::forget('settings.all');
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Logo removed successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Logo removal failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to remove logo: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function update(Request $request)
     {
         // Get all settings to validate against

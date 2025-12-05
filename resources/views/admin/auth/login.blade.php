@@ -4,335 +4,264 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Farmers Network Admin - Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-white: #FFFFFF;
-            --whatsapp-green: #25D366;
-            --whatsapp-dark-green: #128C7E;
-            --text-dark: #333333;
-            --text-light: #666666;
-            --background-light: #F8F9FA;
-            --gradient-green: linear-gradient(135deg, var(--whatsapp-dark-green) 0%, var(--whatsapp-green) 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--background-light);
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .login-container {
-            max-width: 500px;
-            width: 100%;
-            padding: 0 10px;
-        }
-
-        .login-card {
-            background: var(--primary-white);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            border: 1px solid #ddd;
-        }
-
-        .login-header {
-            background: var(--gradient-green);
-            padding: 30px 20px;
-            text-align: center;
-            color: white;
-        }
-
-        .login-logo {
-            font-size: 3rem;
-            color: white;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .login-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .login-subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .login-body {
-            padding: 40px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .form-control-custom {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        .form-control-custom:focus {
-            border-color: var(--whatsapp-green);
-            outline: none;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
-        }
-
-        .btn-login {
-            width: 100%;
-            background: var(--whatsapp-green);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .btn-login:hover {
-            background: var(--whatsapp-dark-green);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(18, 140, 126, 0.3);
-        }
-
-        .demo-info {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 25px;
-        }
-
-        .demo-title {
-            color: var(--text-dark);
-            font-weight: 600;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
-
-        .demo-title i {
-            color: var(--whatsapp-green);
-            margin-right: 8px;
-        }
-
-        .demo-credentials {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 8px;
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        .demo-credentials strong {
-            color: var(--text-dark);
-        }
-
-        .security-notice {
-            text-align: center;
-            margin-top: 25px;
-            padding: 15px;
-            background: rgba(37, 211, 102, 0.1);
-            border-radius: 8px;
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        .security-notice i {
-            color: var(--whatsapp-green);
-            margin-right: 5px;
-        }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        /* Back to home link */
-        .back-home {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: var(--text-light);
-            text-decoration: none;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            transition: color 0.3s ease;
-        }
-
-        .back-home:hover {
-            color: var(--whatsapp-green);
-        }
-
-        .back-home i {
-            margin-right: 8px;
-        }
-
-        /* Alert styles */
-        .alert-custom {
-            border-radius: 12px;
-            border: 1px solid;
-            margin-bottom: 20px;
-        }
-
-        .alert-success-custom {
-            background: rgba(37, 211, 102, 0.1);
-            border-color: var(--whatsapp-green);
-            color: var(--whatsapp-dark-green);
-        }
-
-        .alert-danger-custom {
-            background: rgba(220, 53, 69, 0.1);
-            border-color: #dc3545;
-            color: #721c24;
-        }
-
-        /* Logo and branding */
-        .brand-logo {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: -1;
-            opacity: 0.05;
-        }
-
-        .brand-logo i {
-            font-size: 8rem;
-            color: var(--text-dark);
-        }
-    </style>
+    <title>Login - {{ $appSettings['app_name'] ?? 'Admin' }}</title>
+    
+    {{-- Vite CSS --}}
+    @vite(['resources/css/landing.css'])
+    
+    {{-- Phosphor Icons --}}
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
-<body>
-    <!-- Background Brand Logo -->
-    <div class="brand-logo">
-        <i class="fas fa-leaf"></i>
-    </div>
-
-    <!-- Back to home link -->
-    <a href="{{ route('home') }}" class="back-home">
-        <i class="fas fa-arrow-left"></i> Back to Home
-    </a>
-
-    <!-- Main Login Container -->
-    <div class="login-container">
-        <div class="login-card">
-            <!-- Header Section -->
-            <div class="login-header">
-                
-                <h4 class="login-title">Farmers Network Admin</h4>
-                
+<body class="bg-gray-50 font-sans antialiased min-h-screen">
+    <div class="min-h-screen flex">
+        <!-- Left Side - Branding -->
+        <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-700 via-green-600 to-green-800 relative overflow-hidden">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-20 left-20 w-64 h-64 border-2 border-white rounded-full"></div>
+                <div class="absolute bottom-20 right-20 w-96 h-96 border-2 border-white rounded-full"></div>
+                <div class="absolute top-1/2 left-1/3 w-48 h-48 border-2 border-white rounded-full"></div>
             </div>
+            
+            <!-- Content -->
+            <div class="relative z-10 flex flex-col justify-center px-12 xl:px-20 w-full">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 mb-8">
+                    @if(isset($appSettings['logo_url']) && $appSettings['logo_url'])
+                        <img src="{{ $appSettings['logo_url'] }}" alt="Logo" class="w-14 h-14 rounded-xl shadow-lg">
+                    @else
+                        <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                            <span class="text-white text-2xl font-bold">{{ substr($appSettings['app_name'] ?? 'F', 0, 1) }}</span>
+                        </div>
+                    @endif
+                    <span class="text-white text-2xl font-bold">{{ $appSettings['app_name'] ?? 'Farmers Network' }}</span>
+                </div>
 
-            <!-- Form Section -->
-            <div class="login-body">
-                <!-- Success Message -->
+                <!-- Main Text -->
+                <h1 class="text-4xl xl:text-5xl font-bold text-white leading-tight mb-6">
+                    Welcome to<br>
+                    <span class="text-green-200">Admin Portal</span>
+                </h1>
+                
+                <p class="text-lg text-green-100 mb-10 max-w-md">
+                    {{ $appSettings['app_description'] ?? 'Connect & Collaborate' }}. Manage your platform, users, and content from one powerful dashboard.
+                </p>
+
+                <!-- Features List -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                            <i class="ph-bold ph-users text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-white font-medium">User Management</p>
+                            <p class="text-green-200 text-sm">Manage all users and permissions</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                            <i class="ph-bold ph-chart-line-up text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-white font-medium">Analytics Dashboard</p>
+                            <p class="text-green-200 text-sm">Real-time insights and reports</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                            <i class="ph-bold ph-gear-six text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-white font-medium">System Settings</p>
+                            <p class="text-green-200 text-sm">Configure your application</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="flex gap-8 mt-12 pt-8 border-t border-white/20">
+                    <div>
+                        <p class="text-3xl font-bold text-white">250K+</p>
+                        <p class="text-green-200 text-sm">Active Users</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-bold text-white">10M+</p>
+                        <p class="text-green-200 text-sm">Messages</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-bold text-white">99.9%</p>
+                        <p class="text-green-200 text-sm">Uptime</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
+            <div class="w-full max-w-md">
+                <!-- Mobile Logo -->
+                <div class="lg:hidden flex items-center justify-center gap-3 mb-8">
+                    @if(isset($appSettings['logo_url']) && $appSettings['logo_url'])
+                        <img src="{{ $appSettings['logo_url'] }}" alt="Logo" class="w-12 h-12 rounded-xl">
+                    @else
+                        <div class="w-12 h-12 bg-green-700 rounded-xl flex items-center justify-center">
+                            <span class="text-white text-xl font-bold">{{ substr($appSettings['app_name'] ?? 'A', 0, 1) }}</span>
+                        </div>
+                    @endif
+                    <span class="text-gray-900 text-xl font-bold">{{ $appSettings['app_name'] ?? 'Admin' }}</span>
+                </div>
+
+                <!-- Back to Home -->
+                <a href="{{ route('home') }}" class="inline-flex items-center gap-2 text-gray-500 hover:text-green-700 text-sm font-medium mb-8 transition-colors">
+                    <i class="ph ph-arrow-left"></i>
+                    Back to Home
+                </a>
+
+                <!-- Header -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Sign in to Admin</h2>
+                    <p class="text-gray-500">Enter your credentials to access the dashboard</p>
+                </div>
+
+                <!-- Alert Messages -->
                 @if (session('success'))
-                    <div class="alert-custom alert-success-custom">
-                        <i class="fas fa-check-circle"></i>
-                        {{ session('success') }}
+                    <div class="mb-6 p-4 bg-green-50 border border-green-100 rounded-xl flex items-start gap-3">
+                        <i class="ph-bold ph-check-circle text-green-600 text-xl mt-0.5"></i>
+                        <div>
+                            <p class="text-sm font-medium text-green-800">Success</p>
+                            <p class="text-sm text-green-700">{{ session('success') }}</p>
+                        </div>
                     </div>
                 @endif
 
-                <!-- Error Message -->
                 @if (session('error'))
-                    <div class="alert-custom alert-danger-custom">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        {{ session('error') }}
+                    <div class="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3">
+                        <i class="ph-bold ph-warning-circle text-red-600 text-xl mt-0.5"></i>
+                        <div>
+                            <p class="text-sm font-medium text-red-800">Error</p>
+                            <p class="text-sm text-red-700">{{ session('error') }}</p>
+                        </div>
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('admin.login.submit') }}">
+                <!-- Login Form -->
+                <form method="POST" action="{{ route('admin.login.submit') }}" class="space-y-5">
                     @csrf
 
                     <!-- Email Field -->
-                    <div class="form-group">
-                        <label class="form-label" for="email">
-                            <i class="fas fa-envelope me-2"></i>Email Address
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            Email Address
                         </label>
-                        <input type="email"
-                               id="email"
-                               name="email"
-                               value="{{ old('email') }}"
-                               class="form-control-custom @error('email') is-invalid @enderror"
-                               placeholder="Enter your admin email"
-                               required
-                               autofocus>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="ph ph-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" 
+                                   id="email" 
+                                   name="email" 
+                                   value="{{ old('email') }}"
+                                   class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 focus:bg-white transition-all text-sm @error('email') border-red-300 bg-red-50 @enderror"
+                                   placeholder="admin@example.com"
+                                   required
+                                   autofocus>
+                        </div>
                         @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                <i class="ph ph-warning-circle"></i>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
                     <!-- Password Field -->
-                    <div class="form-group">
-                        <label class="form-label" for="password">
-                            <i class="fas fa-lock me-2"></i>Password
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                            Password
                         </label>
-                        <input type="password"
-                               id="password"
-                               name="password"
-                               class="form-control-custom @error('password') is-invalid @enderror"
-                               placeholder="Enter your admin password"
-                               required>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="ph ph-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" 
+                                   id="password" 
+                                   name="password"
+                                   class="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 focus:bg-white transition-all text-sm @error('password') border-red-300 bg-red-50 @enderror"
+                                   placeholder="Enter your password"
+                                   required>
+                            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                <i class="ph ph-eye text-gray-400 hover:text-gray-600 transition-colors" id="toggleIcon"></i>
+                            </button>
+                        </div>
                         @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                <i class="ph ph-warning-circle"></i>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
-                    <!-- Submit Button -->
-                    <div class="form-group">
-                        <button type="submit" class="btn-login">
-                            <i class="fas fa-sign-in-alt me-2"></i>Access Admin Panel
-                        </button>
+                    <!-- Remember Me -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="remember" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                            <span class="text-sm text-gray-600">Remember me</span>
+                        </label>
+                        <a href="#" class="text-sm text-green-700 hover:text-green-800 font-medium">Forgot password?</a>
                     </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl transition-all shadow-lg shadow-green-700/30 hover:shadow-xl hover:-translate-y-0.5">
+                        <i class="ph-bold ph-sign-in text-lg"></i>
+                        Sign In
+                    </button>
                 </form>
 
-               
-            </div>
-        </div>
+                <!-- Divider -->
+                <div class="relative my-8">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-gray-50 text-gray-500">Secure Login</span>
+                    </div>
+                </div>
 
-        <!-- Footer -->
-        <div class="login-footer">
-            <p>&copy; {{ date('Y') }} Farmers Network. Admin Portal.</p>
+                <!-- Security Notice -->
+                <div class="bg-gray-100 rounded-xl p-4 flex items-start gap-3">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="ph-bold ph-shield-check text-green-700"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Protected Access</p>
+                        <p class="text-xs text-gray-500 mt-1">This area is restricted to authorized administrators only. All login attempts are logged.</p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <p class="text-center text-sm text-gray-400 mt-8">
+                    &copy; {{ date('Y') }} {{ $appSettings['app_name'] ?? 'Admin' }}. All rights reserved.
+                </p>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('ph-eye');
+                toggleIcon.classList.add('ph-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('ph-eye-slash');
+                toggleIcon.classList.add('ph-eye');
+            }
+        }
+    </script>
 </body>
 </html>

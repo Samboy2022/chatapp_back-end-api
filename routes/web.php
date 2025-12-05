@@ -23,11 +23,47 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/login', function () {
     return redirect()->route('admin.login');
 })->name('login');
-Route::get('/about', [HomeController::class, 'about'])->name('about');
-Route::get('/features', [HomeController::class, 'features'])->name('features');
-Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
-Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
-Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
+
+// Fallback register route (redirects to admin login)
+Route::get('/register', function () {
+    return redirect()->route('admin.login');
+})->name('register');
+
+// Footer Pages
+Route::get('/help-center', function () {
+    $appSettings = \App\Models\Setting::getSettings();
+    return view('help-center', compact('appSettings'));
+})->name('help-center');
+
+Route::get('/privacy-policy', function () {
+    $appSettings = \App\Models\Setting::getSettings();
+    return view('privacy-policy', compact('appSettings'));
+})->name('privacy-policy');
+
+Route::get('/terms-of-service', function () {
+    $appSettings = \App\Models\Setting::getSettings();
+    return view('terms-of-service', compact('appSettings'));
+})->name('terms-of-service');
+
+Route::get('/about-us', function () {
+    $appSettings = \App\Models\Setting::getSettings();
+    return view('about-us', compact('appSettings'));
+})->name('about-us');
+
+Route::get('/careers', function () {
+    $appSettings = \App\Models\Setting::getSettings();
+    return view('careers', compact('appSettings'));
+})->name('careers');
+
+Route::get('/press', function () {
+    $appSettings = \App\Models\Setting::getSettings();
+    return view('press', compact('appSettings'));
+})->name('press');
+
+Route::get('/contact', function () {
+    $appSettings = \App\Models\Setting::getSettings();
+    return view('contact', compact('appSettings'));
+})->name('contact');
 
 // API Tester Routes
 Route::get('/api-tester', [ApiTesterController::class, 'index'])->name('api-tester');
@@ -125,6 +161,12 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [SettingController::class, 'index'])->name('index');
         Route::post('/update', [SettingController::class, 'update'])->name('update');
+        Route::get('/api/all', [SettingController::class, 'getSettings'])->name('api.all');
+        Route::post('/api/update-single', [SettingController::class, 'updateSingle'])->name('api.update-single');
+        Route::post('/api/create', [SettingController::class, 'create'])->name('api.create');
+        Route::post('/api/delete', [SettingController::class, 'delete'])->name('api.delete');
+        Route::post('/upload-logo', [SettingController::class, 'uploadLogo'])->name('upload-logo');
+        Route::post('/remove-logo', [SettingController::class, 'removeLogo'])->name('remove-logo');
         Route::post('/clear-cache', [SettingController::class, 'clearCache'])->name('clear-cache');
         Route::post('/optimize', [SettingController::class, 'optimizeSystem'])->name('optimize');
         Route::post('/backup', [SettingController::class, 'backupDatabase'])->name('backup');
@@ -132,6 +174,13 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::get('/export', [SettingController::class, 'exportSettings'])->name('export');
         Route::post('/import', [SettingController::class, 'importSettings'])->name('import');
         Route::post('/reset', [SettingController::class, 'resetSettings'])->name('reset');
+    });
+
+    // Profile Management
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('index');
+        Route::put('/update', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('update');
+        Route::put('/password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('password');
     });
 
     // Broadcast Settings (Redirect to new realtime settings)

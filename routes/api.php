@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\StreamController;
 use App\Http\Controllers\Api\DiscoverController;
 use App\Http\Controllers\Api\ContactListController;
 use App\Http\Controllers\Api\BroadcastSettingsController;
+use App\Http\Controllers\Api\AppSettingsController;
 
 /*
 |--------------------------------------------------------------------------

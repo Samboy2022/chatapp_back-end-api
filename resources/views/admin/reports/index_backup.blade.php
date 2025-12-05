@@ -421,3 +421,4 @@ document.querySelectorAll('[data-chart]').forEach(button => {
 });
 </script>
 @endpush 
+

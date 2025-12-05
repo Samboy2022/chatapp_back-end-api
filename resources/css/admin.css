@@ -1,0 +1,139 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/admin/**/*.blade.php';
+@source '../views/layouts/admin.blade.php';
+
+/* Custom Animations */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-slideDown {
+    animation: slideDown 0.4s ease-out forwards;
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Stat Card Hover Effect */
+.stat-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px -8px rgba(21, 87, 36, 0.15);
+}
+
+/* Navigation Items */
+.nav-item {
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+    background-color: rgba(21, 87, 36, 0.06);
+    transform: translateX(2px);
+}
+
+.nav-item.active {
+    background-color: rgba(21, 87, 36, 0.08);
+    color: #15803d;
+}
+
+.nav-item.active i {
+    color: #15803d;
+}
+
+/* Sidebar */
+.sidebar {
+    transition: transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    transition: all 0.15s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(21, 87, 36, 0.06);
+}
+
+/* Submenu */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.submenu.open {
+    max-height: 500px;
+}
+
+.submenu-item {
+    transition: all 0.15s ease;
+}
+
+.submenu-item:hover {
+    background-color: rgba(21, 87, 36, 0.06);
+    padding-left: 3rem;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #15803d;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #166534;
+}
