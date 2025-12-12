@@ -203,6 +203,18 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::post('/test', [App\Http\Controllers\Admin\RealtimeSettingsController::class, 'testConnection'])->name('test');
         Route::post('/reset', [App\Http\Controllers\Admin\RealtimeSettingsController::class, 'reset'])->name('reset');
     });
+
+    // AI Settings (Farming Assistant)
+    Route::prefix('ai-settings')->name('ai-settings.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\AiSettingController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Admin\AiSettingController::class, 'store'])->name('store');
+        Route::put('/{id}', [App\Http\Controllers\Admin\AiSettingController::class, 'update'])->name('update');
+        Route::delete('/{id}', [App\Http\Controllers\Admin\AiSettingController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/activate', [App\Http\Controllers\Admin\AiSettingController::class, 'activate'])->name('activate');
+        Route::post('/test', [App\Http\Controllers\Admin\AiSettingController::class, 'testConnection'])->name('test');
+        Route::get('/api/all', [App\Http\Controllers\Admin\AiSettingController::class, 'getSettings'])->name('api.all');
+        Route::post('/chat', [App\Http\Controllers\Admin\AiSettingController::class, 'chat'])->name('chat');
+    });
 });
 
 // Test route for Pusher broadcasting

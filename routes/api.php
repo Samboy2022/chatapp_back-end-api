@@ -262,6 +262,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/update', [BroadcastSettingsController::class, 'update']);
     });
 
+    // AI Chat routes (Farming Assistant)
+    Route::prefix('ai-chat')->group(function () {
+        Route::post('/', [App\Http\Controllers\Api\AiChatController::class, 'chat']);
+        Route::post('/sync', [App\Http\Controllers\Api\AiChatController::class, 'chatNonStreaming']); // Non-streaming fallback
+        Route::get('/history', [App\Http\Controllers\Api\AiChatController::class, 'getConversationHistory']);
+        Route::delete('/history', [App\Http\Controllers\Api\AiChatController::class, 'clearHistory']);
+    });
+
     // Test route for checking authentication (authenticated users only)
     Route::get('/test-auth', function (Request $request) {
         return response()->json([
@@ -270,6 +278,34 @@ Route::middleware('auth:sanctum')->group(function () {
             'timestamp' => now()
         ]);
     });
+});
+
+// AI Chat routes (authentication required)
+Route::middleware('auth:sanctum')->prefix('ai-chat')->group(function () {
+    // Main chat endpoint (SSE streaming)
+    Route::post('/', [App\Http\Controllers\Api\AiChatController::class, 'chat']);
+    
+    // Non-streaming fallback
+    Route::post('/sync', [App\Http\Controllers\Api\AiChatController::class, 'chatNonStreaming']);
+    
+    // Conversation history with pagination
+    Route::get('/history', [App\Http\Controllers\Api\AiChatController::class, 'getConversationHistory']);
+    
+    // Get last/resume conversation
+    Route::get('/last', [App\Http\Controllers\Api\AiChatController::class, 'getLastConversation']);
+    
+    // Start new conversation
+    Route::post('/new', function () {
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'conversation_id' => \App\Models\AiMessage::generateConversationId(),
+            ],
+        ]);
+    });
+    
+    // Delete conversation(s)
+    Route::delete('/history', [App\Http\Controllers\Api\AiChatController::class, 'clearHistory']);
 });
 
 // App settings routes (public - no authentication required)
