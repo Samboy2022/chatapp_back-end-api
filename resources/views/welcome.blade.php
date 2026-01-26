@@ -61,39 +61,45 @@
                 <div class="text-center lg:text-left">
                     <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-full text-green-700 text-sm font-medium mb-6">
                         <i class="ph-fill ph-star"></i>
-                        Trusted by 250,000+ farmers worldwide
+                        {{ $appSettings['landing_hero_badge'] ?? 'Trusted by 250,000+ farmers worldwide' }}
                     </div>
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                        Connect, Collaborate & 
-                        <span class="text-green-700">Grow Together</span>
+                        @php
+                            $title = $appSettings['landing_hero_title'] ?? 'Connect, Collaborate & Grow Together';
+                            $highlight = $appSettings['landing_hero_highlight'] ?? 'Grow Together';
+                            if ($highlight) {
+                                $title = str_replace($highlight, '<span class="text-green-700">' . $highlight . '</span>', $title);
+                            }
+                        @endphp
+                        {!! $title !!}
                     </h1>
                     <p class="text-lg text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0">
-                        Transform your farming experience with our cutting-edge communication platform. Connect with farmers worldwide, share knowledge, and build thriving agricultural communities.
+                        {{ $appSettings['landing_hero_description'] ?? 'Transform your farming experience with our cutting-edge communication platform. Connect with farmers worldwide, share knowledge, and build thriving agricultural communities.' }}
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                         <a href="#download" class="flex items-center justify-center gap-2 px-6 py-3.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl transition-all shadow-lg shadow-green-700/30 hover:shadow-xl hover:-translate-y-0.5">
                             <i class="ph-bold ph-download-simple text-lg"></i>
-                            Get Started Free
+                            {{ $appSettings['landing_hero_cta_primary'] ?? 'Get Started Free' }}
                         </a>
                         <a href="#features" class="flex items-center justify-center gap-2 px-6 py-3.5 bg-white border border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-green-300 hover:text-green-700 transition-all">
                             <i class="ph ph-play-circle text-lg"></i>
-                            Explore Features
+                            {{ $appSettings['landing_hero_cta_secondary'] ?? 'Explore Features' }}
                         </a>
                     </div>
 
                     <!-- Stats -->
                     <div class="flex items-center justify-center lg:justify-start gap-8 mt-12 pt-8 border-t border-gray-100">
                         <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-900">250K+</p>
-                            <p class="text-sm text-gray-500">Active Users</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $appSettings['landing_stat_users'] ?? '250K+' }}</p>
+                            <p class="text-sm text-gray-500">{{ $appSettings['landing_stat_users_label'] ?? 'Active Users' }}</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-900">120+</p>
-                            <p class="text-sm text-gray-500">Countries</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $appSettings['landing_stat_countries'] ?? '120+' }}</p>
+                            <p class="text-sm text-gray-500">{{ $appSettings['landing_stat_countries_label'] ?? 'Countries' }}</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-900">4.9</p>
-                            <p class="text-sm text-gray-500">App Rating</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $appSettings['landing_stat_rating'] ?? '4.9' }}</p>
+                            <p class="text-sm text-gray-500">{{ $appSettings['landing_stat_rating_label'] ?? 'App Rating' }}</p>
                         </div>
                     </div>
                 </div>
@@ -101,7 +107,7 @@
                 <!-- Hero Visual -->
                 <div class="relative">
                     <div class="relative z-10">
-                        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&h=500&fit=crop" 
+                        <img src="{{ $appSettings['landing_hero_image'] ?? 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&h=500&fit=crop' }}" 
                              alt="Farming Community" 
                              class="rounded-2xl shadow-2xl w-full">
                     </div>
@@ -140,68 +146,25 @@
             <div class="text-center mb-16">
                 <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-full text-green-700 text-sm font-medium mb-4">
                     <i class="ph-bold ph-sparkle"></i>
-                    Powerful Features
+                    {{ $appSettings['landing_features_badge'] ?? 'Powerful Features' }}
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything You Need to Connect</h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Our platform provides all the tools you need to communicate, collaborate, and grow your farming network.</p>
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{{ $appSettings['landing_features_title'] ?? 'Everything You Need to Connect' }}</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">{{ $appSettings['landing_features_description'] ?? 'Our platform provides all the tools you need to communicate, collaborate, and grow your farming network.' }}</p>
             </div>
 
             <!-- Features Grid -->
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                <!-- Feature 1 -->
+                @for($i = 1; $i <= 6; $i++)
+                @if(isset($appSettings["landing_feature_{$i}_title"]))
                 <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
                     <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-700 transition-colors">
-                        <i class="ph-bold ph-chat-circle-dots text-2xl text-green-700 group-hover:text-white transition-colors"></i>
+                        <i class="ph-bold {{ $appSettings["landing_feature_{$i}_icon"] ?? 'ph-sparkle' }} text-2xl text-green-700 group-hover:text-white transition-colors"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Real-time Messaging</h3>
-                    <p class="text-gray-600 text-sm">Instant messaging with read receipts, typing indicators, and seamless synchronization across all devices.</p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $appSettings["landing_feature_{$i}_title"] }}</h3>
+                    <p class="text-gray-600 text-sm">{{ $appSettings["landing_feature_{$i}_description"] }}</p>
                 </div>
-
-                <!-- Feature 2 -->
-                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
-                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
-                        <i class="ph-bold ph-users-three text-2xl text-blue-600 group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Group Communities</h3>
-                    <p class="text-gray-600 text-sm">Create and join farming communities with up to 256 members. Share knowledge and collaborate on projects.</p>
-                </div>
-
-                <!-- Feature 3 -->
-                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
-                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
-                        <i class="ph-bold ph-video-camera text-2xl text-purple-600 group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Video & Voice Calls</h3>
-                    <p class="text-gray-600 text-sm">Crystal-clear HD video and voice calls. Connect face-to-face with farmers around the world.</p>
-                </div>
-
-                <!-- Feature 4 -->
-                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
-                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-orange-600 transition-colors">
-                        <i class="ph-bold ph-image text-2xl text-orange-600 group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Media Sharing</h3>
-                    <p class="text-gray-600 text-sm">Share photos, videos, and documents easily. Perfect for sharing crop updates and farming techniques.</p>
-                </div>
-
-                <!-- Feature 5 -->
-                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
-                    <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-red-600 transition-colors">
-                        <i class="ph-bold ph-broadcast text-2xl text-red-600 group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Status Updates</h3>
-                    <p class="text-gray-600 text-sm">Share your daily farming activities with status updates that disappear after 24 hours.</p>
-                </div>
-
-                <!-- Feature 6 -->
-                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
-                    <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-teal-600 transition-colors">
-                        <i class="ph-bold ph-shield-check text-2xl text-teal-600 group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">End-to-End Encryption</h3>
-                    <p class="text-gray-600 text-sm">Your conversations are protected with industry-standard encryption. Your data stays private.</p>
-                </div>
+                @endif
+                @endfor
             </div>
         </div>
     </section>
@@ -210,8 +173,8 @@
     <section id="stats" class="py-20 bg-green-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Join Our Growing Community</h2>
-                <p class="text-lg text-green-100 max-w-2xl mx-auto">Thousands of farmers trust our platform every day to connect and collaborate.</p>
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">{{ $appSettings['landing_community_title'] ?? 'Join Our Growing Community' }}</h2>
+                <p class="text-lg text-green-100 max-w-2xl mx-auto">{{ $appSettings['landing_community_description'] ?? 'Thousands of farmers trust our platform every day to connect and collaborate.' }}</p>
             </div>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -219,32 +182,32 @@
                     <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                         <i class="ph-bold ph-users text-3xl text-white"></i>
                     </div>
-                    <p class="text-4xl font-bold text-white mb-1">250K+</p>
-                    <p class="text-green-100 text-sm">Active Users</p>
+                    <p class="text-4xl font-bold text-white mb-1">{{ $appSettings['landing_stat_users'] ?? '250K+' }}</p>
+                    <p class="text-green-100 text-sm">{{ $appSettings['landing_stat_users_label'] ?? 'Active Users' }}</p>
                 </div>
 
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/20">
                     <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                         <i class="ph-bold ph-chat-circle-dots text-3xl text-white"></i>
                     </div>
-                    <p class="text-4xl font-bold text-white mb-1">10M+</p>
-                    <p class="text-green-100 text-sm">Messages Sent</p>
+                    <p class="text-4xl font-bold text-white mb-1">{{ $appSettings['landing_stat_messages'] ?? '10M+' }}</p>
+                    <p class="text-green-100 text-sm">{{ $appSettings['landing_stat_messages_label'] ?? 'Messages Sent' }}</p>
                 </div>
 
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/20">
                     <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                         <i class="ph-bold ph-globe text-3xl text-white"></i>
                     </div>
-                    <p class="text-4xl font-bold text-white mb-1">120+</p>
-                    <p class="text-green-100 text-sm">Countries</p>
+                    <p class="text-4xl font-bold text-white mb-1">{{ $appSettings['landing_stat_countries'] ?? '120+' }}</p>
+                    <p class="text-green-100 text-sm">{{ $appSettings['landing_stat_countries_label'] ?? 'Countries' }}</p>
                 </div>
 
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/20">
                     <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                         <i class="ph-bold ph-star text-3xl text-white"></i>
                     </div>
-                    <p class="text-4xl font-bold text-white mb-1">4.9</p>
-                    <p class="text-green-100 text-sm">App Store Rating</p>
+                    <p class="text-4xl font-bold text-white mb-1">{{ $appSettings['landing_stat_rating'] ?? '4.9' }}</p>
+                    <p class="text-green-100 text-sm">{{ $appSettings['landing_stat_rating_label'] ?? 'App Store Rating' }}</p>
                 </div>
             </div>
         </div>
@@ -259,25 +222,25 @@
                     <div class="p-8 lg:p-12 flex flex-col justify-center">
                         <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-full text-green-700 text-sm font-medium mb-6 w-fit">
                             <i class="ph-bold ph-device-mobile"></i>
-                            Available on all platforms
+                            {{ $appSettings['landing_download_badge'] ?? 'Available on all platforms' }}
                         </div>
                         <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                            Download {{ $appSettings['app_name'] ?? 'Farmers Network' }} Today
+                            {{ $appSettings['landing_download_title'] ?? 'Download Today' }}
                         </h2>
                         <p class="text-lg text-gray-600 mb-8">
-                            Get started in minutes. Download our app and join the largest agricultural community in the world.
+                            {{ $appSettings['landing_download_description'] ?? 'Get started in minutes. Download our app and join the largest agricultural community in the world.' }}
                         </p>
-
+ 
                         <!-- Download Buttons -->
                         <div class="flex flex-col sm:flex-row gap-4">
-                            <a href="#" class="flex items-center gap-4 px-6 py-4 bg-gray-900 hover:bg-gray-800 text-white rounded-xl transition-all group">
+                            <a href="{{ $appSettings['landing_appstore_url'] ?? '#' }}" class="flex items-center gap-4 px-6 py-4 bg-gray-900 hover:bg-gray-800 text-white rounded-xl transition-all group">
                                 <i class="ph-bold ph-apple-logo text-3xl"></i>
                                 <div class="text-left">
                                     <p class="text-xs text-gray-400">Download on the</p>
                                     <p class="text-lg font-semibold">App Store</p>
                                 </div>
                             </a>
-                            <a href="#" class="flex items-center gap-4 px-6 py-4 bg-gray-900 hover:bg-gray-800 text-white rounded-xl transition-all group">
+                            <a href="{{ $appSettings['landing_playstore_url'] ?? '#' }}" class="flex items-center gap-4 px-6 py-4 bg-gray-900 hover:bg-gray-800 text-white rounded-xl transition-all group">
                                 <i class="ph-bold ph-google-play-logo text-3xl"></i>
                                 <div class="text-left">
                                     <p class="text-xs text-gray-400">Get it on</p>
@@ -285,20 +248,20 @@
                                 </div>
                             </a>
                         </div>
-
+ 
                         <p class="text-sm text-gray-500 mt-6">
                             <i class="ph ph-check-circle text-green-600"></i>
-                            Free to download • No credit card required
+                            {{ $appSettings['landing_download_note'] ?? 'Free to download • No credit card required' }}
                         </p>
                     </div>
-
+ 
                     <!-- Image -->
                     <div class="relative bg-gradient-to-br from-green-600 to-green-800 p-8 lg:p-12 flex items-center justify-center">
                         <div class="absolute inset-0 opacity-10">
                             <div class="absolute top-10 left-10 w-32 h-32 border-2 border-white rounded-full"></div>
                             <div class="absolute bottom-10 right-10 w-48 h-48 border-2 border-white rounded-full"></div>
                         </div>
-                        <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=500&fit=crop" 
+                        <img src="{{ $appSettings['landing_download_image'] ?? 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=500&fit=crop' }}" 
                              alt="Mobile App" 
                              class="relative z-10 rounded-2xl shadow-2xl max-w-xs">
                     </div>

@@ -172,6 +172,82 @@ class CloudinaryService
     }
 
     /**
+     * Get secure URL from public_id
+     */
+    public function getSecurePath($publicId, $resourceType = 'image')
+    {
+        if (empty($publicId)) {
+            return null;
+        }
+
+        // If it's already a full URL, return it
+        if (filter_var($publicId, FILTER_VALIDATE_URL)) {
+            return $publicId;
+        }
+
+        try {
+            if ($resourceType === 'image') {
+                return $this->cloudinary->image($publicId)->toUrl();
+            } elseif ($resourceType === 'video') {
+                return $this->cloudinary->video($publicId)->toUrl();
+            } else {
+                // For raw files (documents, audio)
+                return "https://res.cloudinary.com/{$this->cloudinary->configuration->cloud->cloudName}/raw/upload/{$publicId}";
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to generate Cloudinary URL', [
+                'public_id' => $publicId,
+                'error' => $e->getMessage()
+            ]);
+            return null;
+        }
+    }
+
+    /**
+     * Upload app logo
+     */
+    public function uploadLogo($file)
+    {
+        $options = [
+            'folder' => 'logos',
+            'resource_type' => 'image',
+            'public_id' => 'logo_' . time(),
+        ];
+
+        $result = $this->upload($file, 'logos', $options);
+
+        if ($result['success']) {
+            $result['logo_url'] = $result['url'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Extract public_id from Cloudinary URL
+     */
+    public function extractPublicId($url)
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        // If it's not a URL, assume it's already a public_id
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return $url;
+        }
+
+        // Extract public_id from Cloudinary URL
+        // Format: https://res.cloudinary.com/{cloud_name}/{resource_type}/upload/{transformations}/{public_id}.{format}
+        $pattern = '/\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]+)?$/';
+        if (preg_match($pattern, $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
+
+    /**
      * Delete file from Cloudinary
      */
     public function delete($publicId, $resourceType = 'image')

@@ -218,4 +218,81 @@ class Message extends Model
 
         return sprintf('%02d:%02d', $minutes, $seconds);
     }
+
+    /**
+     * Get media URL accessor - ensures Cloudinary URL is returned
+     */
+    public function getMediaUrlAttribute($value)
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        // If it's already a full Cloudinary URL, return it
+        if (filter_var($value, FILTER_VALIDATE_URL) && str_contains($value, 'cloudinary.com')) {
+            return $value;
+        }
+
+        // If it's a local storage path, it needs migration
+        if (str_contains($value, '/storage/')) {
+            return $value;
+        }
+
+        // If it's a public_id, generate Cloudinary URL
+        if (!filter_var($value, FILTER_VALIDATE_URL)) {
+            $cloudName = env('CLOUDINARY_CLOUD_NAME');
+            $resourceType = in_array($this->message_type, ['video', 'audio']) ? 'video' : 
+                           ($this->message_type === 'image' ? 'image' : 'raw');
+            return "https://res.cloudinary.com/{$cloudName}/{$resourceType}/upload/{$value}";
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get thumbnail URL accessor - ensures Cloudinary URL is returned
+     */
+    public function getThumbnailUrlAttribute($value)
+    {
+        if (empty($value)) {
+            // Generate thumbnail from media_url if it's an image
+            if ($this->media_url && $this->message_type === 'image') {
+                $publicId = $this->extractPublicIdFromUrl($this->media_url);
+                if ($publicId) {
+                    $cloudName = env('CLOUDINARY_CLOUD_NAME');
+                    return "https://res.cloudinary.com/{$cloudName}/image/upload/c_fill,h_200,w_200/{$publicId}";
+                }
+            }
+            return null;
+        }
+
+        // If it's already a full Cloudinary URL, return it
+        if (filter_var($value, FILTER_VALIDATE_URL) && str_contains($value, 'cloudinary.com')) {
+            return $value;
+        }
+
+        // If it's a local storage path, it needs migration
+        if (str_contains($value, '/storage/')) {
+            return $value;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Extract public_id from Cloudinary URL
+     */
+    private function extractPublicIdFromUrl($url)
+    {
+        if (empty($url) || !str_contains($url, 'cloudinary.com')) {
+            return null;
+        }
+
+        $pattern = '/\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]+)?$/';
+        if (preg_match($pattern, $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
 }

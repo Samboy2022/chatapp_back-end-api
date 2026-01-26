@@ -3,17 +3,20 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SettingController extends Controller
 {
-    public function __construct()
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
     {
+        $this->cloudinary = $cloudinary;
         // Middleware is applied at the route level
     }
 
@@ -112,7 +115,7 @@ class SettingController extends Controller
         $request->validate([
             'key' => 'required|string|unique:settings,key',
             'value' => 'nullable|string',
-            'type' => 'required|in:string,boolean,integer,float,json,text',
+            'type' => 'required|in:string,boolean,integer,float,json,text,color',
             'group' => 'required|string',
             'label' => 'required|string',
             'description' => 'nullable|string',
@@ -185,28 +188,30 @@ class SettingController extends Controller
     public function uploadLogo(Request $request)
     {
         $request->validate([
-            'logo' => 'required|image|mimes:jpeg,jpg,png,gif|max:2048'
+            'logo' => 'required|image|mimes:jpeg,jpg,png,gif|max:5120' // 5MB max
         ]);
 
         try {
             $file = $request->file('logo');
             
-            // Delete old logo if exists
+            // Delete old logo from Cloudinary if exists
             $oldLogo = \App\Models\Setting::get('logo_url');
-            if ($oldLogo) {
-                $oldPath = str_replace('/storage/', '', parse_url($oldLogo, PHP_URL_PATH));
-                if ($oldPath && Storage::disk('public')->exists($oldPath)) {
-                    Storage::disk('public')->delete($oldPath);
+            if ($oldLogo && str_contains($oldLogo, 'cloudinary.com')) {
+                $publicId = $this->cloudinary->extractPublicId($oldLogo);
+                if ($publicId) {
+                    $this->cloudinary->delete($publicId, 'image');
                 }
             }
 
-            // Store new logo
-            $filename = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('logos', $filename, 'public');
-            $url = Storage::disk('public')->url($path);
+            // Upload new logo to Cloudinary
+            $result = $this->cloudinary->uploadLogo($file);
+
+            if (!$result['success']) {
+                throw new \Exception($result['error'] ?? 'Upload failed');
+            }
 
             // Update setting
-            \App\Models\Setting::set('logo_url', $url, 'string', 'general');
+            \App\Models\Setting::set('logo_url', $result['logo_url'], 'string', 'general');
             
             // Clear cache
             Cache::forget('setting.logo_url');
@@ -215,7 +220,7 @@ class SettingController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Logo uploaded successfully',
-                'url' => $url
+                'url' => $result['logo_url']
             ]);
         } catch (\Exception $e) {
             Log::error('Logo upload failed: ' . $e->getMessage());
@@ -235,10 +240,12 @@ class SettingController extends Controller
             $logoUrl = \App\Models\Setting::get('logo_url');
             
             if ($logoUrl) {
-                // Delete file
-                $path = str_replace('/storage/', '', parse_url($logoUrl, PHP_URL_PATH));
-                if ($path && Storage::disk('public')->exists($path)) {
-                    Storage::disk('public')->delete($path);
+                // Delete from Cloudinary if it's a Cloudinary URL
+                if (str_contains($logoUrl, 'cloudinary.com')) {
+                    $publicId = $this->cloudinary->extractPublicId($logoUrl);
+                    if ($publicId) {
+                        $this->cloudinary->delete($publicId, 'image');
+                    }
                 }
                 
                 // Clear setting
@@ -282,6 +289,12 @@ class SettingController extends Controller
                     break;
                 case 'json':
                     $rules[$key] = 'nullable|json';
+                    break;
+                case 'color':
+                    $rules[$key] = 'nullable|string|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/';
+                    break;
+                case 'text':
+                    $rules[$key] = 'nullable|string';
                     break;
                 default:
                     $rules[$key] = 'nullable|string';
@@ -773,25 +786,30 @@ class SettingController extends Controller
                 throw new \Exception('Invalid image file. Only JPG, PNG, and GIF files are allowed.');
             }
 
-            if ($file->getSize() > 2048 * 1024) {
-                throw new \Exception('File size exceeds the maximum limit of 2MB.');
+            if ($file->getSize() > 5120 * 1024) { // 5MB
+                throw new \Exception('File size exceeds the maximum limit of 5MB.');
             }
 
-            // Delete old logo if exists
+            // Delete old logo from Cloudinary if exists
             $oldLogo = \App\Models\Setting::get('logo_url');
-            if ($oldLogo && Storage::exists('public/logos/' . basename($oldLogo))) {
-                Storage::delete('public/logos/' . basename($oldLogo));
+            if ($oldLogo && str_contains($oldLogo, 'cloudinary.com')) {
+                $publicId = $this->cloudinary->extractPublicId($oldLogo);
+                if ($publicId) {
+                    $this->cloudinary->delete($publicId, 'image');
+                }
             }
 
-            // Store new logo
-            $filename = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('public/logos', $filename);
-            $url = Storage::url($path);
+            // Upload new logo to Cloudinary
+            $result = $this->cloudinary->uploadLogo($file);
+
+            if (!$result['success']) {
+                throw new \Exception($result['error'] ?? 'Upload failed');
+            }
 
             // Update setting
-            \App\Models\Setting::set('logo_url', $url, 'string', 'general');
+            \App\Models\Setting::set('logo_url', $result['logo_url'], 'string', 'general');
 
-            return $url;
+            return $result['logo_url'];
         } catch (\Exception $e) {
             throw new \Exception('Failed to upload logo: ' . $e->getMessage());
         }

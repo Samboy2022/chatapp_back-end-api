@@ -4,13 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
+
     /**
      * Show the profile page
      */
@@ -51,7 +58,7 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($admin->id)],
-            'avatar' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048'
+            'avatar' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:5120' // 5MB max
         ]);
 
         try {
@@ -61,9 +68,12 @@ class ProfileController extends Controller
             // Handle avatar removal
             if ($request->remove_avatar == '1') {
                 if ($admin->avatar_url) {
-                    $oldPath = str_replace('/storage/', '', parse_url($admin->avatar_url, PHP_URL_PATH));
-                    if ($oldPath && Storage::disk('public')->exists($oldPath)) {
-                        Storage::disk('public')->delete($oldPath);
+                    // Delete from Cloudinary if it's a Cloudinary URL
+                    if (str_contains($admin->avatar_url, 'cloudinary.com')) {
+                        $publicId = $this->cloudinary->extractPublicId($admin->avatar_url);
+                        if ($publicId) {
+                            $this->cloudinary->delete($publicId, 'image');
+                        }
                     }
                     $admin->avatar_url = null;
                 }
@@ -71,18 +81,22 @@ class ProfileController extends Controller
 
             // Handle avatar upload
             if ($request->hasFile('avatar')) {
-                // Delete old avatar
-                if ($admin->avatar_url) {
-                    $oldPath = str_replace('/storage/', '', parse_url($admin->avatar_url, PHP_URL_PATH));
-                    if ($oldPath && Storage::disk('public')->exists($oldPath)) {
-                        Storage::disk('public')->delete($oldPath);
+                // Delete old avatar from Cloudinary
+                if ($admin->avatar_url && str_contains($admin->avatar_url, 'cloudinary.com')) {
+                    $publicId = $this->cloudinary->extractPublicId($admin->avatar_url);
+                    if ($publicId) {
+                        $this->cloudinary->delete($publicId, 'image');
                     }
                 }
 
-                $file = $request->file('avatar');
-                $filename = 'admin_avatar_' . $admin->id . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('avatars', $filename, 'public');
-                $admin->avatar_url = Storage::disk('public')->url($path);
+                // Upload new avatar to Cloudinary
+                $result = $this->cloudinary->uploadAvatar($request->file('avatar'), $admin->id);
+                
+                if ($result['success']) {
+                    $admin->avatar_url = $result['avatar_url'];
+                } else {
+                    return redirect()->back()->with('error', 'Failed to upload avatar: ' . ($result['error'] ?? 'Unknown error'));
+                }
             }
 
             $admin->save();

@@ -594,3 +594,13 @@ class SettingsSeeder extends Seeder
                 'description' => 'Link to Google Play Store listing',
                 'is_public' => true
             ],
+        ];
+
+        foreach ($settings as $setting) {
+            Setting::updateOrCreate(
+                ['key' => $setting['key']],
+                $setting
+            );
+        }
+    }
+}

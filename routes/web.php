@@ -65,9 +65,12 @@ Route::get('/contact', function () {
     return view('contact', compact('appSettings'));
 })->name('contact');
 
-// API Tester Routes
-Route::get('/api-tester', [ApiTesterController::class, 'index'])->name('api-tester');
-Route::get('/api-tester/status', [ApiTesterController::class, 'status'])->name('api-tester.status');
+// Host Fix Routes (Temporary Tool for Shared Hosting)
+Route::prefix('host-fix')->group(function () {
+    Route::get('/status', [App\Http\Controllers\HostFixController::class, 'checkStatus']);
+    Route::get('/symlink', [App\Http\Controllers\HostFixController::class, 'fixSymlink']);
+    Route::get('/update-url', [App\Http\Controllers\HostFixController::class, 'updateAppUrl']);
+});
 
 // Broadcasting Authentication Routes (for WebSocket authentication)
 Broadcast::routes(['middleware' => ['auth:sanctum']]);

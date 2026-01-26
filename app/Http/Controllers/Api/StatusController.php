@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Status;
 use App\Models\StatusView;
 use App\Models\Contact;
+use App\Services\CloudinaryService;
 use App\Events\StatusUploaded;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -263,11 +263,13 @@ class StatusController extends Controller
                 ], 403);
             }
 
-            // Delete associated media file if exists
-            if ($status->media_url) {
-                $filename = basename(parse_url($status->media_url, PHP_URL_PATH));
-                if (Storage::disk('public')->exists('status/' . $filename)) {
-                    Storage::disk('public')->delete('status/' . $filename);
+            // Delete associated media file from Cloudinary if exists
+            if ($status->media_url && str_contains($status->media_url, 'cloudinary.com')) {
+                $cloudinary = app(CloudinaryService::class);
+                $publicId = $cloudinary->extractPublicId($status->media_url);
+                if ($publicId) {
+                    $resourceType = $status->content_type === 'video' ? 'video' : 'image';
+                    $cloudinary->delete($publicId, $resourceType);
                 }
             }
 
@@ -488,13 +490,15 @@ class StatusController extends Controller
     {
         try {
             $expiredStatuses = Status::where('expires_at', '<', now())->get();
+            $cloudinary = app(CloudinaryService::class);
             
             foreach ($expiredStatuses as $status) {
-                // Delete associated media file if exists
-                if ($status->media_url) {
-                    $filename = basename(parse_url($status->media_url, PHP_URL_PATH));
-                    if (Storage::disk('public')->exists('status/' . $filename)) {
-                        Storage::disk('public')->delete('status/' . $filename);
+                // Delete associated media file from Cloudinary if exists
+                if ($status->media_url && str_contains($status->media_url, 'cloudinary.com')) {
+                    $publicId = $cloudinary->extractPublicId($status->media_url);
+                    if ($publicId) {
+                        $resourceType = $status->content_type === 'video' ? 'video' : 'image';
+                        $cloudinary->delete($publicId, $resourceType);
                     }
                 }
             }

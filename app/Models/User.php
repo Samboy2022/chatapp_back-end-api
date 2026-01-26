@@ -205,4 +205,32 @@ class User extends Authenticatable
     {
         return $user->hasBlocked($this);
     }
+
+    /**
+     * Get avatar URL accessor - ensures Cloudinary URL is returned
+     */
+    public function getAvatarUrlAttribute($value)
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        // If it's already a full Cloudinary URL, return it
+        if (filter_var($value, FILTER_VALIDATE_URL) && str_contains($value, 'cloudinary.com')) {
+            return $value;
+        }
+
+        // If it's a local storage path, it needs migration
+        if (str_contains($value, '/storage/')) {
+            return $value; // Return as-is for now, migration script will handle
+        }
+
+        // If it's a public_id, generate Cloudinary URL
+        if (!filter_var($value, FILTER_VALIDATE_URL)) {
+            $cloudName = env('CLOUDINARY_CLOUD_NAME');
+            return "https://res.cloudinary.com/{$cloudName}/image/upload/{$value}";
+        }
+
+        return $value;
+    }
 }

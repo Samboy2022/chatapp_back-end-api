@@ -133,6 +133,7 @@
                             <option value="integer">Integer</option>
                             <option value="float">Float</option>
                             <option value="json">JSON</option>
+                            <option value="color">Color</option>
                         </select>
                     </div>
                     <div>
@@ -145,6 +146,8 @@
                             <option value="chat">Chat</option>
                             <option value="user">User</option>
                             <option value="notification">Notification</option>
+                            <option value="landing">Landing Page</option>
+                            <option value="colors">UI Colors</option>
                         </select>
                     </div>
                 </div>
@@ -377,6 +380,16 @@ function renderSettingField(setting) {
         inputHtml = `
             <input type="number" value="${escapeHtml(value)}" onchange="updateSetting('${setting.key}', this.value)"
                    class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 text-sm">
+        `;
+    } else if (setting.type === 'color') {
+        inputHtml = `
+            <div class="flex items-center gap-3">
+                <input type="color" value="${escapeHtml(value)}" onchange="updateSetting('${setting.key}', this.value)"
+                       class="h-10 w-20 border border-gray-200 rounded-lg cursor-pointer">
+                <input type="text" value="${escapeHtml(value)}" onchange="updateSetting('${setting.key}', this.value)"
+                       class="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 text-sm font-mono"
+                       placeholder="#000000">
+            </div>
         `;
     } else {
         const inputType = setting.key && setting.key.includes('email') ? 'email' : 

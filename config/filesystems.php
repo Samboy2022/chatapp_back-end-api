@@ -11,6 +11,10 @@ return [
     | by the framework. The "local" disk, as well as a variety of cloud
     | based disks are available to your application for file storage.
     |
+    | NOTE: This application uses Cloudinary for all media storage.
+    | The 'public' disk is deprecated and should not be used for new uploads.
+    | All image uploads are handled through CloudinaryService.
+    |
     */
 
     'default' => env('FILESYSTEM_DISK', 'local'),
@@ -45,6 +49,9 @@ return [
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+            // DEPRECATED: This disk is no longer used for media uploads.
+            // All media is now stored on Cloudinary.
+            // This disk is kept for backward compatibility only.
         ],
 
         's3' => [

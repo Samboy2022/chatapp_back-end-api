@@ -26,6 +26,26 @@
     }
 }
 
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
 .animate-slideDown {
     animation: slideDown 0.4s ease-out forwards;
 }
@@ -34,29 +54,78 @@
     animation: fadeIn 0.5s ease-out forwards;
 }
 
+.animate-slideInRight {
+    animation: slideInRight 0.3s ease-out forwards;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* Stat Card Hover Effect */
 .stat-card {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(21, 128, 61, 0.05), transparent);
+    transition: left 0.5s ease;
+}
+
+.stat-card:hover::before {
+    left: 100%;
 }
 
 .stat-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 24px -8px rgba(21, 87, 36, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px rgba(21, 128, 61, 0.2);
+    border-color: rgba(21, 128, 61, 0.3);
 }
 
 /* Navigation Items */
 .nav-item {
     transition: all 0.2s ease;
+    position: relative;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: #15803d;
+    border-radius: 0 3px 3px 0;
+    transition: height 0.2s ease;
 }
 
 .nav-item:hover {
-    background-color: rgba(21, 87, 36, 0.06);
+    background-color: rgba(21, 128, 61, 0.06);
     transform: translateX(2px);
 }
 
+.nav-item:hover::before {
+    height: 60%;
+}
+
 .nav-item.active {
-    background-color: rgba(21, 87, 36, 0.08);
+    background-color: rgba(21, 128, 61, 0.1);
     color: #15803d;
+    font-weight: 600;
+}
+
+.nav-item.active::before {
+    height: 80%;
 }
 
 .nav-item.active i {
@@ -66,6 +135,7 @@
 /* Sidebar */
 .sidebar {
     transition: transform 0.3s ease;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
 }
 
 @media (max-width: 768px) {
@@ -75,6 +145,7 @@
 
     .sidebar.open {
         transform: translateX(0);
+        box-shadow: 2px 0 16px rgba(0, 0, 0, 0.1);
     }
 }
 
@@ -82,14 +153,14 @@
 .dropdown-menu {
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-8px);
+    transform: translateY(-8px) scale(0.95);
     transition: all 0.2s ease;
 }
 
 .dropdown-menu.show {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 .dropdown-item {
@@ -97,7 +168,8 @@
 }
 
 .dropdown-item:hover {
-    background-color: rgba(21, 87, 36, 0.06);
+    background-color: rgba(21, 128, 61, 0.06);
+    transform: translateX(2px);
 }
 
 /* Submenu */
@@ -116,17 +188,19 @@
 }
 
 .submenu-item:hover {
-    background-color: rgba(21, 87, 36, 0.06);
+    background-color: rgba(21, 128, 61, 0.06);
     padding-left: 3rem;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #f1f5f9;
+    border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -136,4 +210,46 @@
 
 ::-webkit-scrollbar-thumb:hover {
     background: #166534;
+}
+
+/* Table Styles */
+.table-hover tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(21, 128, 61, 0.03);
+    transform: scale(1.01);
+}
+
+/* Button Hover Effects */
+.btn-primary {
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(21, 128, 61, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Badge Styles */
+.badge {
+    transition: all 0.2s ease;
+}
+
+.badge:hover {
+    transform: scale(1.05);
+}
+
+/* Card Styles */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }

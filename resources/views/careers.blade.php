@@ -9,24 +9,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <a href="/" class="flex items-center space-x-2">
-                    @if(isset($appSettings['logo_url']) && $appSettings['logo_url'])
-                        <img src="{{ $appSettings['logo_url'] }}" alt="Logo" class="w-8 h-8 rounded-lg">
-                    @else
-                        <div class="w-8 h-8 bg-green-700 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-sm">{{ substr($appSettings['app_name'] ?? 'F', 0, 1) }}</span>
-                        </div>
-                    @endif
-                    <span class="font-bold text-gray-900 text-lg">{{ $appSettings['app_name'] ?? 'Farmers Network' }}</span>
-                </a>
-                <a href="/" class="text-sm font-medium text-gray-600 hover:text-green-700">Back to Home</a>
-            </div>
-        </div>
-    </nav>
+    @include('partials.public-nav')
 
     <!-- Hero -->
     <section class="bg-green-700 text-white py-16">
