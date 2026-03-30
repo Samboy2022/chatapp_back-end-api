@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Management API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-600 hover:text-pink-600 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Index
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-pink-100 rounded-lg p-1">
+                            <i class="fas fa-address-book text-pink-600"></i>
+                        </div>
+                        <span class="font-medium text-gray-900">Contact Management API</span>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                    Updated: 2025-09-15
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <div class="flex items-center space-x-4 mb-6">
+                <div class="bg-pink-600 rounded-lg p-3">
+                    <i class="fas fa-address-book text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Contact Management API</h1>
+                    <p class="text-gray-600 mt-1">Device contact synchronization and management</p>
+                </div>
+            </div>
+
+            <div class="bg-pink-50 rounded-lg p-4">
+                <div class="flex items-center space-x-3 text-pink-800">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <p class="font-medium">Base URL: http://127.0.0.1:8000/api</p>
+                        <p class="text-sm">6 endpoints • Contact sync • Favorites • Blocking</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Navigation</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="#sync" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-pink-50 transition-colors">
+                    <i class="fas fa-sync text-pink-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Sync Contacts</div>
+                </a>
+                <a href="#list" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
+                    <i class="fas fa-list text-blue-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Contact List</div>
+                </a>
+                <a href="#search" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-green-50 transition-colors">
+                    <i class="fas fa-search text-green-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Search</div>
+                </a>
+                <a href="#favorites" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-yellow-50 transition-colors">
+                    <i class="fas fa-star text-yellow-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Favorites</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="space-y-8">
+            <!-- Get Contacts -->
+            <div id="list" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-blue-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/contacts</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get user's contacts list with pagination</p>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-gray-900 mb-3">Query Parameters</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div><strong>per_page:</strong> integer (default: 50)</div>
+                            <div><strong>page:</strong> integer (default: 1)</div>
+                            <div><strong>search:</strong> string (optional search)</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <p class="text-blue-800 text-sm">Returns contacts sorted by favorites first, then alphabetically by name.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sync Contacts -->
+            <div id="sync" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-pink-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/contacts/sync</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Sync device contacts with app users</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Request Body</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "contacts": [
+    {
+      "name": "John Doe",
+      "phone": "+1234567890"
+    },
+    {
+      "name": "Jane Smith",
+      "phone": "+1234567891"
+    }
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-pink-50 rounded-lg p-4">
+                        <p class="text-pink-800 text-sm">Automatically matches device contacts with registered app users. Only creates contact records for matched users.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Contacts -->
+            <div id="search" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-green-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/contacts/search</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Search for users by name or phone number</p>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-gray-900 mb-3">Query Parameters</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div><strong>query:</strong> string (min 3 characters)</div>
+                            <div><strong>per_page:</strong> integer (default: 20)</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <p class="text-green-800 text-sm">Searches across all registered users, not just existing contacts.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toggle Favorite -->
+            <div id="favorites" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-yellow-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/contacts/favorite/{contactId}</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Toggle favorite status for a contact</p>
+
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <div class="text-yellow-800 text-sm">
+                            <strong>How it works:</strong> Each call toggles the favorite status. Returns the updated contact with the new favorite status.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Favorites -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-orange-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/contacts/favorites</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get user's favorite contacts</p>
+                    <div class="bg-orange-50 rounded-lg p-4">
+                        <p class="text-orange-800 text-sm">Returns only contacts marked as favorites, sorted alphabetically by contact name.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Block Contact -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-red-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/contacts/block/{contactId}</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Block a contact/user</p>
+
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <div class="text-red-800 text-sm">
+                            <strong>Blocking effects:</strong> Prevents calls, messages, and contact visibility. Creates mutual blocking to prevent the blocked user from contacting you.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unblock Contact -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-indigo-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/contacts/unblock/{contactId}</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Unblock a contact/user</p>
+
+                    <div class="bg-indigo-50 rounded-lg p-4">
+                        <p class="text-indigo-800 text-sm">Removes blocking restrictions and restores normal contact functionality.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Blocked Contacts -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-gray-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/contacts/blocked</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get user's blocked contacts</p>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-gray-800 text-sm">Returns all contacts that have been blocked by the user.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Overview -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">✨ Key Features</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="flex items-start space-x-3">
+                    <div class="bg-pink-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-mobile-alt text-pink-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Device Sync</h3>
+                        <p class="text-sm text-gray-600">Import contacts from mobile device</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-blue-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-search text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Global Search</h3>
+                        <p class="text-sm text-gray-600">Find any registered user</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-yellow-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-star text-yellow-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Favorites</h3>
+                        <p class="text-sm text-gray-600">Mark important contacts</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-red-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-ban text-red-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Blocking</h3>
+                        <p class="text-sm text-gray-600">Block unwanted contacts</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-green-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-users text-green-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Smart Matching</h3>
+                        <p class="text-sm text-gray-600">Auto-match device contacts with app users</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-purple-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-shield-alt text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Privacy First</h3>
+                        <p class="text-sm text-gray-600">Respect privacy settings</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Examples -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">💻 Code Examples</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">JavaScript (Contact Management)</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code>// Sync device contacts
+const syncContacts = async (deviceContacts) => {
+  const response = await fetch('http://127.0.0.1:8000/api/contacts/sync', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      contacts: deviceContacts
+    })
+  });
+  return await response.json();
+};
+
+// Search users
+const searchUsers = async (query) => {
+  const response = await fetch(`http://127.0.0.1:8000/api/contacts/search?query=${query}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};
+
+// Toggle favorite
+const toggleFavorite = async (contactId) => {
+  const response = await fetch(`http://127.0.0.1:8000/api/contacts/favorite/${contactId}`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};
+
+// Block contact
+const blockContact = async (contactId) => {
+  const response = await fetch(`http://127.0.0.1:8000/api/contacts/block/${contactId}`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};
+
+// Get blocked contacts
+const getBlockedContacts = async () => {
+  const response = await fetch('http://127.0.0.1:8000/api/contacts/blocked', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};</code></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">cURL Commands</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code># Get contacts
+curl -X GET "http://127.0.0.1:8000/api/contacts" \
+  -H "Authorization: Bearer TOKEN"
+
+# Sync device contacts
+curl -X POST "http://127.0.0.1:8000/api/contacts/sync" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contacts": [
+      {"name": "John Doe", "phone": "+1234567890"}
+    ]
+  }'
+
+# Search users
+curl -X GET "http://127.0.0.1:8000/api/contacts/search?query=john" \
+  -H "Authorization: Bearer TOKEN"
+
+# Toggle favorite
+curl -X POST "http://127.0.0.1:8000/api/contacts/favorite/2" \
+  -H "Authorization: Bearer TOKEN"
+
+# Block contact
+curl -X POST "http://127.0.0.1:8000/api/contacts/block/2" \
+  -H "Authorization: Bearer TOKEN"
+
+# Get blocked contacts
+curl -X GET "http://127.0.0.1:8000/api/contacts/blocked" \
+  -H "Authorization: Bearer TOKEN"
+
+# Get favorite contacts
+curl -X GET "http://127.0.0.1:8000/api/contacts/favorites" \
+  -H "Authorization: Bearer TOKEN"</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Notes -->
+        <div class="bg-blue-50 rounded-lg p-6 mt-8">
+            <h2 class="text-xl font-bold text-blue-900 mb-4">🔧 Integration Notes</h2>
+            <ul class="space-y-2 text-blue-800">
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Request device contact permission before syncing</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Handle contact sync in background to avoid UI blocking</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Normalize phone numbers before sync for better matching</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Cache contact lists locally for better performance</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Respect privacy settings when displaying contact information</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Contact Sync Process -->
+        <div class="bg-green-50 rounded-lg p-6 mt-8">
+            <h2 class="text-xl font-bold text-green-900 mb-4">🔄 Contact Sync Process</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="bg-green-200 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <span class="text-green-800 font-bold text-lg">1</span>
+                    </div>
+                    <h3 class="font-semibold text-green-900 mb-2">Extract</h3>
+                    <p class="text-sm text-green-700">Get contacts from device</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-green-200 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <span class="text-green-800 font-bold text-lg">2</span>
+                    </div>
+                    <h3 class="font-semibold text-green-900 mb-2">Match</h3>
+                    <p class="text-sm text-green-700">Find matching app users</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="bg-green-200 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <span class="text-green-800 font-bold text-lg">3</span>
+                    </div>
+                    <h3 class="font-semibold text-green-900 mb-2">Sync</h3>
+                    <p class="text-sm text-green-700">Create contact records</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-6 mt-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Chat App API Documentation</p>
+        </div>
+    </footer>
+</body>
+</html>

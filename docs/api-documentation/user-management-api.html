@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management API Documentation - FarmersNetwork</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet">
+    <style>
+        .endpoint-card {
+            border-left: 4px solid #007bff;
+            margin-bottom: 2rem;
+        }
+        .method-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
+        .response-example {
+            background-color: #f8f9fa;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .code-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            overflow-x: auto;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #007bff;
+        }
+        .table-responsive {
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
+        .implementation-section {
+            background-color: #f8f9fa;
+            border-radius: 0.375rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .auth-flow {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">FarmersNetwork API</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="chat-api.html">Chat API</a>
+                <a class="nav-link" href="call-api.html">Call API</a>
+                <a class="nav-link" href="settings-api.html">Settings API</a>
+                <a class="nav-link active" href="user-management-api.html">User Management</a>
+                <a class="nav-link" href="status-api.html">Status API</a>
+                <a class="nav-link" href="websocket.html">WebSocket</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Navigation</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-pills flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#overview">Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#authentication">Authentication</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#profile-management">Profile Management</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#account-settings">Account Settings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#data-management">Data Management</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#contact-management">Contact Management</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#react-native">React Native</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#flutter">Flutter</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <h1 class="mb-4">User Management API Documentation</h1>
+
+                <!-- Overview Section -->
+                <section id="overview" class="mb-5">
+                    <h2>Overview</h2>
+                    <p class="lead">
+                        The User Management API provides comprehensive endpoints for managing user profiles, account settings, privacy controls, and contact synchronization in the FarmersNetwork application.
+                    </p>
+                    
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle"></i> Key Features</h6>
+                        <ul class="mb-0">
+                            <li><strong>Phone Number Authentication</strong> - Login using phone number and password</li>
+                            <li><strong>Profile Management</strong> - Update user information, avatar, and about section</li>
+                            <li><strong>Privacy Controls</strong> - Manage visibility settings for profile data</li>
+                            <li><strong>Media Settings</strong> - Configure auto-download and quality preferences</li>
+                            <li><strong>Notification Settings</strong> - Control push notifications and sounds</li>
+                            <li><strong>Contact Synchronization</strong> - Sync device contacts with app users</li>
+                            <li><strong>Data Export</strong> - Export user data for backup or migration</li>
+                        </ul>
+                    </div>
+
+                    <h4>Base URL</h4>
+                    <div class="code-block">
+                        <code>https://your-domain.com/api</code>
+                    </div>
+                </section>
+
+                <!-- Authentication Section -->
+                <section id="authentication" class="mb-5">
+                    <h2>Authentication</h2>
+                    
+                    <div class="auth-flow">
+                        <h4>📱 Phone Number Authentication Flow</h4>
+                        <p>FarmersNetwork uses phone number-based authentication with Laravel Sanctum tokens for secure API access.</p>
+                    </div>
+
+                    <!-- Registration -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">User Registration</h5>
+                            <span class="badge bg-success method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/auth/register</code></p>
+                            <p>Register a new user with phone number and password.</p>
+
+                            <h6>Request Body:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone_number": "+1234567890",
+  "country_code": "+1",
+  "password": "securepassword123",
+  "password_confirmation": "securepassword123"
+}</code></pre>
+                            </div>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "phone_number": "+1234567890",
+      "country_code": "+1",
+      "avatar_url": null,
+      "about": null,
+      "is_online": false,
+      "created_at": "2024-01-15T10:30:00.000Z",
+      "updated_at": "2024-01-15T10:30:00.000Z"
+    },
+    "token": "1|abc123def456...",
+    "token_type": "Bearer"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Login -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">User Login</h5>
+                            <span class="badge bg-success method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/auth/login</code></p>
+                            <p>Login with phone number or email and password.</p>
+
+                            <h6>Request Body:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "login": "+1234567890",
+  "password": "securepassword123"
+}</code></pre>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <strong>Note:</strong> The <code>login</code> field accepts both phone numbers and email addresses. The system automatically detects the format.
+                            </div>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "phone_number": "+1234567890",
+      "country_code": "+1",
+      "avatar_url": "https://example.com/avatars/user1.jpg",
+      "about": "Hey there! I am using FarmersNetwork.",
+      "last_seen_at": "2024-01-15T10:30:00.000Z",
+      "is_online": true,
+      "privacy_last_seen": "everyone",
+      "privacy_profile_photo": "everyone",
+      "privacy_about": "everyone",
+      "read_receipts": true
+    },
+    "token": "2|xyz789abc123...",
+    "token_type": "Bearer"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logout -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">User Logout</h5>
+                            <span class="badge bg-warning method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/auth/logout</code></p>
+                            <p>Logout user and revoke authentication token.</p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Logged out successfully"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Profile Management Section -->
+                <section id="profile-management" class="mb-5">
+                    <h2>Profile Management</h2>
+
+                    <!-- Get Profile -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get User Profile</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/profile</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Retrieve current user's profile information.</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Profile retrieved successfully",
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone_number": "+1234567890",
+    "country_code": "+1",
+    "avatar_url": "https://example.com/avatars/user1.jpg",
+    "about": "Hey there! I am using FarmersNetwork.",
+    "last_seen_at": "2024-01-15T10:30:00.000Z",
+    "is_online": true,
+    "created_at": "2024-01-15T10:00:00.000Z",
+    "updated_at": "2024-01-15T10:30:00.000Z"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Profile -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Update User Profile</h5>
+                            <span class="badge bg-warning method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/profile</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Update user profile information including name, about, email, and avatar.</p>
+
+                            <h6>Request Body (JSON):</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "name": "John Smith",
+  "about": "Farmer and agricultural enthusiast",
+  "email": "john.smith@example.com"
+}</code></pre>
+                            </div>
+
+                            <h6>Request Body (Multipart for Avatar Upload):</h6>
+                            <div class="response-example">
+                                <pre><code class="language-javascript">const formData = new FormData();
+formData.append('name', 'John Smith');
+formData.append('about', 'Farmer and agricultural enthusiast');
+formData.append('avatar', imageFile); // File object</code></pre>
+                            </div>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Profile updated successfully",
+  "data": {
+    "id": 1,
+    "name": "John Smith",
+    "email": "john.smith@example.com",
+    "phone_number": "+1234567890",
+    "country_code": "+1",
+    "avatar_url": "https://example.com/avatars/user1_updated.jpg",
+    "about": "Farmer and agricultural enthusiast",
+    "updated_at": "2024-01-15T11:00:00.000Z"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Account Settings Section -->
+                <section id="account-settings" class="mb-5">
+                    <h2>Account Settings</h2>
+
+                    <!-- Privacy Settings -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Privacy Settings</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/privacy</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Retrieve user's privacy settings and visibility controls.</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Privacy settings retrieved successfully",
+  "data": {
+    "last_seen_privacy": "everyone",
+    "profile_photo_privacy": "contacts",
+    "about_privacy": "everyone",
+    "status_privacy": "contacts",
+    "read_receipts_enabled": true,
+    "groups_privacy": "everyone"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Privacy Settings -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Update Privacy Settings</h5>
+                            <span class="badge bg-warning method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/privacy</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Update privacy controls for profile visibility.</p>
+
+                            <h6>Request Body:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "privacy_last_seen": "contacts",
+  "privacy_profile_photo": "everyone",
+  "privacy_about": "contacts",
+  "read_receipts": true
+}</code></pre>
+                            </div>
+
+                            <h6>Privacy Options:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Setting</th>
+                                            <th>Options</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>privacy_last_seen</code></td>
+                                            <td>everyone, contacts, nobody</td>
+                                            <td>Who can see when you were last online</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>privacy_profile_photo</code></td>
+                                            <td>everyone, contacts, nobody</td>
+                                            <td>Who can see your profile picture</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>privacy_about</code></td>
+                                            <td>everyone, contacts, nobody</td>
+                                            <td>Who can see your about section</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>read_receipts</code></td>
+                                            <td>true, false</td>
+                                            <td>Send read receipts for messages</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Media Settings -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Media Settings</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/media-settings</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Retrieve media download and quality preferences.</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Media settings retrieved successfully",
+  "data": {
+    "auto_download_photos": true,
+    "auto_download_videos": false,
+    "auto_download_documents": false,
+    "auto_download_on_mobile": false,
+    "auto_download_on_wifi": true,
+    "media_quality": "high",
+    "voice_message_playback_speed": 1,
+    "delete_media_after_days": 30,
+    "compress_images": true,
+    "compress_videos": true,
+    "save_to_gallery": true
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Media Settings -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Update Media Settings</h5>
+                            <span class="badge bg-warning method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/media-settings</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Update media download and quality preferences.</p>
+
+                            <h6>Request Body:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "auto_download_photos": true,
+  "auto_download_videos": false,
+  "auto_download_documents": true,
+  "media_quality": "high",
+  "compress_images": true,
+  "save_to_gallery": false
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Notification Settings</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/notifications</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Retrieve notification preferences and sound settings.</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Notification settings retrieved successfully",
+  "data": {
+    "message_notifications": true,
+    "call_notifications": true,
+    "status_notifications": true,
+    "group_notifications": true,
+    "notification_sound": "default",
+    "vibrate": true,
+    "notification_light": true,
+    "in_app_sounds": true,
+    "in_app_vibrate": true,
+    "notification_preview": "name_and_message",
+    "high_priority_notifications": true
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Notification Settings -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Update Notification Settings</h5>
+                            <span class="badge bg-warning method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/notifications</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Update notification preferences and sound settings.</p>
+
+                            <h6>Request Body:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "push_notifications": true,
+  "email_notifications": false,
+  "sms_notifications": false,
+  "notification_sound": "default",
+  "vibration": true
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Data Management Section -->
+                <section id="data-management" class="mb-5">
+                    <h2>Data Management</h2>
+
+                    <!-- Export Data -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Export User Data</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/export-data</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Export user's data for backup or migration purposes.</p>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Data exported successfully",
+  "data": {
+    "profile": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "phone_number": "+1234567890",
+      "about": "Hey there! I am using FarmersNetwork.",
+      "created_at": "2024-01-15T10:00:00.000Z"
+    },
+    "privacy_settings": {
+      "last_seen_privacy": "everyone",
+      "profile_photo_privacy": "contacts",
+      "about_privacy": "everyone",
+      "read_receipts_enabled": true
+    },
+    "export_generated_at": "2024-01-15T12:00:00.000Z",
+    "note": "This export contains your profile and settings data. Message history and media files are not included for privacy reasons."
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Deletion -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Delete Account</h5>
+                            <span class="badge bg-danger method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/settings/delete-account</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Permanently delete user account and all associated data.</p>
+
+                            <div class="alert alert-danger">
+                                <strong>⚠️ Warning:</strong> This action is irreversible. All user data, messages, and media will be permanently deleted.
+                            </div>
+
+                            <h6>Request Body:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "password": "current_password",
+  "confirmation": "DELETE"
+}</code></pre>
+                            </div>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Account deleted successfully"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contact Management Section -->
+                <section id="contact-management" class="mb-5">
+                    <h2>Contact Management & Synchronization</h2>
+
+                    <!-- Get Contacts -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Contacts List</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/contacts</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Retrieve user's synchronized contacts list.</p>
+
+                            <h6>Query Parameters:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>per_page</code></td>
+                                            <td>integer</td>
+                                            <td>Number of contacts per page (default: 50)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>search</code></td>
+                                            <td>string</td>
+                                            <td>Search contacts by name or phone number</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Contacts retrieved successfully",
+  "data": {
+    "data": [
+      {
+        "id": 1,
+        "contact_name": "Jane Smith",
+        "is_favorite": false,
+        "is_blocked": false,
+        "added_at": "2024-01-15T10:00:00.000Z",
+        "contact": {
+          "id": 2,
+          "name": "Jane Smith",
+          "phone_number": "+1234567891",
+          "country_code": "+1",
+          "avatar_url": "https://example.com/avatars/jane.jpg",
+          "last_seen_at": "2024-01-15T11:30:00.000Z",
+          "is_online": true
+        }
+      }
+    ],
+    "current_page": 1,
+    "per_page": 50,
+    "total": 25
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sync Contacts -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Sync Device Contacts</h5>
+                            <span class="badge bg-warning method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/contacts/sync</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Synchronize device contacts with app users.</p>
+
+                            <h6>Request Body:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "contacts": [
+    {
+      "name": "John Doe",
+      "phone": "+1234567890"
+    },
+    {
+      "name": "Jane Smith",
+      "phone": "+1234567891"
+    },
+    {
+      "name": "Bob Johnson",
+      "phone": "+1234567892"
+    }
+  ]
+}</code></pre>
+                            </div>
+
+                            <h6>Response Example:</h6>
+                            <div class="response-example">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Contacts synced successfully",
+  "data": {
+    "synced_contacts": [
+      {
+        "id": 1,
+        "contact_name": "Jane Smith",
+        "contact_user_id": 2,
+        "added_at": "2024-01-15T12:00:00.000Z"
+      }
+    ],
+    "total_synced": 3,
+    "new_contacts": 1,
+    "app_users_found": 1
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Contacts -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Search Users</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/contacts/search</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Search for users by name or phone number.</p>
+
+                            <h6>Query Parameters:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Required</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>query</code></td>
+                                            <td>string</td>
+                                            <td>Yes</td>
+                                            <td>Search term (name or phone number)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>per_page</code></td>
+                                            <td>integer</td>
+                                            <td>No</td>
+                                            <td>Results per page (default: 20)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h6>Example Request:</h6>
+                            <div class="code-block">
+                                <code>GET /api/contacts/search?query=john&per_page=10</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Favorite Contacts -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Get Favorite Contacts</h5>
+                            <span class="badge bg-success method-badge">GET</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/contacts/favorites</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Retrieve user's favorite contacts.</p>
+                        </div>
+                    </div>
+
+                    <!-- Block/Unblock Contacts -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Block/Unblock Contact</h5>
+                            <span class="badge bg-warning method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoints:</strong></p>
+                            <ul>
+                                <li><code>/api/contacts/block/{contactId}</code> - Block a contact</li>
+                                <li><code>/api/contacts/unblock/{contactId}</code> - Unblock a contact</li>
+                            </ul>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Block or unblock a contact to control message delivery.</p>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Favorite -->
+                    <div class="card endpoint-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Toggle Favorite Contact</h5>
+                            <span class="badge bg-warning method-badge">POST</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Endpoint:</strong> <code>/api/contacts/favorite/{contactId}</code></p>
+                            <p><strong>Authentication:</strong> Required (Bearer token)</p>
+                            <p>Add or remove a contact from favorites list.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- React Native Implementation -->
+                <section id="react-native" class="mb-5">
+                    <h2>React Native Implementation</h2>
+
+                    <div class="implementation-section">
+                        <h4>Authentication Service</h4>
+                        <p>Complete authentication service with phone number support:</p>
+
+                        <div class="code-block">
+                            <pre><code class="language-javascript">// services/AuthService.js
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+class AuthService {
+  constructor() {
+    this.baseUrl = 'https://your-domain.com/api';
+    this.token = null;
+  }
+
+  async register(userData) {
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        this.token = result.data.token;
+        await AsyncStorage.setItem('auth_token', this.token);
+        await AsyncStorage.setItem('user_data', JSON.stringify(result.data.user));
+        return result;
+      }
+
+      throw new Error(result.message || 'Registration failed');
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
+  }
+
+  async login(phoneOrEmail, password) {
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          login: phoneOrEmail,
+          password: password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        this.token = result.data.token;
+        await AsyncStorage.setItem('auth_token', this.token);
+        await AsyncStorage.setItem('user_data', JSON.stringify(result.data.user));
+        return result;
+      }
+
+      throw new Error(result.message || 'Login failed');
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  }
+
+  async logout() {
+    try {
+      if (this.token) {
+        await fetch(`${this.baseUrl}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.token}`,
+            'Accept': 'application/json',
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      this.token = null;
+      await AsyncStorage.multiRemove(['auth_token', 'user_data']);
+    }
+  }
+
+  async getStoredToken() {
+    if (!this.token) {
+      this.token = await AsyncStorage.getItem('auth_token');
+    }
+    return this.token;
+  }
+
+  async isAuthenticated() {
+    const token = await this.getStoredToken();
+    return !!token;
+  }
+}
+
+export default new AuthService();</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="implementation-section">
+                        <h4>User Profile Management</h4>
+                        <div class="code-block">
+                            <pre><code class="language-javascript">// services/UserService.js
+import AuthService from './AuthService';
+
+class UserService {
+  constructor() {
+    this.baseUrl = 'https://your-domain.com/api';
+  }
+
+  async getProfile() {
+    const token = await AuthService.getStoredToken();
+
+    const response = await fetch(`${this.baseUrl}/settings/profile`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      return result.data;
+    }
+
+    throw new Error(result.message || 'Failed to get profile');
+  }
+
+  async updateProfile(profileData) {
+    const token = await AuthService.getStoredToken();
+
+    const response = await fetch(`${this.baseUrl}/settings/profile`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(profileData),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      return result.data;
+    }
+
+    throw new Error(result.message || 'Failed to update profile');
+  }
+
+  async uploadAvatar(imageUri) {
+    const token = await AuthService.getStoredToken();
+
+    const formData = new FormData();
+    formData.append('avatar', {
+      uri: imageUri,
+      type: 'image/jpeg',
+      name: 'avatar.jpg',
+    });
+
+    const response = await fetch(`${this.baseUrl}/settings/profile`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+        'Accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      return result.data;
+    }
+
+    throw new Error(result.message || 'Failed to upload avatar');
+  }
+}
+
+export default new UserService();</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="implementation-section">
+                        <h4>Contact Synchronization</h4>
+                        <div class="code-block">
+                            <pre><code class="language-javascript">// services/ContactService.js
+import { PermissionsAndroid, Platform } from 'react-native';
+import Contacts from 'react-native-contacts';
+import AuthService from './AuthService';
+
+class ContactService {
+  constructor() {
+    this.baseUrl = 'https://your-domain.com/api';
+  }
+
+  async requestContactsPermission() {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+        {
+          title: 'Contacts Permission',
+          message: 'This app needs access to your contacts to find friends.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    }
+    return true; // iOS handles permissions automatically
+  }
+
+  async getDeviceContacts() {
+    const hasPermission = await this.requestContactsPermission();
+
+    if (!hasPermission) {
+      throw new Error('Contacts permission denied');
+    }
+
+    return new Promise((resolve, reject) => {
+      Contacts.getAll((err, contacts) => {
+        if (err) {
+          reject(err);
+        } else {
+          const formattedContacts = contacts
+            .filter(contact => contact.phoneNumbers.length > 0)
+            .map(contact => ({
+              name: contact.displayName || contact.givenName || 'Unknown',
+              phone: contact.phoneNumbers[0].number,
+            }));
+          resolve(formattedContacts);
+        }
+      });
+    });
+  }
+
+  async syncContacts() {
+    try {
+      const deviceContacts = await this.getDeviceContacts();
+      const token = await AuthService.getStoredToken();
+
+      const response = await fetch(`${this.baseUrl}/contacts/sync`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          contacts: deviceContacts,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        return result.data;
+      }
+
+      throw new Error(result.message || 'Failed to sync contacts');
+    } catch (error) {
+      console.error('Contact sync error:', error);
+      throw error;
+    }
+  }
+
+  async getContacts(page = 1, search = '') {
+    const token = await AuthService.getStoredToken();
+
+    const params = new URLSearchParams({
+      per_page: '50',
+      page: page.toString(),
+    });
+
+    if (search) {
+      params.append('search', search);
+    }
+
+    const response = await fetch(`${this.baseUrl}/contacts?${params}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      return result.data;
+    }
+
+    throw new Error(result.message || 'Failed to get contacts');
+  }
+}
+
+export default new ContactService();</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Flutter Implementation -->
+                <section id="flutter" class="mb-5">
+                    <h2>Flutter Implementation</h2>
+
+                    <div class="implementation-section">
+                        <h4>Authentication Service</h4>
+                        <p>Complete Flutter authentication service:</p>
+
+                        <div class="code-block">
+                            <pre><code class="language-dart">// lib/services/auth_service.dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+class AuthService {
+  static const String _baseUrl = 'https://your-domain.com/api';
+  static const String _tokenKey = 'auth_token';
+  static const String _userKey = 'user_data';
+
+  static AuthService? _instance;
+  static AuthService get instance => _instance ??= AuthService._();
+
+  AuthService._();
+
+  Future<Map<String, dynamic>> register({
+    required String name,
+    required String email,
+    required String phoneNumber,
+    required String countryCode,
+    required String password,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/auth/register'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: json.encode({
+          'name': name,
+          'email': email,
+          'phone_number': phoneNumber,
+          'country_code': countryCode,
+          'password': password,
+          'password_confirmation': password,
+        }),
+      );
+
+      final result = json.decode(response.body);
+
+      if (response.statusCode == 201 && result['success']) {
+        await _storeAuthData(result['data']);
+        return result;
+      }
+
+      throw Exception(result['message'] ?? 'Registration failed');
+    } catch (error) {
+      print('Registration error: $error');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> login({
+    required String phoneOrEmail,
+    required String password,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/auth/login'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: json.encode({
+          'login': phoneOrEmail,
+          'password': password,
+        }),
+      );
+
+      final result = json.decode(response.body);
+
+      if (response.statusCode == 200 && result['success']) {
+        await _storeAuthData(result['data']);
+        return result;
+      }
+
+      throw Exception(result['message'] ?? 'Login failed');
+    } catch (error) {
+      print('Login error: $error');
+      rethrow;
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      final token = await getStoredToken();
+
+      if (token != null) {
+        await http.post(
+          Uri.parse('$_baseUrl/auth/logout'),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        );
+      }
+    } catch (error) {
+      print('Logout error: $error');
+    } finally {
+      await _clearAuthData();
+    }
+  }
+
+  Future<String?> getStoredToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_tokenKey);
+  }
+
+  Future<bool> isAuthenticated() async {
+    final token = await getStoredToken();
+    return token != null;
+  }
+
+  Future<void> _storeAuthData(Map<String, dynamic> authData) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_tokenKey, authData['token']);
+    await prefs.setString(_userKey, json.encode(authData['user']));
+  }
+
+  Future<void> _clearAuthData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
+    await prefs.remove(_userKey);
+  }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="implementation-section">
+                        <h4>User Profile Management</h4>
+                        <div class="code-block">
+                            <pre><code class="language-dart">// lib/services/user_service.dart
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'auth_service.dart';
+
+class UserService {
+  static const String _baseUrl = 'https://your-domain.com/api';
+
+  static UserService? _instance;
+  static UserService get instance => _instance ??= UserService._();
+
+  UserService._();
+
+  Future<Map<String, dynamic>> getProfile() async {
+    final token = await AuthService.instance.getStoredToken();
+
+    final response = await http.get(
+      Uri.parse('$_baseUrl/settings/profile'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
+
+    final result = json.decode(response.body);
+
+    if (response.statusCode == 200 && result['success']) {
+      return result['data'];
+    }
+
+    throw Exception(result['message'] ?? 'Failed to get profile');
+  }
+
+  Future<Map<String, dynamic>> updateProfile({
+    String? name,
+    String? about,
+    String? email,
+  }) async {
+    final token = await AuthService.instance.getStoredToken();
+
+    final body = <String, dynamic>{};
+    if (name != null) body['name'] = name;
+    if (about != null) body['about'] = about;
+    if (email != null) body['email'] = email;
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/settings/profile'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode(body),
+    );
+
+    final result = json.decode(response.body);
+
+    if (response.statusCode == 200 && result['success']) {
+      return result['data'];
+    }
+
+    throw Exception(result['message'] ?? 'Failed to update profile');
+  }
+
+  Future<Map<String, dynamic>> uploadAvatar(File imageFile) async {
+    final token = await AuthService.instance.getStoredToken();
+
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$_baseUrl/settings/profile'),
+    );
+
+    request.headers['Authorization'] = 'Bearer $token';
+    request.headers['Accept'] = 'application/json';
+
+    request.files.add(
+      await http.MultipartFile.fromPath('avatar', imageFile.path),
+    );
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    final result = json.decode(response.body);
+
+    if (response.statusCode == 200 && result['success']) {
+      return result['data'];
+    }
+
+    throw Exception(result['message'] ?? 'Failed to upload avatar');
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

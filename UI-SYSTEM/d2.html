@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Dark Green</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .animate-slideDown {
+        animation: slideDown 0.4s ease-out forwards;
+      }
+
+      .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+
+      .stat-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 24px -8px rgba(21, 87, 36, 0.15);
+      }
+
+      .nav-item {
+        transition: all 0.2s ease;
+      }
+
+      .nav-item:hover {
+        background-color: rgba(21, 87, 36, 0.06);
+        transform: translateX(2px);
+      }
+
+      .nav-item.active {
+        background-color: rgba(21, 87, 36, 0.08);
+        color: #15803d;
+      }
+      
+      .nav-item.active i {
+        color: #15803d;
+      }
+
+      .sidebar {
+        transition: transform 0.3s ease;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+
+        .sidebar.open {
+          transform: translateX(0);
+        }
+      }
+
+      .dropdown-menu {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: all 0.2s ease;
+      }
+
+      .dropdown-menu.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .dropdown-item {
+        transition: all 0.15s ease;
+      }
+      
+      .dropdown-item:hover {
+        background-color: rgba(21, 87, 36, 0.06);
+      }
+
+      /* Submenu dropdown */
+      .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .submenu.open {
+        max-height: 500px;
+      }
+
+      .submenu-item {
+        transition: all 0.15s ease;
+      }
+
+      .submenu-item:hover {
+        background-color: rgba(21, 87, 36, 0.06);
+        padding-left: 3rem;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #15803d;
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #166534;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans antialiased">
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+    <!-- Sidebar -->
+    <aside
+      class="sidebar fixed left-0 top-0 h-full w-56 bg-white border-r border-gray-200 z-50 flex flex-col md:translate-x-0"
+    >
+      <!-- Logo -->
+      <div class="h-14 flex items-center px-4 border-b border-gray-200 flex-shrink-0">
+        <div class="flex items-center space-x-2">
+          <div class="w-7 h-7 bg-green-700 rounded-lg flex items-center justify-center">
+            <i class="ph-bold ph-tree-evergreen text-white text-sm"></i>
+          </div>
+          <span class="font-bold text-green-900 text-sm">GreenAdmin</span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 overflow-y-auto py-3 px-3" style="scrollbar-width: thin;">
+        <a
+          href="#"
+          class="nav-item active flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph-bold ph-squares-four text-base"></i>
+          <span>Dashboard</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-users-three text-base"></i>
+          <span>Users</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-shopping-cart text-base"></i>
+          <span>Orders</span>
+        </a>
+        
+        <!-- Products with Submenu -->
+        <div class="mb-1">
+          <button
+            id="productsToggle"
+            class="nav-item flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm text-gray-700"
+          >
+            <div class="flex items-center space-x-2">
+              <i class="ph ph-package text-base"></i>
+              <span>Products</span>
+            </div>
+            <i class="ph ph-caret-down text-xs transition-transform" id="productsIcon"></i>
+          </button>
+          <div id="productsSubmenu" class="submenu">
+            <a href="#" class="submenu-item flex items-center space-x-2 px-3 py-2 pl-10 rounded-lg text-xs text-gray-600">
+              <i class="ph ph-list text-sm"></i>
+              <span>All Products</span>
+            </a>
+            <a href="#" class="submenu-item flex items-center space-x-2 px-3 py-2 pl-10 rounded-lg text-xs text-gray-600">
+              <i class="ph ph-plus-circle text-sm"></i>
+              <span>Add New</span>
+            </a>
+            <a href="#" class="submenu-item flex items-center space-x-2 px-3 py-2 pl-10 rounded-lg text-xs text-gray-600">
+              <i class="ph ph-folder text-sm"></i>
+              <span>Categories</span>
+            </a>
+            <a href="#" class="submenu-item flex items-center space-x-2 px-3 py-2 pl-10 rounded-lg text-xs text-gray-600">
+              <i class="ph ph-tag text-sm"></i>
+              <span>Tags</span>
+            </a>
+          </div>
+        </div>
+        
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-chart-line text-base"></i>
+          <span>Analytics</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-receipt text-base"></i>
+          <span>Invoices</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-credit-card text-base"></i>
+          <span>Payments</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-truck text-base"></i>
+          <span>Shipping</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-percent text-base"></i>
+          <span>Discounts</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-megaphone text-base"></i>
+          <span>Marketing</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-star text-base"></i>
+          <span>Reviews</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-file-text text-base"></i>
+          <span>Reports</span>
+        </a>
+        <a
+          href="#"
+          class="nav-item flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-gear-six text-base"></i>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <!-- User Section -->
+      <div class="p-3 border-t border-gray-200">
+        <div class="flex items-center space-x-2 p-2 bg-green-50 rounded-xl">
+          <img
+            src="https://i.pravatar.cc/32"
+            alt="User"
+            class="w-7 h-7 rounded-full border-2 border-green-700"
+          />
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold text-gray-900 truncate">Admin User</p>
+            <p class="text-xs text-gray-500 truncate">admin@green.com</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="md:ml-56">
+      <!-- Sticky Header -->
+      <header
+        class="sticky top-0 z-30 bg-white border-b border-gray-200 h-14 flex items-center px-4 md:px-6"
+      >
+        <div class="flex items-center justify-between w-full">
+          <!-- Left: Menu + Search -->
+          <div class="flex items-center space-x-3">
+            <button
+              id="menuToggle"
+              class="md:hidden p-1.5 hover:bg-gray-100 rounded-lg transition"
+            >
+              <i class="ph-bold ph-list text-xl text-gray-700"></i>
+            </button>
+            <div class="hidden sm:flex items-center space-x-2 bg-gray-100 px-3 py-1.5 rounded-xl">
+              <i class="ph ph-magnifying-glass text-gray-500"></i>
+              <input
+                type="text"
+                placeholder="Search..."
+                class="bg-transparent border-none outline-none text-sm text-gray-700 w-48"
+              />
+            </div>
+          </div>
+
+          <!-- Right: Actions -->
+          <div class="flex items-center space-x-2">
+            <button class="p-1.5 hover:bg-gray-100 rounded-lg transition relative">
+              <i class="ph-bold ph-bell text-lg text-gray-700"></i>
+              <span
+                class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"
+              ></span>
+            </button>
+            <button class="p-1.5 hover:bg-gray-100 rounded-lg transition">
+              <i class="ph ph-envelope text-lg text-gray-700"></i>
+            </button>
+
+            <!-- Profile Dropdown -->
+            <div class="relative">
+              <button
+                id="profileBtn"
+                class="flex items-center space-x-2 p-1.5 hover:bg-gray-100 rounded-lg transition"
+              >
+                <img
+                  src="https://i.pravatar.cc/32"
+                  alt="User"
+                  class="w-7 h-7 rounded-full border-2 border-green-700"
+                />
+                <i class="ph ph-caret-down text-gray-600 text-sm hidden sm:block transition-transform" id="caretIcon"></i>
+              </button>
+
+              <!-- Dropdown -->
+              <div
+                id="profileDropdown"
+                class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2"
+              >
+                <a
+                  href="#"
+                  class="dropdown-item flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 rounded-lg mx-2"
+                >
+                  <i class="ph ph-user text-base"></i>
+                  <span>Profile</span>
+                </a>
+                <a
+                  href="#"
+                  class="dropdown-item flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 rounded-lg mx-2"
+                >
+                  <i class="ph ph-gear-six text-base"></i>
+                  <span>Settings</span>
+                </a>
+                <div class="border-t border-gray-200 my-2"></div>
+                <a
+                  href="#"
+                  class="dropdown-item flex items-center space-x-2 px-3 py-2 text-sm text-red-600 rounded-lg mx-2"
+                >
+                  <i class="ph ph-sign-out text-base"></i>
+                  <span>Logout</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="p-4 md:p-6">
+        <!-- Page Title -->
+        <div class="mb-4">
+          <h1 class="text-xl font-bold text-gray-900">Dashboard Overview</h1>
+          <p class="text-xs text-gray-500 mt-0.5">Monitor your business metrics</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          <!-- Card 1 -->
+          <div class="stat-card bg-white rounded-xl border border-gray-200 p-4">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs text-gray-500 mb-1">Total Revenue</p>
+                <p class="text-xl font-bold text-gray-900" data-count="45280">0</p>
+                <div class="flex items-center mt-1">
+                  <span class="text-xs text-green-700 font-medium">+12.5%</span>
+                </div>
+              </div>
+              <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="ph-bold ph-currency-dollar text-green-700"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="stat-card bg-white rounded-xl border border-gray-200 p-4">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs text-gray-500 mb-1">Total Orders</p>
+                <p class="text-xl font-bold text-gray-900" data-count="1842">0</p>
+                <div class="flex items-center mt-1">
+                  <span class="text-xs text-green-700 font-medium">+8.2%</span>
+                </div>
+              </div>
+              <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="ph-bold ph-shopping-bag text-green-700"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="stat-card bg-white rounded-xl border border-gray-200 p-4">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs text-gray-500 mb-1">New Customers</p>
+                <p class="text-xl font-bold text-gray-900" data-count="328">0</p>
+                <div class="flex items-center mt-1">
+                  <span class="text-xs text-green-700 font-medium">+15.3%</span>
+                </div>
+              </div>
+              <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="ph-bold ph-user-plus text-green-700"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="stat-card bg-white rounded-xl border border-gray-200 p-4">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs text-gray-500 mb-1">Conversion Rate</p>
+                <p class="text-xl font-bold text-gray-900">3.24%</p>
+                <div class="flex items-center mt-1">
+                  <span class="text-xs text-red-600 font-medium">-2.1%</span>
+                </div>
+              </div>
+              <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center">
+                <i class="ph-bold ph-trend-up text-green-700"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+          <!-- Sales Chart -->
+          <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-sm font-bold text-gray-900">Sales Overview</h3>
+                <p class="text-xs text-gray-500">Monthly sales performance</p>
+              </div>
+              <div class="flex space-x-1">
+                <button class="px-2 py-1 text-xs bg-green-700 text-white rounded-lg transition hover:bg-green-800">Month</button>
+                <button class="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition">Year</button>
+              </div>
+            </div>
+            <div class="h-48 bg-gray-50 rounded-xl flex items-end p-3">
+              <div class="flex-1 bg-green-700 h-3/6 mx-1 rounded-t-lg hover:opacity-80 transition cursor-pointer"></div>
+              <div class="flex-1 bg-green-700 h-4/6 mx-1 rounded-t-lg hover:opacity-80 transition cursor-pointer"></div>
+              <div class="flex-1 bg-green-700 h-5/6 mx-1 rounded-t-lg hover:opacity-80 transition cursor-pointer"></div>
+              <div class="flex-1 bg-green-700 h-4/6 mx-1 rounded-t-lg hover:opacity-80 transition cursor-pointer"></div>
+              <div class="flex-1 bg-green-700 h-2/6 mx-1 rounded-t-lg hover:opacity-80 transition cursor-pointer"></div>
+              <div class="flex-1 bg-green-700 h-3/6 mx-1 rounded-t-lg hover:opacity-80 transition cursor-pointer"></div>
+            </div>
+          </div>
+
+          <!-- Top Products -->
+          <div class="bg-white rounded-xl border border-gray-200 p-4">
+            <h3 class="text-sm font-bold text-gray-900 mb-3">Top Products</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="ph-bold ph-laptop text-green-700 text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">Laptop Pro</p>
+                    <p class="text-xs text-gray-500">245 sold</p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-green-700">$12,450</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="ph-bold ph-headphones text-green-700 text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">Headphones</p>
+                    <p class="text-xs text-gray-500">189 sold</p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-green-700">$5,670</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="ph-bold ph-watch text-green-700 text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">Smart Watch</p>
+                    <p class="text-xs text-gray-500">156 sold</p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-green-700">$4,680</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="ph-bold ph-device-mobile text-green-700 text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">Smartphone</p>
+                    <p class="text-xs text-gray-500">134 sold</p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-green-700">$8,040</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Recent Orders -->
+          <div class="bg-white rounded-xl border border-gray-200 p-4">
+            <h3 class="text-sm font-bold text-gray-900 mb-3">Recent Orders</h3>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
+                <div class="flex items-center space-x-2">
+                  <div class="w-7 h-7 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="ph-bold ph-check text-green-700 text-xs"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">Order #12345</p>
+                    <p class="text-xs text-gray-500">John Smith</p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-gray-900">$245.00</span>
+              </div>
+              <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
+                <div class="flex items-center space-x-2">
+                  <div class="w-7 h-7 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <i class="ph-bold ph-clock text-yellow-700 text-xs"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">Order #12344</p>
+                    <p class="text-xs text-gray-500">Sarah Johnson</p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-gray-900">$189.50</span>
+              </div>
+              <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
+                <div class="flex items-center space-x-2">
+                  <div class="w-7 h-7 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="ph-bold ph-check text-green-700 text-xs"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">Order #12343</p>
+                    <p class="text-xs text-gray-500">Mike Chen</p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-gray-900">$567.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Customers -->
+          <div class="bg-white rounded-xl border border-gray-200 p-4">
+            <h3 class="text-sm font-bold text-gray-900 mb-3">New Customers</h3>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
+                <div class="flex items-center space-x-2">
+                  <img
+                    src="https://i.pravatar.cc/28?img=1"
+                    alt="User"
+                    class="w-7 h-7 rounded-full"
+                  />
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">Emma Wilson</p>
+                    <p class="text-xs text-gray-500">emma@example.com</p>
+                  </div>
+                </div>
+                <span class="text-xs text-gray-500">2m ago</span>
+              </div>
+              <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
+                <div class="flex items-center space-x-2">
+                  <img
+                    src="https://i.pravatar.cc/28?img=2"
+                    alt="User"
+                    class="w-7 h-7 rounded-full"
+                  />
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">David Brown</p>
+                    <p class="text-xs text-gray-500">david@example.com</p>
+                  </div>
+                </div>
+                <span class="text-xs text-gray-500">15m ago</span>
+              </div>
+              <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
+                <div class="flex items-center space-x-2">
+                  <img
+                    src="https://i.pravatar.cc/28?img=3"
+                    alt="User"
+                    class="w-7 h-7 rounded-full"
+                  />
+                  <div>
+                    <p class="text-xs font-semibold text-gray-900">Lisa Anderson</p>
+                    <p class="text-xs text-gray-500">lisa@example.com</p>
+                  </div>
+                </div>
+                <span class="text-xs text-gray-500">1h ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Counter animation
+      function animateCounter(element, target) {
+        const duration = 1500;
+        const increment = target / (duration / 16);
+        let current = 0;
+
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            element.textContent = target.toLocaleString();
+            clearInterval(timer);
+          } else {
+            element.textContent = Math.floor(current).toLocaleString();
+          }
+        }, 16);
+      }
+
+      // Initialize counters
+      window.addEventListener("load", () => {
+        document.querySelectorAll("[data-count]").forEach((el) => {
+          const target = parseInt(el.getAttribute("data-count"));
+          setTimeout(() => animateCounter(el, target), 300);
+        });
+      });
+
+      // Mobile menu toggle
+      const menuToggle = document.getElementById("menuToggle");
+      const sidebar = document.querySelector(".sidebar");
+      const overlay = document.getElementById("overlay");
+
+      if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+          sidebar.classList.toggle("open");
+          overlay.classList.toggle("hidden");
+        });
+
+        overlay.addEventListener("click", () => {
+          sidebar.classList.remove("open");
+          overlay.classList.add("hidden");
+        });
+      }
+
+      // Profile dropdown
+      const profileBtn = document.getElementById("profileBtn");
+      const profileDropdown = document.getElementById("profileDropdown");
+      const caretIcon = document.getElementById("caretIcon");
+
+      if (profileBtn) {
+        profileBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          profileDropdown.classList.toggle("show");
+          if (caretIcon) {
+            caretIcon.style.transform = profileDropdown.classList.contains("show")
+              ? "rotate(180deg)"
+              : "rotate(0deg)";
+          }
+        });
+
+        document.addEventListener("click", () => {
+          profileDropdown.classList.remove("show");
+          if (caretIcon) {
+            caretIcon.style.transform = "rotate(0deg)";
+          }
+        });
+      }
+
+      // Active nav handling
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", (e) => {
+          // Don't handle if it's the products toggle button
+          if (item.id === 'productsToggle') return;
+          
+          document.querySelectorAll(".nav-item").forEach((nav) => nav.classList.remove("active"));
+          item.classList.add("active");
+        });
+      });
+
+      // Products submenu toggle
+      const productsToggle = document.getElementById("productsToggle");
+      const productsSubmenu = document.getElementById("productsSubmenu");
+      const productsIcon = document.getElementById("productsIcon");
+
+      if (productsToggle) {
+        productsToggle.addEventListener("click", (e) => {
+          e.preventDefault();
+          productsSubmenu.classList.toggle("open");
+          productsIcon.style.transform = productsSubmenu.classList.contains("open")
+            ? "rotate(180deg)"
+            : "rotate(0deg)";
+        });
+      }
+    </script>
+  </body>
+</html>

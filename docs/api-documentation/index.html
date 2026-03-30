@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmersNetwork Chat API Documentation</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">
+                <i class="fas fa-comments me-2"></i>
+                FarmersNetwork API
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#authentication">Authentication</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chat-api.html">Chat API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="message-reactions-api.html">Reactions API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact-management-api.html">Contact API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="status-api.html">Status API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="websocket.html">WebSocket</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="call-api.html">Call API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="broadcast-settings-api.html">Broadcast Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="settings-api.html">Settings API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="user-management-api.html">User Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="api-summary.html">API Summary</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="mobile-implementation.html">Mobile Guide</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#examples">Examples</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1 class="display-4 fw-bold text-white mb-4">
+                            <i class="fas fa-rocket text-warning me-3"></i>
+                            FarmersNetwork Chat API
+                        </h1>
+                        <p class="lead text-light mb-4">
+                            Comprehensive REST API documentation for building WhatsApp-style chat applications with real-time messaging, status updates, and group chat functionality.
+                        </p>
+                        <div class="hero-stats row text-center mb-4">
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <h3 class="text-warning">React Native</h3>
+                                    <p class="text-light">& Flutter Support</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <h3 class="text-warning">50+</h3>
+                                    <p class="text-light">API Endpoints</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <h3 class="text-warning">Real-time</h3>
+                                    <p class="text-light">WebSocket Support</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-buttons">
+                            <a href="#overview" class="btn btn-warning btn-lg me-3">
+                                <i class="fas fa-book me-2"></i>Get Started
+                            </a>
+                            <a href="chat-api.html" class="btn btn-outline-light btn-lg me-3">
+                                <i class="fas fa-comments me-2"></i>Chat API
+                            </a>
+                            <a href="call-api.html" class="btn btn-outline-light btn-lg me-3">
+                                <i class="fas fa-phone me-2"></i>Call API
+                            </a>
+                            <a href="broadcast-settings-api.html" class="btn btn-outline-light btn-lg me-3">
+                                <i class="fas fa-broadcast-tower me-2"></i>Broadcast API
+                            </a>
+                            <a href="status-api.html" class="btn btn-outline-light btn-lg me-3">
+                                <i class="fas fa-eye me-2"></i>Status API
+                            </a>
+                            <a href="mobile-implementation.html" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-mobile-alt me-2"></i>Mobile Guide
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <div class="api-preview-card">
+                            <div class="card-header">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                                <span class="title">API Response</span>
+                            </div>
+                            <div class="card-body">
+                                <pre><code class="language-json">{
+  "success": true,
+  "message": "Message sent successfully",
+  "data": {
+    "id": 123,
+    "content": "Hello World! 🚀",
+    "sender": {
+      "id": 1,
+      "name": "Admin User"
+    },
+    "chat_id": 45,
+    "created_at": "2025-07-14T19:42:34Z"
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-5 fw-bold mb-4">API Overview</h2>
+                    <p class="lead text-muted">
+                        The FarmersNetwork Chat API provides a complete solution for building modern chat applications with enterprise-grade features.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-md-3">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h4>Real-time Messaging</h4>
+                        <p>Send and receive messages instantly with WebSocket support, typing indicators, and read receipts.</p>
+                        <ul class="feature-list">
+                            <li>Private & Group Chats</li>
+                            <li>Media File Sharing</li>
+                            <li>Message Reactions</li>
+                            <li>Reply to Messages</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <h4>Voice & Video Calls</h4>
+                        <p>Complete WebRTC-based calling system with WebSocket signaling and mobile integration.</p>
+                        <ul class="feature-list">
+                            <li>Audio & Video Calls</li>
+                            <li>Real-time Signaling</li>
+                            <li>Call History & Stats</li>
+                            <li>Mobile App Support</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h4>Status Updates</h4>
+                        <p>WhatsApp-style status updates with 24-hour expiration and comprehensive viewer analytics.</p>
+                        <ul class="feature-list">
+                            <li>Text & Media Status</li>
+                            <li>Viewer Tracking</li>
+                            <li>Privacy Controls</li>
+                            <li>Auto-Expiration</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Enterprise Security</h4>
+                        <p>Robust authentication and authorization with Laravel Sanctum and comprehensive API protection.</p>
+                        <ul class="feature-list">
+                            <li>Bearer Token Auth</li>
+                            <li>User Verification</li>
+                            <li>Rate Limiting</li>
+                            <li>Data Validation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Features Row -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-3">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-address-book"></i>
+                        </div>
+                        <h4>Contact Management</h4>
+                        <p>Complete contact synchronization and management with device integration and social features.</p>
+                        <ul class="feature-list">
+                            <li>Device Contact Sync</li>
+                            <li>Contact Search</li>
+                            <li>Favorites Management</li>
+                            <li>Block/Unblock Users</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <h4>Settings & Privacy</h4>
+                        <p>Comprehensive user settings with privacy controls and notification preferences.</p>
+                        <ul class="feature-list">
+                            <li>Privacy Settings</li>
+                            <li>Notification Controls</li>
+                            <li>Media Preferences</li>
+                            <li>Data Export</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-broadcast-tower"></i>
+                        </div>
+                        <h4>Real-time Broadcasting</h4>
+                        <p>Advanced WebSocket broadcasting with Laravel Reverb and Pusher integration.</p>
+                        <ul class="feature-list">
+                            <li>Laravel Reverb</li>
+                            <li>Pusher Cloud</li>
+                            <li>Dynamic Configuration</li>
+                            <li>Admin Controls</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h4>Mobile Ready</h4>
+                        <p>Complete mobile app integration with React Native and Flutter implementation guides.</p>
+                        <ul class="feature-list">
+                            <li>React Native SDK</li>
+                            <li>Flutter Integration</li>
+                            <li>Offline Support</li>
+                            <li>Push Notifications</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Base Information -->
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="api-info-card">
+                        <h3 class="mb-4">
+                            <i class="fas fa-server me-2"></i>
+                            Base API Information
+                        </h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <strong>Base URL:</strong>
+                                    <code>http://127.0.0.1:8000/api</code>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Version:</strong>
+                                    <span class="badge bg-success">v1.0.0</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Content-Type:</strong>
+                                    <code>application/json</code>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <strong>Authentication:</strong>
+                                    <code>Bearer Token</code>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Rate Limit:</strong>
+                                    <span class="text-success">60 requests/minute</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>WebSocket:</strong>
+                                    <code>ws://127.0.0.1:8080</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">Quick Start Guide</h2>
+                    <p class="lead text-muted">Get up and running with the FarmersNetwork Chat API in minutes.</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="quick-start-step">
+                        <div class="step-number">1</div>
+                        <h4>Authentication</h4>
+                        <p>Register or login to get your Bearer token for API access.</p>
+                        <a href="#authentication" class="btn btn-outline-primary btn-sm">Learn More</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="quick-start-step">
+                        <div class="step-number">2</div>
+                        <h4>Send Messages</h4>
+                        <p>Create chats and start sending messages with our comprehensive Chat API.</p>
+                        <a href="#chat-api" class="btn btn-outline-primary btn-sm">Explore Chat API</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="quick-start-step">
+                        <div class="step-number">3</div>
+                        <h4>Real-time Updates</h4>
+                        <p>Connect to WebSocket for real-time messaging and status updates.</p>
+                        <a href="#websocket" class="btn btn-outline-primary btn-sm">WebSocket Guide</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Authentication Section -->
+    <section id="authentication" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-5 fw-bold mb-4">
+                        <i class="fas fa-shield-alt text-primary me-3"></i>
+                        Authentication
+                    </h2>
+                    <p class="lead text-muted">
+                        Secure your API requests with Laravel Sanctum Bearer token authentication.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Authentication Flow -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-url">/auth/login</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Authenticate a user and receive a Bearer token for API access. The token should be included in the Authorization header for all subsequent requests.
+                            </p>
+
+                            <h5><i class="fas fa-arrow-right text-primary me-2"></i>Request Body</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                JSON Request
+                            </div>
+                            <pre><code class="language-json">{
+  "login": "admin@chatapp.com",
+  "password": "password"
+}</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@chatapp.com",
+      "phone_number": "+1234567890",
+      "avatar_url": null,
+      "is_online": true,
+      "last_seen_at": "2025-07-14T19:42:31.000000Z",
+      "created_at": "2025-07-14T10:00:00.000000Z"
+    },
+    "token": "1|abcdef123456789...",
+    "token_type": "Bearer"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Registration -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-url">/auth/register</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Register a new user account. Returns user data and authentication token upon successful registration.
+                            </p>
+
+                            <h5><i class="fas fa-arrow-right text-primary me-2"></i>Request Body</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                JSON Request
+                            </div>
+                            <pre><code class="language-json">{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone_number": "+1234567890",
+  "country_code": "+1",
+  "password": "password123",
+  "password_confirmation": "password123"
+}</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (201)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "Registration successful",
+  "data": {
+    "user": {
+      "id": 2,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone_number": "+1234567890",
+      "country_code": "+1",
+      "avatar_url": null,
+      "is_online": false,
+      "created_at": "2025-07-14T19:45:00.000000Z"
+    },
+    "token": "2|xyz789abc456...",
+    "token_type": "Bearer"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Current User -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-url">/auth/user</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Get the currently authenticated user's information. Requires Bearer token in Authorization header.
+                            </p>
+
+                            <h5><i class="fas fa-key text-warning me-2"></i>Headers</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-lock"></i>
+                                Authorization Header
+                            </div>
+                            <pre><code class="language-http">Authorization: Bearer 1|abcdef123456789...</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@chatapp.com",
+      "phone_number": "+1234567890",
+      "avatar_url": null,
+      "is_online": true,
+      "last_seen_at": "2025-07-14T19:42:31.000000Z",
+      "created_at": "2025-07-14T10:00:00.000000Z"
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication Usage -->
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="api-info-card">
+                        <h3 class="mb-4">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            Using Authentication
+                        </h3>
+                        <div class="row">
+                            <div class="col-12">
+                                <h5>1. Include Bearer Token</h5>
+                                <p class="text-muted">Add the token to the Authorization header for all authenticated requests:</p>
+                                <pre><code class="language-http">Authorization: Bearer YOUR_TOKEN_HERE</code></pre>
+
+                                <h5 class="mt-4">2. Token Expiration</h5>
+                                <p class="text-muted">Tokens do not expire by default but can be revoked. Handle 401 responses by redirecting to login.</p>
+
+                                <h5 class="mt-4">3. Error Responses</h5>
+                                <p class="text-muted">Authentication errors return 401 status with error details:</p>
+                                <pre><code class="language-json">{
+  "success": false,
+  "message": "Unauthenticated",
+  "error": "Token not provided or invalid"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Endpoints Overview -->
+    <section id="api-endpoints" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">API Endpoints Overview</h2>
+                    <p class="lead text-muted">Complete list of available endpoints organized by functionality.</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Authentication Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Authentication</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/auth/login</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/auth/register</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/auth/user</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/auth/logout</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="#authentication" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-comments"></i>
+                            <h4>Chat & Messaging</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/chats</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/chats</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/chats/{id}</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/chats/{id}/messages</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/chats/{id}/messages</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/chats/{id}/messages/{id}/react</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="chat-api.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-eye"></i>
+                            <h4>Status Updates</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/status</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/status</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/status/user/{id}</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/status/{id}/view</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/status/{id}/viewers</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-delete">DELETE</span>
+                                <span class="url">/status/{id}</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="status-api.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Management Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-address-book"></i>
+                            <h4>Contact Management</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/contacts/sync</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/contacts</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/contacts/search</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/contacts/favorite/{id}</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/contacts/favorites</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/contacts/block/{id}</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/contacts/unblock/{id}</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/contacts/blocked</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="contact-management-api.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Chat Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-users"></i>
+                            <h4>Group Management</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/groups</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/groups/{id}</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/groups/{id}/users</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-delete">DELETE</span>
+                                <span class="url">/groups/{id}/users/{id}</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/groups/{id}/message</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="chat-api.html#group-chat" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-file-upload"></i>
+                            <h4>Media Upload</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/media/upload</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/media/{filename}</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-delete">DELETE</span>
+                                <span class="url">/media/{filename}</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="chat-api.html#media-upload" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call API Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-phone-alt"></i>
+                            <h4>Voice & Video Calls</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/api/calls</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/api/calls/{id}/answer</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/api/calls/{id}/end</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/api/calls/{id}/decline</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/api/calls/active</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="call-api.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WebSocket Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-bolt"></i>
+                            <h4>Real-time Features</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/websocket/connection-info</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/websocket/online-status</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/websocket/chats/{id}/typing</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="websocket.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Reactions Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-smile"></i>
+                            <h4>Message Reactions</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/messages/{id}/react</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-delete">DELETE</span>
+                                <span class="url">/messages/{id}/react</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/messages/{id}/reactions</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/messages/{id}/read</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="message-reactions-api.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Broadcast Settings Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-broadcast-tower"></i>
+                            <h4>Broadcast Settings</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/api/broadcast-settings</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/api/broadcast-settings/status</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/api/broadcast-settings/health</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="broadcast-settings-api.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- App Settings Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-sliders-h"></i>
+                            <h4>App Settings</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/api/app-settings</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/api/app-settings/config</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/api/app-settings/{key}</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/api/app-settings/multiple</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="settings-api.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management Endpoints -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-users"></i>
+                            <h4>User Management</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/api/auth/login</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/api/settings/profile</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/api/settings/privacy</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/api/contacts/sync</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="user-management-api.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuration Management -->
+                <div class="col-lg-4">
+                    <div class="endpoint-category-card h-100">
+                        <div class="category-header">
+                            <i class="fas fa-cogs"></i>
+                            <h4>Configuration</h4>
+                        </div>
+                        <div class="category-body">
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/api/broadcast-settings/connection-info</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-post">POST</span>
+                                <span class="url">/api/broadcast-settings/test</span>
+                            </div>
+                            <div class="endpoint-item">
+                                <span class="method method-get">GET</span>
+                                <span class="url">/admin/realtime-settings</span>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="broadcast-settings-api.html" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

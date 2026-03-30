@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broadcast Settings API - FarmersNetwork Documentation</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-comments me-2"></i>
+                FarmersNetwork API
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chat-api.html">Chat API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="status-api.html">Status API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="websocket.html">WebSocket</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#broadcast-overview">Broadcast Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Broadcast Settings Header -->
+    <section id="broadcast-overview" class="py-5 bg-primary text-white" style="margin-top: 76px;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-broadcast-tower text-warning me-3"></i>
+                        Broadcast Settings API
+                    </h1>
+                    <p class="lead mb-4">
+                        Dynamic configuration API for mobile apps to automatically adapt to admin broadcast settings changes without requiring app updates.
+                    </p>
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Dynamic</h4>
+                                <p>Configuration</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Real-time</h4>
+                                <p>Updates</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Multi-Driver</h4>
+                                <p>Support</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Health</h4>
+                                <p>Monitoring</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="hero-image text-center">
+                        <i class="fas fa-cogs fa-10x text-warning opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview -->
+    <section id="overview" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">Dynamic Broadcast Configuration</h2>
+                    <p class="lead text-muted">
+                        Mobile apps can dynamically fetch broadcast settings to automatically adapt to admin configuration changes. 
+                        Supports both Pusher Cloud and Laravel Reverb with seamless switching.
+                    </p>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-lg-4">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h4>Auto-Configuration</h4>
+                        <p>Apps automatically receive updated WebSocket settings when admins make changes.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-toggle-on"></i>
+                        </div>
+                        <h4>Enable/Disable Control</h4>
+                        <p>Admins can instantly enable or disable real-time features across all mobile apps.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <h4>Health Monitoring</h4>
+                        <p>Built-in health checks and connection status monitoring for reliable service.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Endpoints -->
+    <section id="endpoints" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">API Endpoints</h2>
+                    <p class="lead text-muted">Complete broadcast settings configuration and monitoring endpoints.</p>
+                </div>
+            </div>
+
+            <!-- Get Broadcast Settings -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-url">/api/broadcast-settings</span>
+                            <span class="badge bg-success ms-2">Public</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Get complete broadcast configuration including driver settings, connection status, and WebSocket configuration for mobile apps.
+                            </p>
+                            
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "enabled": true,
+    "driver": "pusher",
+    "config": {
+      "enabled": true,
+      "driver": "pusher",
+      "key": "b3652bc3e7cddc5d6f80",
+      "cluster": "mt1",
+      "host": null,
+      "port": 443,
+      "scheme": "https",
+      "encrypted": true,
+      "auth_endpoint": "http://127.0.0.1:8000/broadcasting/auth"
+    },
+    "connection_status": {
+      "connected": true,
+      "message": "Pusher Cloud configuration valid and connectivity OK"
+    },
+    "last_updated": "2025-07-14T19:33:57.000000Z"
+  }
+}</code></pre>
+
+                            <h5><i class="fas fa-info-circle text-info me-2"></i>Response Fields</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Description</th>
+                                            <th>Example</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>enabled</code></td>
+                                            <td>Whether broadcasting is enabled</td>
+                                            <td>true</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>driver</code></td>
+                                            <td>Active broadcast driver (pusher/reverb)</td>
+                                            <td>pusher</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>config</code></td>
+                                            <td>WebSocket connection configuration</td>
+                                            <td>Object with connection details</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>connection_status</code></td>
+                                            <td>Current connection test results</td>
+                                            <td>Object with status and message</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Connection Info -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-url">/api/broadcast-settings/connection-info</span>
+                            <span class="badge bg-success ms-2">Public</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Get lightweight WebSocket connection information for establishing real-time connections.
+                            </p>
+                            
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "enabled": true,
+    "driver": "pusher",
+    "key": "b3652bc3e7cddc5d6f80",
+    "cluster": "mt1",
+    "host": null,
+    "port": 443,
+    "scheme": "https",
+    "encrypted": true,
+    "auth_endpoint": "http://127.0.0.1:8000/broadcasting/auth"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Status -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-url">/api/broadcast-settings/status</span>
+                            <span class="badge bg-success ms-2">Public</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Lightweight status check for polling. Use this endpoint for frequent status checks to minimize server load.
+                            </p>
+                            
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "enabled": true,
+    "driver": "pusher",
+    "last_updated": 1721851437
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Check -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-url">/api/broadcast-settings/health</span>
+                            <span class="badge bg-success ms-2">Public</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Comprehensive health check with connection testing. Returns HTTP 503 if broadcasting is unhealthy.
+                            </p>
+                            
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Healthy Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "status": "healthy",
+    "broadcast_enabled": true,
+    "driver": "pusher",
+    "connection": true,
+    "message": "Pusher Cloud configuration valid and connectivity OK",
+    "timestamp": "2025-07-14T19:33:57.000000Z"
+  }
+}</code></pre>
+
+                            <div class="code-block-header">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Unhealthy Response (503)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "status": "unhealthy",
+    "broadcast_enabled": false,
+    "driver": "log",
+    "connection": false,
+    "message": "Broadcasting is disabled",
+    "timestamp": "2025-07-14T19:33:57.000000Z"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Implementation Examples -->
+    <section id="examples" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">Implementation Examples</h2>
+                    <p class="lead text-muted">How to integrate broadcast settings API in your mobile applications.</p>
+                </div>
+            </div>
+
+            <!-- React Native Example -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="api-info-card">
+                        <h3 class="mb-4">
+                            <i class="fab fa-react text-primary me-2"></i>
+                            React Native Integration
+                        </h3>
+                        <div class="row">
+                            <div class="col-12">
+                                <h5>Configuration Service</h5>
+                                <pre><code class="language-javascript">// services/BroadcastConfigService.js
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+class BroadcastConfigService {
+  constructor() {
+    this.config = null;
+    this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
+  }
+
+  async getConfig(forceRefresh = false) {
+    try {
+      // Check cache first
+      if (!forceRefresh && this.config) {
+        return this.config;
+      }
+
+      // Fetch from API
+      const response = await fetch(`${API_BASE_URL}/api/broadcast-settings`);
+      const data = await response.json();
+
+      if (data.success) {
+        this.config = data.data;
+        
+        // Cache for offline use
+        await AsyncStorage.setItem('broadcast_config', JSON.stringify(this.config));
+        
+        return this.config;
+      }
+    } catch (error) {
+      console.error('Failed to get broadcast config:', error);
+      
+      // Try cached config
+      const cached = await AsyncStorage.getItem('broadcast_config');
+      if (cached) {
+        return JSON.parse(cached);
+      }
+      
+      // Return default disabled config
+      return { enabled: false, driver: 'log' };
+    }
+  }
+
+  async isEnabled() {
+    const config = await this.getConfig();
+    return config.enabled;
+  }
+}
+
+export default new BroadcastConfigService();</code></pre>
+                                
+                                <h5 class="mt-4">App Integration</h5>
+                                <pre><code class="language-javascript">// App.js
+import BroadcastConfigService from './services/BroadcastConfigService';
+import WebSocketManager from './services/WebSocketManager';
+
+export default function App() {
+  const [broadcastEnabled, setBroadcastEnabled] = useState(false);
+
+  useEffect(() => {
+    const initializeBroadcasting = async () => {
+      const config = await BroadcastConfigService.getConfig();
+      setBroadcastEnabled(config.enabled);
+      
+      if (config.enabled) {
+        await WebSocketManager.initialize(config.config);
+      }
+    };
+    
+    initializeBroadcasting();
+    
+    // Check for updates every 5 minutes
+    const interval = setInterval(async () => {
+      const config = await BroadcastConfigService.getConfig(true);
+      
+      if (config.enabled !== broadcastEnabled) {
+        setBroadcastEnabled(config.enabled);
+        
+        if (config.enabled) {
+          await WebSocketManager.initialize(config.config);
+        } else {
+          WebSocketManager.disconnect();
+        }
+      }
+    }, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <View>
+      {/* Your app content */}
+      {broadcastEnabled && (
+        <Text>Real-time features enabled</Text>
+      )}
+    </View>
+  );
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flutter Example -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="api-info-card">
+                        <h3 class="mb-4">
+                            <i class="fab fa-google text-info me-2"></i>
+                            Flutter Integration
+                        </h3>
+                        <div class="row">
+                            <div class="col-12">
+                                <h5>Broadcast Configuration Service</h5>
+                                <pre><code class="language-dart">// services/broadcast_config_service.dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+class BroadcastConfigService {
+  static const String _cacheKey = 'broadcast_config';
+  static const int _cacheTimeoutMinutes = 5;
+
+  Map<String, dynamic>? _config;
+  DateTime? _lastFetch;
+
+  static final BroadcastConfigService _instance = BroadcastConfigService._internal();
+  factory BroadcastConfigService() => _instance;
+  BroadcastConfigService._internal();
+
+  Future<Map<String, dynamic>> getConfig({bool forceRefresh = false}) async {
+    try {
+      // Check cache first
+      if (!forceRefresh && _config != null && _lastFetch != null) {
+        final now = DateTime.now();
+        final cacheAge = now.difference(_lastFetch!).inMinutes;
+        if (cacheAge < _cacheTimeoutMinutes) {
+          return _config!;
+        }
+      }
+
+      // Fetch from API
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/api/broadcast-settings'),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['success'] == true) {
+          _config = data['data'];
+          _lastFetch = DateTime.now();
+
+          // Cache for offline use
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_cacheKey, json.encode(_config));
+
+          return _config!;
+        }
+      }
+
+      throw Exception('Failed to fetch broadcast config: ${response.statusCode}');
+
+    } catch (error) {
+      print('Failed to get broadcast config: $error');
+
+      // Try cached config
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final cached = prefs.getString(_cacheKey);
+        if (cached != null) {
+          _config = json.decode(cached);
+          return _config!;
+        }
+      } catch (cacheError) {
+        print('Failed to get cached config: $cacheError');
+      }
+
+      // Return default disabled config
+      return {
+        'enabled': false,
+        'driver': 'log',
+        'config': {'enabled': false}
+      };
+    }
+  }
+
+  Future<bool> isEnabled() async {
+    final config = await getConfig();
+    return config['enabled'] == true;
+  }
+
+  Future<Map<String, dynamic>> getConnectionConfig() async {
+    final config = await getConfig();
+    return config['config'] ?? {};
+  }
+
+  Future<Map<String, dynamic>> getStatus() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/api/broadcast-settings/status'),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(const Duration(seconds: 5));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['data'] ?? {};
+      }
+    } catch (error) {
+      print('Failed to get broadcast status: $error');
+    }
+
+    return {'enabled': false, 'driver': 'log'};
+  }
+}</code></pre>
+
+                                <h5 class="mt-4">WebSocket Manager</h5>
+                                <pre><code class="language-dart">// services/websocket_manager.dart
+import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'broadcast_config_service.dart';
+
+class WebSocketManager {
+  PusherChannelsFlutter? _pusher;
+  bool _isConnected = false;
+  int _reconnectAttempts = 0;
+  static const int _maxReconnectAttempts = 5;
+
+  static final WebSocketManager _instance = WebSocketManager._internal();
+  factory WebSocketManager() => _instance;
+  WebSocketManager._internal();
+
+  Future<bool> initialize() async {
+    try {
+      // Check if broadcasting is enabled
+      final configService = BroadcastConfigService();
+      final isEnabled = await configService.isEnabled();
+
+      if (!isEnabled) {
+        print('Broadcasting is disabled, skipping WebSocket initialization');
+        return false;
+      }
+
+      // Get connection configuration
+      final config = await configService.getConnectionConfig();
+
+      if (config['driver'] == 'pusher') {
+        await _initializePusher(config);
+      } else if (config['driver'] == 'reverb') {
+        await _initializeReverb(config);
+      } else {
+        print('Unknown driver: ${config['driver']}');
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      print('Failed to initialize WebSocket: $error');
+      return false;
+    }
+  }
+
+  Future<void> _initializePusher(Map<String, dynamic> config) async {
+    _pusher = PusherChannelsFlutter.getInstance();
+
+    await _pusher!.init(
+      apiKey: config['key'],
+      cluster: config['cluster'],
+      onConnectionStateChange: _onConnectionStateChange,
+      onError: _onError,
+      onSubscriptionSucceeded: _onSubscriptionSucceeded,
+      onEvent: _onEvent,
+      authEndpoint: config['auth_endpoint'],
+      onAuthorizer: (channelName, socketId, options) async {
+        final token = await _getAuthToken();
+        return {
+          'Authorization': 'Bearer $token',
+        };
+      },
+    );
+
+    await _pusher!.connect();
+    print('Pusher initialized successfully');
+  }
+
+  Future<void> _initializeReverb(Map<String, dynamic> config) async {
+    _pusher = PusherChannelsFlutter.getInstance();
+
+    await _pusher!.init(
+      apiKey: config['key'],
+      host: config['host'],
+      port: config['port'],
+      useTLS: config['scheme'] == 'https',
+      onConnectionStateChange: _onConnectionStateChange,
+      onError: _onError,
+      authEndpoint: config['auth_endpoint'],
+      onAuthorizer: (channelName, socketId, options) async {
+        final token = await _getAuthToken();
+        return {
+          'Authorization': 'Bearer $token',
+        };
+      },
+    );
+
+    await _pusher!.connect();
+    print('Reverb initialized successfully');
+  }
+
+  void _onConnectionStateChange(String currentState, String previousState) {
+    print('Connection state changed: $previousState -> $currentState');
+    _isConnected = currentState == 'connected';
+    _reconnectAttempts = 0;
+  }
+
+  void _onError(String message, int? code, dynamic e) {
+    print('WebSocket error: $message (code: $code)');
+    _handleReconnection();
+  }
+
+  void _onSubscriptionSucceeded(String channelName, dynamic data) {
+    print('Subscribed to channel: $channelName');
+  }
+
+  void _onEvent(PusherEvent event) {
+    print('Received event: ${event.eventName} on ${event.channelName}');
+    // Handle your events here
+  }
+
+  Future<void> _handleReconnection() async {
+    if (_reconnectAttempts >= _maxReconnectAttempts) {
+      print('Max reconnection attempts reached');
+      return;
+    }
+
+    _reconnectAttempts++;
+    print('Reconnection attempt $_reconnectAttempts');
+
+    // Wait before reconnecting
+    await Future.delayed(Duration(seconds: 2 * _reconnectAttempts));
+
+    // Check if settings changed
+    final configService = BroadcastConfigService();
+    final config = await configService.getConfig(forceRefresh: true);
+
+    if (config['enabled'] != true) {
+      print('Broadcasting disabled, stopping reconnection');
+      return;
+    }
+
+    // Reinitialize connection
+    await initialize();
+  }
+
+  Future<String?> _getAuthToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
+  }
+
+  PusherChannel? subscribe(String channelName) {
+    if (_pusher == null || !_isConnected) {
+      print('WebSocket not connected, cannot subscribe to channel: $channelName');
+      return null;
+    }
+
+    return _pusher!.subscribe(channelName: channelName);
+  }
+
+  void disconnect() {
+    if (_pusher != null) {
+      _pusher!.disconnect();
+      _pusher = null;
+      _isConnected = false;
+    }
+  }
+
+  bool get isConnected => _isConnected;
+}</code></pre>
+
+                                <h5 class="mt-4">App Integration</h5>
+                                <pre><code class="language-dart">// main.dart or your main app widget
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'services/broadcast_config_service.dart';
+import 'services/websocket_manager.dart';
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _broadcastEnabled = false;
+  bool _wsConnected = false;
+  Timer? _configCheckTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeBroadcasting();
+    _startConfigPolling();
+  }
+
+  @override
+  void dispose() {
+    _configCheckTimer?.cancel();
+    WebSocketManager().disconnect();
+    super.dispose();
+  }
+
+  Future<void> _initializeBroadcasting() async {
+    try {
+      final configService = BroadcastConfigService();
+      final config = await configService.getConfig();
+
+      setState(() {
+        _broadcastEnabled = config['enabled'] == true;
+      });
+
+      if (_broadcastEnabled) {
+        final connected = await WebSocketManager().initialize();
+        setState(() {
+          _wsConnected = connected;
+        });
+      }
+    } catch (error) {
+      print('Failed to initialize broadcasting: $error');
+    }
+  }
+
+  void _startConfigPolling() {
+    // Check for config updates every 5 minutes
+    _configCheckTimer = Timer.periodic(
+      const Duration(minutes: 5),
+      (timer) => _checkConfigUpdates(),
+    );
+  }
+
+  Future<void> _checkConfigUpdates() async {
+    try {
+      final configService = BroadcastConfigService();
+      final config = await configService.getConfig(forceRefresh: true);
+      final newEnabled = config['enabled'] == true;
+
+      if (newEnabled != _broadcastEnabled) {
+        setState(() {
+          _broadcastEnabled = newEnabled;
+        });
+
+        if (newEnabled) {
+          // Broadcasting was enabled
+          final connected = await WebSocketManager().initialize();
+          setState(() {
+            _wsConnected = connected;
+          });
+        } else {
+          // Broadcasting was disabled
+          WebSocketManager().disconnect();
+          setState(() {
+            _wsConnected = false;
+          });
+        }
+      }
+    } catch (error) {
+      print('Failed to check config updates: $error');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'FarmersNetwork',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('FarmersNetwork'),
+          backgroundColor: _wsConnected ? Colors.green : Colors.orange,
+          actions: [
+            Icon(
+              _wsConnected ? Icons.wifi : Icons.wifi_off,
+              color: Colors.white,
+            ),
+            SizedBox(width: 16),
+          ],
+        ),
+        body: Column(
+          children: [
+            // Connection status indicator
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(8),
+              color: _wsConnected ? Colors.green.shade100 : Colors.orange.shade100,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    _wsConnected ? Icons.check_circle : Icons.warning,
+                    color: _wsConnected ? Colors.green : Colors.orange,
+                    size: 16,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    _wsConnected
+                        ? 'Real-time features enabled'
+                        : 'Real-time features disabled',
+                    style: TextStyle(
+                      color: _wsConnected ? Colors.green.shade800 : Colors.orange.shade800,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Your app content
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('FarmersNetwork Chat App'),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _broadcastEnabled ? () {
+                        // Navigate to chat or other real-time features
+                      } : null,
+                      child: Text('Open Chat'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</code></pre>
+
+                                <h5 class="mt-4">Dependencies (pubspec.yaml)</h5>
+                                <pre><code class="language-yaml">dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.1.0
+  shared_preferences: ^2.2.2
+  pusher_channels_flutter: ^2.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter</code></pre>
+
+                                <h5 class="mt-4">API Configuration</h5>
+                                <pre><code class="language-dart">// config/api_config.dart
+class ApiConfig {
+  static const String baseUrl = 'http://your-laravel-api.com';
+
+  // For development
+  static const String devBaseUrl = 'http://127.0.0.1:8000';
+
+  // For production
+  static const String prodBaseUrl = 'https://your-production-api.com';
+
+  // Use appropriate URL based on build mode
+  static String get currentBaseUrl {
+    const bool isProduction = bool.fromEnvironment('dart.vm.product');
+    return isProduction ? prodBaseUrl : devBaseUrl;
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel Link -->
+    <section id="admin-panel" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-6 fw-bold mb-4">Admin Configuration</h2>
+                    <p class="lead text-muted mb-4">
+                        Administrators can manage broadcast settings through the admin panel to control real-time features across all mobile applications.
+                    </p>
+                    <div class="admin-info-card">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h4><i class="fas fa-cog text-primary me-2"></i>Realtime Settings Panel</h4>
+                                <p class="mb-0">Configure Pusher Cloud or Laravel Reverb, enable/disable broadcasting, and monitor connection status.</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <a href="/admin/realtime-settings" class="btn btn-primary btn-lg" target="_blank">
+                                    <i class="fas fa-external-link-alt me-2"></i>
+                                    Open Admin Panel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2025 FarmersNetwork. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="index.html" class="text-white me-3">API Overview</a>
+                    <a href="websocket.html" class="text-white">WebSocket API</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

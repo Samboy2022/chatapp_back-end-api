@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-600 hover:text-blue-600 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Index
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-blue-100 rounded-lg p-1">
+                            <i class="fas fa-key text-blue-600"></i>
+                        </div>
+                        <span class="font-medium text-gray-900">Authentication API</span>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                    Updated: 2025-09-15
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <div class="flex items-center space-x-4 mb-6">
+                <div class="bg-blue-600 rounded-lg p-3">
+                    <i class="fas fa-key text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Authentication API</h1>
+                    <p class="text-gray-600 mt-1">User registration, login, and token management</p>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 rounded-lg p-4">
+                <div class="flex items-center space-x-3 text-blue-800">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <p class="font-medium">Base URL: http://127.0.0.1:8000/api</p>
+                        <p class="text-sm">All endpoints use JSON format for requests and responses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Navigation</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="#register" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
+                    <i class="fas fa-user-plus text-blue-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Register</div>
+                </a>
+                <a href="#login" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-green-50 transition-colors">
+                    <i class="fas fa-sign-in-alt text-green-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Login</div>
+                </a>
+                <a href="#user" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-purple-50 transition-colors">
+                    <i class="fas fa-user text-purple-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">User Info</div>
+                </a>
+                <a href="#logout" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-red-50 transition-colors">
+                    <i class="fas fa-sign-out-alt text-red-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Logout</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="space-y-8">
+            <!-- Register -->
+            <div id="register" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-blue-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/auth/register</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Register a new user account</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Request Body</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone_number": "+1234567890",
+  "country_code": "+1",
+  "password": "password123",
+  "password_confirmation": "password123"
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Success Response (201)</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone_number": "+1234567890",
+      "country_code": "+1"
+    },
+    "token": "1|abc123def456",
+    "token_type": "Bearer"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-yellow-800 mb-2">Required Fields</h4>
+                        <ul class="text-sm text-yellow-700 space-y-1">
+                            <li>• name: User's full name</li>
+                            <li>• email: Valid email address (unique)</li>
+                            <li>• phone_number: Phone with country code</li>
+                            <li>• country_code: Country code (e.g., +1)</li>
+                            <li>• password: Minimum 8 characters</li>
+                            <li>• password_confirmation: Must match password</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login -->
+            <div id="login" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-green-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/auth/login</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Authenticate user and receive access token</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Request Body</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "login": "+1234567890",
+  "password": "password123"
+}</code></pre>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-2">Use phone number or email for login field</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Success Response (200)</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone_number": "+1234567890",
+      "country_code": "+1",
+      "is_online": true,
+      "last_seen_at": "2025-09-15T00:36:00.000000Z"
+    },
+    "token": "2|xyz789abc123",
+    "token_type": "Bearer"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-red-800 mb-2">Error Response (401)</h4>
+                        <div class="bg-red-900 text-red-100 rounded-lg p-3 font-mono text-sm">
+                            <pre><code>{"success": false, "message": "Invalid credentials"}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get User Info -->
+            <div id="user" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-purple-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/auth/user</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get authenticated user's profile information</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Headers</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-3 font-mono text-sm">
+                            <pre><code>Authorization: Bearer YOUR_TOKEN_HERE</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Success Response (200)</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone_number": "+1234567890",
+      "country_code": "+1",
+      "about": "Hello! I'm John",
+      "avatar_url": "http://127.0.0.1:8000/storage/avatars/avatar_1.jpg",
+      "is_online": true,
+      "last_seen_at": "2025-09-15T00:36:00.000000Z",
+      "is_active": 1,
+      "is_blocked": 0,
+      "created_at": "2025-09-15T00:35:55.000000Z",
+      "updated_at": "2025-09-15T00:36:00.000000Z"
+    }
+  },
+  "message": "User data retrieved successfully"
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-red-800 mb-2">Error Response (401)</h4>
+                        <div class="bg-red-900 text-red-100 rounded-lg p-3 font-mono text-sm">
+                            <pre><code>{"success": false, "message": "Unauthenticated."}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logout -->
+            <div id="logout" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-red-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/auth/logout</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Logout user and revoke current access token</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Headers</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-3 font-mono text-sm">
+                            <pre><code>Authorization: Bearer YOUR_TOKEN_HERE</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Success Response (200)</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-3 font-mono text-sm">
+                            <pre><code>{"success": true, "message": "Logged out successfully"}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Refresh Token -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-indigo-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/auth/refresh</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Refresh authentication token</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Headers</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-3 font-mono text-sm">
+                            <pre><code>Authorization: Bearer YOUR_TOKEN_HERE</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Success Response (200)</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "success": true,
+  "message": "Token refreshed successfully",
+  "data": {
+    "token": "3|newtoken456",
+    "token_type": "Bearer"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Profile -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-teal-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-teal-500 text-white px-3 py-1 rounded-full text-sm font-medium">PUT</span>
+                        <span class="font-mono text-lg">/auth/profile</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Update authenticated user's profile</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Request Body (All fields optional)</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "name": "Updated Name",
+  "about": "Updated bio",
+  "email": "newemail@example.com",
+  "current_password": "oldpassword123",
+  "new_password": "newpassword123",
+  "new_password_confirmation": "newpassword123"
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Success Response (200)</h4>
+                        <div class="bg-green-900 text-green-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Updated Name",
+    "email": "newemail@example.com",
+    "about": "Updated bio"
+  },
+  "message": "Profile updated successfully"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Privacy -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-pink-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium">PUT</span>
+                        <span class="font-mono text-lg">/auth/privacy</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Update user's privacy settings</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Privacy Options</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div><strong>last_seen_privacy:</strong> everyone, contacts, nobody</div>
+                            <div><strong>profile_photo_privacy:</strong> everyone, contacts, nobody</div>
+                            <div><strong>about_privacy:</strong> everyone, contacts, nobody</div>
+                            <div><strong>status_privacy:</strong> everyone, contacts, close_friends</div>
+                            <div><strong>read_receipts_enabled:</strong> true, false</div>
+                            <div><strong>groups_privacy:</strong> everyone, contacts</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Request Example</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                            <pre><code>{
+  "last_seen_privacy": "contacts",
+  "read_receipts_enabled": true,
+  "profile_photo_privacy": "everyone"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Examples -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">💻 Code Examples</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">JavaScript (Fetch API)</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code>// Register new user
+const registerUser = async (userData) => {
+  const response = await fetch('http://127.0.0.1:8000/api/auth/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData)
+  });
+  return await response.json();
+};
+
+// Login user
+const loginUser = async (login, password) => {
+  const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ login, password })
+  });
+  const data = await response.json();
+  if (data.success) {
+    localStorage.setItem('token', data.data.token);
+  }
+  return data;
+};
+
+// Get user profile
+const getUserProfile = async () => {
+  const token = localStorage.getItem('token');
+  const response = await fetch('http://127.0.0.1:8000/api/auth/user', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};</code></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">cURL Commands</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code># Register user
+curl -X POST http://127.0.0.1:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone_number": "+1234567890",
+    "country_code": "+1",
+    "password": "password123",
+    "password_confirmation": "password123"
+  }'
+
+# Login user
+curl -X POST http://127.0.0.1:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "login": "+1234567890",
+    "password": "password123"
+  }'
+
+# Get user profile
+curl -X GET http://127.0.0.1:8000/api/auth/user \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Update profile
+curl -X PUT http://127.0.0.1:8000/api/auth/profile \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Name",
+    "about": "Updated bio"
+  }'</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Handling -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">⚠️ Error Handling</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Common Error Codes</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm font-medium">400</span>
+                            <span class="text-gray-700">Bad Request - Invalid data</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm font-medium">401</span>
+                            <span class="text-gray-700">Unauthorized - Invalid token</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm font-medium">422</span>
+                            <span class="text-gray-700">Validation Failed</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-medium">429</span>
+                            <span class="text-gray-700">Too Many Requests</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm font-medium">500</span>
+                            <span class="text-gray-700">Internal Server Error</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Validation Error Example</h3>
+                    <div class="bg-red-900 text-red-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code>{
+  "success": false,
+  "message": "Validation failed",
+  "errors": {
+    "email": ["The email has already been taken."],
+    "password": ["The password must be at least 8 characters."]
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Notes -->
+        <div class="bg-blue-50 rounded-lg p-6 mt-8">
+            <h2 class="text-xl font-bold text-blue-900 mb-4">🔒 Security Best Practices</h2>
+            <ul class="space-y-2 text-blue-800">
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Always use HTTPS in production environments</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Store tokens securely (avoid localStorage for sensitive data)</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Implement token refresh before expiration</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Clear tokens on logout</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Validate user input on both client and server sides</span>
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-6 mt-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Chat App API Documentation</p>
+        </div>
+    </footer>
+</body>
+</html>

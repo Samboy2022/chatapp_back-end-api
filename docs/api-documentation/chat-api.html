@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat API - FarmersNetwork Documentation</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-comments me-2"></i>
+                FarmersNetwork API
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#chat-overview">Chat API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="status-api.html">Status API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#websocket">WebSocket</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat API Header -->
+    <section id="chat-overview" class="py-5 bg-primary text-white" style="margin-top: 76px;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-comments text-warning me-3"></i>
+                        Chat API Documentation
+                    </h1>
+                    <p class="lead mb-4">
+                        Complete REST API for building WhatsApp-style chat applications with private messaging, group chats, file sharing, and real-time features.
+                    </p>
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">15+</h4>
+                                <p>Chat Endpoints</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">100%</h4>
+                                <p>Test Coverage</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Real-time</h4>
+                                <p>WebSocket Support</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Media</h4>
+                                <p>File Sharing</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="text-center">
+                        <i class="fas fa-comments display-1 text-warning opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Management -->
+    <section id="chat-management" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">Chat Management</h2>
+                    <p class="lead text-muted">Create, retrieve, and manage private and group chats.</p>
+                </div>
+            </div>
+
+            <!-- Get All Chats -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-url">/api/chats</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Retrieve all chats for the authenticated user, including private and group chats with latest message information, unread counts, and participant details.
+                            </p>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "chats": [
+      {
+        "id": 1,
+        "type": "private",
+        "name": null,
+        "description": null,
+        "avatar_url": null,
+        "created_by": 1,
+        "created_at": "2025-07-14T10:00:00.000000Z",
+        "updated_at": "2025-07-14T19:42:34.000000Z",
+        "participants": [
+          {
+            "id": 1,
+            "name": "Admin User",
+            "avatar_url": null,
+            "is_online": true,
+            "last_seen_at": "2025-07-14T19:42:31.000000Z"
+          },
+          {
+            "id": 2,
+            "name": "John Doe",
+            "avatar_url": null,
+            "is_online": false,
+            "last_seen_at": "2025-07-14T18:30:00.000000Z"
+          }
+        ],
+        "latest_message": {
+          "id": 115,
+          "content": "Hello! How are you?",
+          "message_type": "text",
+          "sender": {
+            "id": 1,
+            "name": "Admin User"
+          },
+          "created_at": "2025-07-14T19:42:34.000000Z"
+        },
+        "unread_count": 0,
+        "is_muted": false,
+        "other_participant": {
+          "id": 2,
+          "name": "John Doe",
+          "avatar_url": null,
+          "is_online": false,
+          "last_seen_at": "2025-07-14T18:30:00.000000Z"
+        }
+      }
+    ]
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Private Chat -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-url">/chats</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Create a new private chat between two users. If a chat already exists between the users, returns the existing chat.
+                            </p>
+                            
+                            <h5><i class="fas fa-arrow-right text-primary me-2"></i>Request Body</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                JSON Request
+                            </div>
+                            <pre><code class="language-json">{
+  "type": "private",
+  "participant_id": 2
+}</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (201)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "Chat created successfully",
+  "data": {
+    "chat": {
+      "type": "private",
+      "created_by": 1,
+      "updated_at": "2025-07-14T19:42:34.000000Z",
+      "created_at": "2025-07-14T19:42:34.000000Z",
+      "id": 28,
+      "participants": [
+        {
+          "id": 1,
+          "name": "Admin User",
+          "avatar_url": null,
+          "is_online": true,
+          "last_seen_at": "2025-07-14T19:42:31.000000Z",
+          "pivot": {
+            "chat_id": 28,
+            "user_id": 1,
+            "role": "member",
+            "joined_at": "2025-07-14 19:42:34"
+          }
+        },
+        {
+          "id": 2,
+          "name": "John Doe",
+          "avatar_url": null,
+          "is_online": false,
+          "last_seen_at": null,
+          "pivot": {
+            "chat_id": 28,
+            "user_id": 2,
+            "role": "member",
+            "joined_at": "2025-07-14 19:42:34"
+          }
+        }
+      ],
+      "latest_message": null
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Chat Details -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-url">/chats/{id}</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Get detailed information about a specific chat, including participants and recent messages.
+                            </p>
+                            
+                            <h5><i class="fas fa-route text-info me-2"></i>Path Parameters</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Required</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>id</code></td>
+                                            <td>integer</td>
+                                            <td><span class="badge bg-danger">Yes</span></td>
+                                            <td>The unique identifier of the chat</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "id": 28,
+    "type": "private",
+    "name": null,
+    "description": null,
+    "avatar_url": null,
+    "created_by": 1,
+    "created_at": "2025-07-14T19:42:34.000000Z",
+    "updated_at": "2025-07-14T19:42:34.000000Z",
+    "participants": [
+      {
+        "id": 1,
+        "name": "Admin User",
+        "avatar_url": null,
+        "is_online": true,
+        "last_seen_at": "2025-07-14T19:42:31.000000Z"
+      }
+    ],
+    "messages": [
+      {
+        "id": 115,
+        "content": "Hello! This is a test message.",
+        "type": "text",
+        "sender": {
+          "id": 1,
+          "name": "Admin User"
+        },
+        "created_at": "2025-07-14T19:42:34.000000Z",
+        "reactions": [],
+        "reply_to": null
+      }
+    ]
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Messaging -->
+    <section id="messaging" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">Messaging</h2>
+                    <p class="lead text-muted">Send, receive, and manage messages in chats.</p>
+                </div>
+            </div>
+
+            <!-- Send Message -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-url">/chats/{chatId}/messages</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Send a new message to a chat. Supports text messages, media files, and replies to other messages.
+                            </p>
+
+                            <h5><i class="fas fa-route text-info me-2"></i>Path Parameters</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Required</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>chatId</code></td>
+                                            <td>integer</td>
+                                            <td><span class="badge bg-danger">Yes</span></td>
+                                            <td>The unique identifier of the chat</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5><i class="fas fa-arrow-right text-primary me-2"></i>Request Body</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                Text Message
+                            </div>
+                            <pre><code class="language-json">{
+  "type": "text",
+  "content": "Hello! This is a test message with emojis 🚀😊"
+}</code></pre>
+
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                Reply Message
+                            </div>
+                            <pre><code class="language-json">{
+  "type": "text",
+  "content": "This is a reply to your message!",
+  "reply_to_message_id": 115
+}</code></pre>
+
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                Media Message
+                            </div>
+                            <pre><code class="language-json">{
+  "type": "image",
+  "content": "Check out this image!",
+  "media_url": "http://127.0.0.1:8000/storage/media/images/example.jpg",
+  "media_size": 1024000,
+  "media_mime_type": "image/jpeg",
+  "file_name": "example.jpg"
+}</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (201)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "Message sent successfully",
+  "data": {
+    "id": 116,
+    "content": "Hello! This is a test message with emojis 🚀😊",
+    "type": "text",
+    "chat_id": 28,
+    "sender_id": 1,
+    "reply_to_message_id": null,
+    "media_url": null,
+    "media_size": null,
+    "media_mime_type": null,
+    "file_name": null,
+    "created_at": "2025-07-14T19:45:00.000000Z",
+    "updated_at": "2025-07-14T19:45:00.000000Z",
+    "sender": {
+      "id": 1,
+      "name": "Admin User",
+      "avatar_url": null
+    },
+    "reply_to": null,
+    "reactions": []
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Messages -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-url">/chats/{chatId}/messages</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Retrieve messages from a chat with pagination support. Returns messages in chronological order.
+                            </p>
+
+                            <h5><i class="fas fa-filter text-info me-2"></i>Query Parameters</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Default</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>page</code></td>
+                                            <td>integer</td>
+                                            <td>1</td>
+                                            <td>Page number for pagination</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>per_page</code></td>
+                                            <td>integer</td>
+                                            <td>50</td>
+                                            <td>Number of messages per page (max: 100)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>before</code></td>
+                                            <td>integer</td>
+                                            <td>null</td>
+                                            <td>Get messages before this message ID</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 115,
+        "content": "Hello! This is a test message.",
+        "type": "text",
+        "chat_id": 28,
+        "sender_id": 1,
+        "created_at": "2025-07-14T19:42:34.000000Z",
+        "sender": {
+          "id": 1,
+          "name": "Admin User",
+          "avatar_url": null
+        },
+        "reply_to": null,
+        "reactions": [
+          {
+            "emoji": "👍",
+            "user": {
+              "id": 2,
+              "name": "John Doe"
+            },
+            "created_at": "2025-07-14T19:43:00.000000Z"
+          }
+        ]
+      }
+    ],
+    "first_page_url": "http://127.0.0.1:8000/api/chats/28/messages?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "http://127.0.0.1:8000/api/chats/28/messages?page=1",
+    "next_page_url": null,
+    "path": "http://127.0.0.1:8000/api/chats/28/messages",
+    "per_page": 50,
+    "prev_page_url": null,
+    "to": 1,
+    "total": 1
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Message Reactions -->
+    <section id="reactions" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">Message Reactions</h2>
+                    <p class="lead text-muted">Add and manage emoji reactions to messages.</p>
+                </div>
+            </div>
+
+            <!-- Add Reaction -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-url">/chats/{chatId}/messages/{messageId}/react</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Add an emoji reaction to a message. If the user has already reacted with the same emoji, it will be removed (toggle behavior).
+                            </p>
+
+                            <h5><i class="fas fa-route text-info me-2"></i>Path Parameters</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Required</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>chatId</code></td>
+                                            <td>integer</td>
+                                            <td><span class="badge bg-danger">Yes</span></td>
+                                            <td>The unique identifier of the chat</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>messageId</code></td>
+                                            <td>integer</td>
+                                            <td><span class="badge bg-danger">Yes</span></td>
+                                            <td>The unique identifier of the message</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5><i class="fas fa-arrow-right text-primary me-2"></i>Request Body</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                JSON Request
+                            </div>
+                            <pre><code class="language-json">{
+  "emoji": "👍"
+}</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "Reaction added successfully",
+  "data": {
+    "id": 1,
+    "message_id": 115,
+    "user_id": 1,
+    "emoji": "👍",
+    "created_at": "2025-07-14T19:45:30.000000Z"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Group Chat Management -->
+    <section id="group-chat" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">Group Chat Management</h2>
+                    <p class="lead text-muted">Create and manage group chats with multiple participants.</p>
+                </div>
+            </div>
+
+            <!-- Create Group Chat -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-url">/groups</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Create a new group chat with multiple participants. The creator becomes the admin of the group.
+                            </p>
+
+                            <h5><i class="fas fa-arrow-right text-primary me-2"></i>Request Body</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                JSON Request
+                            </div>
+                            <pre><code class="language-json">{
+  "name": "API Test Group",
+  "description": "A group created for testing the API",
+  "participant_ids": [2, 3, 4]
+}</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (201)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "Group created successfully",
+  "data": {
+    "id": 29,
+    "type": "group",
+    "name": "API Test Group",
+    "description": "A group created for testing the API",
+    "avatar_url": null,
+    "created_by": 1,
+    "created_at": "2025-07-14T19:46:00.000000Z",
+    "updated_at": "2025-07-14T19:46:00.000000Z",
+    "participants": [
+      {
+        "id": 1,
+        "name": "Admin User",
+        "avatar_url": null,
+        "is_online": true,
+        "pivot": {
+          "chat_id": 29,
+          "user_id": 1,
+          "role": "admin",
+          "joined_at": "2025-07-14 19:46:00"
+        }
+      },
+      {
+        "id": 2,
+        "name": "John Doe",
+        "avatar_url": null,
+        "is_online": false,
+        "pivot": {
+          "chat_id": 29,
+          "user_id": 2,
+          "role": "member",
+          "joined_at": "2025-07-14 19:46:00"
+        }
+      }
+    ]
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add User to Group -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-url">/groups/{groupId}/users</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Add a user to an existing group chat. Only group admins can add new members.
+                            </p>
+
+                            <h5><i class="fas fa-arrow-right text-primary me-2"></i>Request Body</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                JSON Request
+                            </div>
+                            <pre><code class="language-json">{
+  "user_id": 5
+}</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "User added to group successfully",
+  "data": {
+    "user": {
+      "id": 5,
+      "name": "Jane Smith",
+      "avatar_url": null,
+      "is_online": true
+    },
+    "role": "member",
+    "joined_at": "2025-07-14T19:47:00.000000Z"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remove User from Group -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-delete">DELETE</span>
+                            <span class="endpoint-url">/groups/{groupId}/users/{userId}</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Remove a user from a group chat. Only group admins can remove members, or users can remove themselves.
+                            </p>
+
+                            <h5><i class="fas fa-route text-info me-2"></i>Path Parameters</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Required</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>groupId</code></td>
+                                            <td>integer</td>
+                                            <td><span class="badge bg-danger">Yes</span></td>
+                                            <td>The unique identifier of the group</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>userId</code></td>
+                                            <td>integer</td>
+                                            <td><span class="badge bg-danger">Yes</span></td>
+                                            <td>The unique identifier of the user to remove</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "User removed from group successfully"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

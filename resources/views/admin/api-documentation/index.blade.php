@@ -1,0 +1,773 @@
+@extends('layouts.admin')
+
+@section('title', 'API Documentation')
+@section('page-title', 'API Documentation')
+
+@section('toolbar-buttons')
+    <a href="{{ route('admin.api-documentation.examples') }}" class="btn btn-primary">
+        <i class="bi bi-code-slash"></i> View Examples
+    </a>
+    <button type="button" class="btn btn-success" onclick="downloadPostmanCollection()">
+        <i class="bi bi-download"></i> Download Postman
+    </button>
+@endsection
+
+@section('content')
+<div class="row">
+    <!-- Navigation Sidebar -->
+    <div class="col-md-3">
+        <div class="card position-sticky" style="top: 20px;">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">API Sections</h6>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="#overview" class="list-group-item list-group-item-action">
+                    <i class="bi bi-info-circle me-2"></i>Overview
+                </a>
+                <a href="#authentication" class="list-group-item list-group-item-action">
+                    <i class="bi bi-shield-lock me-2"></i>Authentication
+                </a>
+                <a href="#users" class="list-group-item list-group-item-action">
+                    <i class="bi bi-people me-2"></i>User Management
+                </a>
+                <a href="#chats" class="list-group-item list-group-item-action">
+                    <i class="bi bi-chat-left-text me-2"></i>Chat Management
+                </a>
+                <a href="#messages" class="list-group-item list-group-item-action">
+                    <i class="bi bi-envelope me-2"></i>Messages
+                </a>
+                <a href="#contacts" class="list-group-item list-group-item-action">
+                    <i class="bi bi-person-lines-fill me-2"></i>Contacts
+                </a>
+                <a href="#status" class="list-group-item list-group-item-action">
+                    <i class="bi bi-camera-reels me-2"></i>Status Updates
+                </a>
+                <a href="#calls" class="list-group-item list-group-item-action">
+                    <i class="bi bi-telephone me-2"></i>Calls
+                </a>
+                <a href="#media" class="list-group-item list-group-item-action">
+                    <i class="bi bi-image me-2"></i>Media Upload
+                </a>
+                <a href="#settings" class="list-group-item list-group-item-action">
+                    <i class="bi bi-gear me-2"></i>Settings
+                </a>
+                <a href="#configuration" class="list-group-item list-group-item-action">
+                    <i class="bi bi-tools me-2"></i>Configuration
+                </a>
+                <a href="#errors" class="list-group-item list-group-item-action">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Error Handling
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9">
+        <!-- Overview Section -->
+        <section id="overview" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-info-circle me-2"></i>API Overview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Base URL:</strong> <code>{{ url('/api') }}</code><br>
+                        <strong>Authentication:</strong> Laravel Sanctum (Bearer Token)<br>
+                        <strong>Content Type:</strong> <code>application/json</code>
+                    </div>
+                    
+                    <h6>Features Available</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Real-time messaging</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Media uploads (images, videos, documents)</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Voice and video calls</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>24-hour status updates</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Contact management</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Group chats</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Message reactions and replies</li>
+                                <li><i class="bi bi-check-circle text-success me-2"></i>Read receipts and privacy settings</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Authentication Section -->
+        <section id="authentication" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-shield-lock me-2"></i>Authentication
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-success">POST</span> Register User</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/auth/register</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123",
+    "password_confirmation": "password123",
+    "country_code": "+1",
+    "phone_number": "1234567890"
+}</code></pre>
+                        <p><strong>Response:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "success": true,
+    "message": "User registered successfully",
+    "data": {
+        "user": {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@example.com"
+        },
+        "token": "1|abc123def456..."
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-success">POST</span> Login User</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/auth/login</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "email": "john@example.com",
+    "password": "password123"
+}</code></pre>
+                        <p><strong>Response:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "success": true,
+    "message": "Login successful",
+    "data": {
+        "user": {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@example.com"
+        },
+        "token": "2|xyz789abc123..."
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <h6><span class="badge bg-success">POST</span> Logout User</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/auth/logout</code></p>
+                        <p><strong>Headers:</strong> <code>Authorization: Bearer {token}</code></p>
+                        <p><strong>Response:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "success": true,
+    "message": "Logged out successfully"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Management Section -->
+        <section id="users" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-people me-2"></i>User Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-primary">GET</span> Get User Profile</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/auth/profile</code></p>
+                        <p><strong>Headers:</strong> <code>Authorization: Bearer {token}</code></p>
+                        <p><strong>Response:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "success": true,
+    "data": {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@example.com",
+        "avatar_url": "https://example.com/avatar.jpg",
+        "bio": "Hello there!",
+        "last_seen_at": "2024-01-15T10:30:00Z"
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <h6><span class="badge bg-warning">PUT</span> Update User Profile</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/auth/profile</code></p>
+                        <p><strong>Headers:</strong> <code>Authorization: Bearer {token}</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "name": "John Smith",
+    "bio": "Updated bio message",
+    "avatar_url": "https://example.com/new-avatar.jpg"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Management Section -->
+        <section id="chats" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-chat-left-text me-2"></i>Chat Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-primary">GET</span> Get User Chats</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/chats</code></p>
+                        <p><strong>Parameters:</strong></p>
+                        <ul>
+                            <li><code>page</code> - Page number (default: 1)</li>
+                            <li><code>per_page</code> - Items per page (default: 20)</li>
+                            <li><code>search</code> - Search chat name</li>
+                        </ul>
+                        <p><strong>Response:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "name": "John & Jane",
+            "is_group": false,
+            "last_message": {
+                "id": 123,
+                "content": "Hello there!",
+                "type": "text",
+                "created_at": "2024-01-15T10:30:00Z"
+            },
+            "unread_count": 2,
+            "participants": [...]
+        }
+    ],
+    "pagination": {
+        "current_page": 1,
+        "total": 50
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <h6><span class="badge bg-success">POST</span> Create Chat</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/chats</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "name": "Project Discussion",
+    "is_group": true,
+    "participant_ids": [2, 3, 4],
+    "description": "Chat for project coordination"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Messages Section -->
+        <section id="messages" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-envelope me-2"></i>Messages
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-primary">GET</span> Get Chat Messages</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/chats/{chatId}/messages</code></p>
+                        <p><strong>Parameters:</strong></p>
+                        <ul>
+                            <li><code>page</code> - Page number</li>
+                            <li><code>per_page</code> - Messages per page</li>
+                            <li><code>before</code> - Get messages before message ID</li>
+                        </ul>
+                    </div>
+
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-success">POST</span> Send Message</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/chats/{chatId}/messages</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "content": "Hello everyone!",
+    "type": "text",
+    "reply_to_message_id": 456
+}</code></pre>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <h6><span class="badge bg-success">POST</span> React to Message</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/messages/{messageId}/react</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "reaction": "??"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contacts Section -->
+        <section id="contacts" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-person-lines-fill me-2"></i>Contacts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-primary">GET</span> Get Contacts</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/contacts</code></p>
+                        <p><strong>Parameters:</strong></p>
+                        <ul>
+                            <li><code>search</code> - Search by name or phone</li>
+                            <li><code>favorites_only</code> - Get only favorite contacts</li>
+                        </ul>
+                    </div>
+
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-success">POST</span> Add Contact</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/contacts</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "country_code": "+1",
+    "phone_number": "9876543210",
+    "name": "Jane Smith"
+}</code></pre>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <h6><span class="badge bg-danger">POST</span> Block/Unblock Contact</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/contacts/{contactId}/block</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "action": "block"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Status Updates Section -->
+        <section id="status" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-camera-reels me-2"></i>Status Updates
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-success">POST</span> Upload Status</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/status</code></p>
+                        <p><strong>Request Body (FormData):</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>file: [image/video file]
+caption: "My status update"
+privacy: "all" // or "contacts_only"</code></pre>
+                    </div>
+
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-primary">GET</span> Get Status Updates</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/status</code></p>
+                        <p><strong>Note:</strong> Returns status updates from contacts (24-hour expiry)</p>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <h6><span class="badge bg-success">POST</span> Mark Status as Viewed</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/status/{statusId}/view</code></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calls Section -->
+        <section id="calls" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-telephone me-2"></i>Calls
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-success">POST</span> Initiate Call</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/calls</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "receiver_id": 2,
+    "type": "video"
+}</code></pre>
+                    </div>
+
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-warning">PUT</span> Answer Call</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/calls/{callId}/answer</code></p>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <h6><span class="badge bg-danger">PUT</span> End Call</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/calls/{callId}/end</code></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Media Upload Section -->
+        <section id="media" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-image me-2"></i>Media Upload
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="api-endpoint">
+                        <h6><span class="badge bg-success">POST</span> Upload Media</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/media/upload</code></p>
+                        <p><strong>Request Body (FormData):</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>file: [file]
+type: "image" // or "video", "document", "audio"</code></pre>
+                        <p><strong>File Types Supported:</strong></p>
+                        <ul>
+                            <li><strong>Images:</strong> jpg, jpeg, png, gif (max 10MB)</li>
+                            <li><strong>Videos:</strong> mp4, mov, avi (max 100MB)</li>
+                            <li><strong>Documents:</strong> pdf, doc, docx, txt (max 50MB)</li>
+                            <li><strong>Audio:</strong> mp3, wav, aac (max 25MB)</li>
+                        </ul>
+                        <p><strong>Response:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "success": true,
+    "data": {
+        "url": "https://example.com/uploads/file.jpg",
+        "filename": "file.jpg",
+        "size": 1024576,
+        "type": "image"
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-gear me-2"></i>Settings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="api-endpoint mb-4">
+                        <h6><span class="badge bg-primary">GET</span> Get User Settings</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/settings</code></p>
+                    </div>
+
+                    <div class="api-endpoint">
+                        <h6><span class="badge bg-warning">PUT</span> Update Settings</h6>
+                        <p><strong>Endpoint:</strong> <code>/api/settings</code></p>
+                        <p><strong>Request Body:</strong></p>
+                        <pre class="bg-light p-3 rounded"><code>{
+    "last_seen_privacy": "everyone", // "contacts", "nobody"
+    "read_receipts": true,
+    "notifications_enabled": true,
+    "profile_photo_privacy": "contacts"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Configuration Section -->
+        <section id="configuration" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-tools me-2"></i>Configuration
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6>Environment Variables</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Description</th>
+                                    <th>Example</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>PUSHER_APP_ID</code></td>
+                                    <td>Pusher Application ID</td>
+                                    <td>1234567</td>
+                                </tr>
+                                <tr>
+                                    <td><code>PUSHER_APP_KEY</code></td>
+                                    <td>Pusher Application Key</td>
+                                    <td>abcdef123456</td>
+                                </tr>
+                                <tr>
+                                    <td><code>PUSHER_APP_SECRET</code></td>
+                                    <td>Pusher Application Secret</td>
+                                    <td>secret123</td>
+                                </tr>
+                                <tr>
+                                    <td><code>PUSHER_APP_CLUSTER</code></td>
+                                    <td>Pusher Cluster</td>
+                                    <td>mt1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h6 class="mt-4">React Native Setup</h6>
+                    <pre class="bg-light p-3 rounded"><code>npm install axios @react-native-async-storage/async-storage pusher-js</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error Handling Section -->
+        <section id="errors" class="mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Error Handling
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6>HTTP Status Codes</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Status</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-success">
+                                    <td>200</td>
+                                    <td>OK</td>
+                                    <td>Request successful</td>
+                                </tr>
+                                <tr class="table-info">
+                                    <td>201</td>
+                                    <td>Created</td>
+                                    <td>Resource created successfully</td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td>400</td>
+                                    <td>Bad Request</td>
+                                    <td>Invalid request data</td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td>401</td>
+                                    <td>Unauthorized</td>
+                                    <td>Authentication required</td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td>403</td>
+                                    <td>Forbidden</td>
+                                    <td>Access denied</td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td>404</td>
+                                    <td>Not Found</td>
+                                    <td>Resource not found</td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td>422</td>
+                                    <td>Unprocessable Entity</td>
+                                    <td>Validation failed</td>
+                                </tr>
+                                <tr class="table-danger">
+                                    <td>500</td>
+                                    <td>Internal Server Error</td>
+                                    <td>Server error</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h6 class="mt-4">Error Response Format</h6>
+                    <pre class="bg-light p-3 rounded"><code>{
+    "success": false,
+    "message": "Validation failed",
+    "errors": {
+        "email": ["The email field is required."],
+        "password": ["The password must be at least 6 characters."]
+    }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+@endsection
+
+@push('styles')
+<style>
+    .api-endpoint {
+        border-left: 4px solid #007bff;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .api-endpoint h6 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+    
+    .api-endpoint pre {
+        font-size: 0.85rem;
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+    }
+    
+    .api-endpoint pre:hover {
+        border-color: #007bff;
+    }
+    
+    .api-endpoint code {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        color: #495057;
+    }
+    
+    section {
+        scroll-margin-top: 80px;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Update active nav item
+                document.querySelectorAll('.list-group-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+            }
+        });
+    });
+    
+    // Copy code to clipboard
+    document.querySelectorAll('pre code').forEach(block => {
+        block.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.textContent).then(() => {
+                // Show success feedback
+                const originalBg = this.parentElement.style.backgroundColor;
+                this.parentElement.style.backgroundColor = '#d4edda';
+                this.parentElement.style.borderColor = '#c3e6cb';
+                
+                setTimeout(() => {
+                    this.parentElement.style.backgroundColor = originalBg;
+                    this.parentElement.style.borderColor = '';
+                }, 1000);
+            });
+        });
+    });
+    
+    // Auto-update navigation based on scroll position
+    window.addEventListener('scroll', () => {
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.list-group-item[href^="#"]');
+        
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 100;
+            const sectionHeight = section.offsetHeight;
+            
+            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    });
+});
+
+function downloadPostmanCollection() {
+    // This would download a Postman collection file
+    alert('Postman collection download feature coming soon!');
+}
+</script>
+@endpush
+
+@push('styles')
+<style>
+    .api-endpoint {
+        border-left: 4px solid #007bff;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .api-endpoint h6 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+    
+    .api-endpoint pre {
+        font-size: 0.85rem;
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+    }
+    
+    .api-endpoint pre:hover {
+        border-color: #007bff;
+    }
+    
+    .api-endpoint code {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        color: #495057;
+    }
+    
+    section {
+        scroll-margin-top: 80px;
+    }
+</style>
+@endpush
+
+

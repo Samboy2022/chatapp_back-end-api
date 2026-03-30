@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\laragon\www\chat-app-backend\chatapp_back-end-api\phpunit.xml" tests="1" assertions="8" errors="0" failures="0" skipped="0" time="0.736748">
+    <testsuite name="Feature" tests="1" assertions="8" errors="0" failures="0" skipped="0" time="0.736748">
+      <testsuite name="Tests\Feature\StreamTokenTest" file="C:\laragon\www\chat-app-backend\chatapp_back-end-api\tests\Feature\StreamTokenTest.php" tests="1" assertions="8" errors="0" failures="0" skipped="0" time="0.736748">
+        <testcase name="test_stream_token_endpoint_returns_token" file="C:\laragon\www\chat-app-backend\chatapp_back-end-api\tests\Feature\StreamTokenTest.php" line="17" class="Tests\Feature\StreamTokenTest" classname="Tests.Feature.StreamTokenTest" assertions="8" time="0.736748"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

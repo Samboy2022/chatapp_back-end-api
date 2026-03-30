@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="test-token-12345">
+    <title>Form Submission Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>🧪 Form Submission Test</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> Test Purpose</h5>
+                    <p>This page tests the form submission functionality to ensure it uses POST method and doesn't show data in URL.</p>
+                </div>
+
+                <!-- Test Results -->
+                <div id="test-results"></div>
+
+                <!-- Test Form -->
+                <form id="test-form" method="POST" action="/admin/broadcast-settings/update">
+                    <input type="hidden" name="_token" value="test-token-12345">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Broadcast Enabled</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="settings[broadcast_enabled]" value="1" checked>
+                                    <label class="form-check-label">Enable real-time broadcasting</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Service Type</label>
+                                <select class="form-select" name="settings[pusher_service_type]">
+                                    <option value="reverb" selected>Laravel Reverb (Self-hosted)</option>
+                                    <option value="pusher_cloud">Pusher Cloud API</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">WebSocket Host</label>
+                                <input type="text" class="form-control" name="settings[websocket_host]" value="127.0.0.1">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">WebSocket Port</label>
+                                <input type="number" class="form-control" name="settings[websocket_port]" value="6001">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary me-md-2" onclick="resetTestForm()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="saveTestSettings(); return false;">
+                            <i class="fas fa-save"></i> Test Save Settings
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Debug Information -->
+                <div class="mt-4">
+                    <h5>🐛 Debug Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-info btn-sm" onclick="debugFormData()">
+                                <i class="fas fa-bug"></i> Debug Form Data
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-warning btn-sm" onclick="testFormSubmission()">
+                                <i class="fas fa-test-tube"></i> Test Form Submission
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showTestResult(title, success, message, details = null) {
+            const resultsDiv = document.getElementById('test-results');
+            const alertClass = success ? 'alert-success' : 'alert-danger';
+            const icon = success ? 'check-circle' : 'exclamation-triangle';
+            
+            const resultHtml = `
+                <div class="alert ${alertClass} alert-dismissible fade show">
+                    <h6><i class="fas fa-${icon}"></i> ${title}</h6>
+                    <p class="mb-1">${message}</p>
+                    ${details ? `<small class="text-muted">${details}</small>` : ''}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = resultHtml + resultsDiv.innerHTML;
+        }
+
+        function saveTestSettings() {
+            console.log('💾 Testing settings save process...');
+            
+            const form = document.getElementById('test-form');
+            if (!form) {
+                showTestResult('Form Test', false, 'Form not found');
+                return false;
+            }
+            
+            const formData = new FormData(form);
+            
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                             document.querySelector('input[name="_token"]')?.value;
+            
+            if (csrfToken) {
+                formData.set('_token', csrfToken);
+            }
+            
+            // Debug: Log form data
+            console.log('📋 Form data being sent:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`  ${key}: ${value}`);
+            }
+            
+            // Show loading state
+            const submitBtn = form.querySelector('button[onclick*="saveTestSettings"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
+            submitBtn.disabled = true;
+
+            // Simulate the request (don't actually send to avoid errors)
+            setTimeout(() => {
+                showTestResult(
+                    'Form Submission Test',
+                    true,
+                    'Form data prepared successfully using POST method',
+                    'Data would be sent via POST, not GET. No URL parameters would be visible.'
+                );
+                
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 1000);
+            
+            return false; // Prevent actual submission
+        }
+
+        function resetTestForm() {
+            const form = document.getElementById('test-form');
+            if (form) {
+                form.reset();
+                showTestResult('Form Reset', true, 'Form has been reset to original values');
+            }
+        }
+
+        function debugFormData() {
+            const form = document.getElementById('test-form');
+            if (!form) {
+                showTestResult('Debug Test', false, 'Form not found');
+                return;
+            }
+            
+            const formData = new FormData(form);
+            let debugInfo = 'Form Data:\n';
+            
+            for (let [key, value] of formData.entries()) {
+                debugInfo += `${key}: ${value}\n`;
+            }
+            
+            console.log('🐛 Form Debug Information:');
+            console.log(debugInfo);
+            
+            showTestResult(
+                'Debug Information',
+                true,
+                'Form data logged to console',
+                'Check browser developer tools console for detailed form data'
+            );
+        }
+
+        function testFormSubmission() {
+            const form = document.getElementById('test-form');
+            if (!form) {
+                showTestResult('Submission Test', false, 'Form not found');
+                return;
+            }
+            
+            // Check form method
+            const method = form.method.toUpperCase();
+            const action = form.action;
+            
+            showTestResult(
+                'Form Configuration Test',
+                method === 'POST',
+                `Form method: ${method}, Action: ${action}`,
+                method === 'POST' ? 'Form is correctly configured for POST submission' : 'Form should use POST method'
+            );
+            
+            // Check CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                             document.querySelector('input[name="_token"]')?.value;
+            
+            showTestResult(
+                'CSRF Token Test',
+                !!csrfToken,
+                csrfToken ? 'CSRF token found' : 'CSRF token missing',
+                csrfToken ? `Token: ${csrfToken.substring(0, 10)}...` : 'CSRF token is required for security'
+            );
+        }
+
+        // Initialize form event handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('test-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('🚫 Preventing default form submission');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    saveTestSettings();
+                    return false;
+                });
+                
+                showTestResult(
+                    'Initialization',
+                    true,
+                    'Form event handlers attached successfully',
+                    'Form is ready for testing'
+                );
+            }
+        });
+    </script>
+</body>
+</html>

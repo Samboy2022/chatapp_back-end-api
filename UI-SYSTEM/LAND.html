@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmers Network - Connect & Collaborate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-white: #FFFFFF;
+            --primary-green: #22c55e;
+            --primary-green-dark: #16a34a;
+            --secondary-green: #10b981;
+            --accent-blue: #3b82f6;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --text-muted: #9ca3af;
+            --background-light: #f8fafc;
+            --background-gray: #f1f5f9;
+            --gradient-primary: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            --gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --gradient-hero: linear-gradient(135deg, #22c55e 0%, #10b981 50%, #3b82f6 100%);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --border-radius: 12px;
+            --border-radius-lg: 20px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-white);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: var(--primary-white);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--whatsapp-dark-green);
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            color: var(--whatsapp-green);
+            margin-right: 10px;
+        }
+        
+        .nav-link {
+            color: var(--text-dark);
+            font-weight: 500;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--whatsapp-green);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--whatsapp-green);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: var(--whatsapp-green);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: var(--whatsapp-dark-green);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(18, 140, 126, 0.2);
+        }
+        
+        /* Hero Section */
+        .hero {
+            position: relative;
+            padding: 140px 0 120px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80') center/cover no-repeat;
+            opacity: 0.05;
+            z-index: 0;
+        }
+
+        .hero-content {
+            max-width: 650px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.1;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 40px;
+            color: var(--text-light);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--border-radius-lg);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+            padding: 10px 20px;
+            border-radius: var(--border-radius-lg);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-green);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero-visual {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-visual img {
+            max-width: 100%;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-xl);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-visual:hover img {
+            transform: scale(1.02);
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 40%;
+            left: 5%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(-15px) rotate(240deg); }
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .stat-item-inline {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-item-inline .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            line-height: 1;
+        }
+
+        .stat-item-inline .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .hero-visual-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .visual-element {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease;
+            animation: floatElement 6s ease-in-out infinite;
+        }
+
+        .visual-element img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .visual-element-1 {
+            top: -20px;
+            right: -40px;
+            animation-delay: 0s;
+        }
+
+        .visual-element-2 {
+            bottom: 20px;
+            left: -30px;
+            animation-delay: 2s;
+        }
+
+        .visual-element-3 {
+            top: 50%;
+            right: -20px;
+            animation-delay: 4s;
+        }
+
+        @keyframes floatElement {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 120px 0;
+            background: var(--primary-white);
+            position: relative;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.02) 0%, rgba(59, 130, 246, 0.02) 100%);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title h2 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+        }
+
+        .section-title p {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 40px auto 0;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .feature-card {
+            background: var(--primary-white);
+            border-radius: var(--border-radius);
+            padding: 30px 25px;
+            margin-bottom: 25px;
+            height: 100%;
+            border: 1px solid var(--background-gray);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-green);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--primary-green);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--primary-green);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .feature-grid {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Community Section */
+        .community {
+            padding: 120px 0;
+            background: linear-gradient(135deg, var(--background-light) 0%, #e2e8f0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .community::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+            opacity: 0.03;
+            z-index: 0;
+        }
+
+        .stats-container {
+            background: var(--gradient-primary);
+            border-radius: var(--border-radius-lg);
+            padding: 60px 40px;
+            color: white;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        .stat-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 60%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover .stat-icon {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            line-height: 1;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .community-cta {
+            text-align: center;
+            margin-top: 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .community-cta h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .community-cta p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Download Section */
+        .download {
+            padding: 120px 0;
+            background: var(--primary-white);
+            position: relative;
+        }
+
+        .download::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+        }
+
+        .download-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .download-content h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .download-content p {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .store-btn {
+            display: flex;
+            align-items: center;
+            background: var(--primary-white);
+            border: 2px solid var(--background-gray);
+            border-radius: var(--border-radius);
+            padding: 15px 25px;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 220px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .store-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            background: var(--primary-green);
+            color: white;
+            border-color: var(--primary-green);
+        }
+
+        .store-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--background-light);
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+
+        .store-btn:hover .store-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .store-icon img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .store-text {
+            text-align: left;
+            flex: 1;
+        }
+
+        .store-text p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+
+        .store-text div {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .store-btn:hover .store-text p,
+        .store-btn:hover .store-text div {
+            color: white;
+        }
+
+        .download-info {
+            margin-top: 40px;
+        }
+
+        .download-info p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--text-dark);
+            padding: 70px 0 30px;
+            color: white;
+        }
+        
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: inline-block;
+            color: white;
+        }
+        
+        .footer-logo i {
+            color: var(--whatsapp-green);
+        }
+        
+        .footer p {
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 300px;
+        }
+        
+        .footer h4 {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+            color: white;
+        }
+        
+        .footer h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--whatsapp-green);
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+            list-style: none;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--whatsapp-green);
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: var(--whatsapp-green);
+            color: white;
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 50px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+
+            .section-title h2 {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .hero {
+                padding: 100px 0 80px;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .btn-primary,
+            .btn-outline {
+                padding: 14px 28px;
+                font-size: 1rem;
+            }
+
+            .section-title h2 {
+                font-size: 2.5rem;
+            }
+
+            .feature-card {
+                padding: 30px 25px;
+                margin-bottom: 25px;
+            }
+
+            .stats-container {
+                padding: 40px 30px;
+            }
+
+            .stat-item:not(:last-child)::after {
+                display: none;
+            }
+
+            .download-content h2 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .hero {
+                padding: 80px 0 60px;
+                text-align: center;
+            }
+
+            .hero-content {
+                margin-bottom: 40px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .section-title {
+                margin-bottom: 60px;
+            }
+
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+
+            .section-title p {
+                font-size: 1.1rem;
+            }
+
+            .feature-card {
+                padding: 25px 20px;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            .stat-text {
+                font-size: 1.1rem;
+            }
+
+            .download {
+                padding: 80px 0;
+            }
+
+            .download-content h2 {
+                font-size: 2rem;
+            }
+
+            .download-content p {
+                font-size: 1.1rem;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .store-btn {
+                min-width: 280px;
+                padding: 18px 30px;
+            }
+
+            .community-cta h3 {
+                font-size: 2rem;
+            }
+
+            .community-cta p {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+
+            .download-content h2 {
+                font-size: 1.8rem;
+            }
+
+            .store-btn {
+                min-width: 250px;
+                padding: 16px 25px;
+            }
+
+            .store-text div {
+                font-size: 1.2rem;
+            }
+
+            .btn-primary,
+            .btn-outline {
+                padding: 12px 24px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-leaf"></i>
+                Farmers Network
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#community">Community</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#download">Download</a>
+                    </li>
+                </ul>
+                <div class="ms-lg-3 mt-3 mt-lg-0">
+                    <button class="btn btn-primary">Join Now</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1>Connect, Collaborate & Grow Together</h1>
+                        <p>Transform your farming experience with our cutting-edge communication platform. Connect with farmers worldwide, share knowledge, and build thriving agricultural communities.</p>
+                        <div class="hero-buttons">
+                            <button class="btn-primary">Get Started Free</button>
+                            <a href="#features" class="btn-outline">Explore Features</a>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="stat-item-inline">
+                                <span class="stat-number">250K+</span>
+                                <span class="stat-label">Active Farmers</span>
+                            </div>
+                            <div class="stat-item-inline">
+                                <span class="stat-number">120+</span>
+                                <span class="stat-label">Countries</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-visual">
+                        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Modern farming technology and community" class="hero-main-img">
+                        <div class="hero-visual-elements">
+                            <div class="visual-element visual-element-1">
+                                <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Wheat field">
+                            </div>
+                            <div class="visual-element visual-element-2">
+                                <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Farm workers">
+                            </div>
+                            <div class="visual-element visual-element-3">
+                                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Modern greenhouse">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Powerful Features</h2>
+                <p>Everything you need to connect, communicate, and collaborate with the global farming community</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="row">
+                    <!-- Feature 1 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h3>Real-time Messaging</h3>
+                            <p>Send and receive messages instantly with real-time delivery and read receipts. Stay connected with your farming community anytime, anywhere.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h3>Video & Voice Calls</h3>
+                            <p>High-quality video and voice calling with crystal clear audio and HD video. Consult with experts or connect with fellow farmers face-to-face.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3>End-to-End Security</h3>
+                            <p>Your conversations are protected with industry-standard encryption. Share farming insights and data with complete peace of mind.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3>Group Chats</h3>
+                            <p>Create group conversations with up to 256 members and advanced admin controls. Coordinate with your entire farming cooperative.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                            <h3>File Sharing</h3>
+                            <p>Share photos, videos, documents, and any file type up to 100MB instantly. Exchange crop reports, weather data, and market information.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <h3>Status Updates</h3>
+                            <p>Share your farming moments with 24-hour disappearing status updates and stories. Showcase your harvest, equipment, or daily farm life.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section id="community" class="community">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Growing Community</h2>
+                <p>Join thousands of farmers who are already connecting and growing together</p>
+            </div>
+
+            <div class="stats-container">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-number">250K+</div>
+                            <div class="stat-text">Active Farmers</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-globe-americas"></i>
+                            </div>
+                            <div class="stat-number">120+</div>
+                            <div class="stat-text">Countries</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="stat-number">5M+</div>
+                            <div class="stat-text">Daily Messages</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <div class="stat-number">15K+</div>
+                            <div class="stat-text">Farming Groups</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="community-cta">
+                <h3>Join the Community Today</h3>
+                <p>Connect with fellow farmers and start growing your network. Be part of the largest agricultural community worldwide.</p>
+                <button class="btn-primary">Sign Up Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download">
+        <div class="container">
+            <div class="download-content">
+                <h2>Download Farmers Network Today</h2>
+                <p>Join the largest agricultural community and start connecting with farmers around the world. Get started with just a few taps and transform your farming experience.</p>
+
+                <div class="download-buttons">
+                    <a href="#" class="store-btn app-store">
+                        <div class="store-icon">
+                            <img src="https://img.icons8.com/color/100/mac-os.png" alt="App Store">
+                        </div>
+                        <div class="store-text">
+                            <p>Download on the</p>
+                            <div>App Store</div>
+                        </div>
+                    </a>
+
+                    <a href="#" class="store-btn play-store">
+                        <div class="store-icon">
+                            <img src="https://img.icons8.com/color/100/google-play.png" alt="Google Play">
+                        </div>
+                        <div class="store-text">
+                            <p>Get it on</p>
+                            <div>Google Play</div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="download-info">
+                    <p class="text-muted">Available on iOS, Android, and Web platforms</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <a href="#" class="footer-logo">
+                        <i class="fas fa-leaf"></i> Farmers Network
+                    </a>
+                    <p>Connecting the agricultural community worldwide. Share knowledge, collaborate, and grow together with farmers across the globe.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                    <div class="mt-3">
+                        <img src="https://img.icons8.com/color/100/farm.png" alt="Farm Icon" style="width:2rem; height:2rem;">
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 mb-5 mb-md-0">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#community">Community</a></li>
+                        <li><a href="#download">Download</a></li>
+                        <li><a href="#">FAQs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 mb-5 mb-md-0">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Community Forum</a></li>
+                        <li><a href="#">Events</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-4 col-md-4">
+                    <h4>Contact Us</h4>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope me-2"></i> contact@farmersnetwork.app</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (800) FARM-NET</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Farmington, Agriculture Valley</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 Farmers Network. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Animation on scroll
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.feature-card, .stat-item, .store-btn');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if(elementPosition < screenPosition) {
+                    element.style.opacity = 1;
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        }
+        
+        // Set initial state for animation
+        document.querySelectorAll('.feature-card, .stat-item, .store-btn').forEach(el => {
+            el.style.opacity = 0;
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+        
+        // Trigger animations when page loads and on scroll
+        window.addEventListener('load', animateOnScroll);
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
+</body>
+</html>

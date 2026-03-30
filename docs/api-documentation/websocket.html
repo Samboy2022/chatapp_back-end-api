@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket API - FarmersNetwork Documentation</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-comments me-2"></i>
+                FarmersNetwork API
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chat-api.html">Chat API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="status-api.html">Status API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#websocket-overview">WebSocket</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- WebSocket Header -->
+    <section id="websocket-overview" class="py-5 bg-primary text-white" style="margin-top: 76px;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-bolt text-warning me-3"></i>
+                        WebSocket API Documentation
+                    </h1>
+                    <p class="lead mb-4">
+                        Real-time communication with WebSocket support for instant messaging, typing indicators, online presence, and live status updates.
+                    </p>
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Real-time</h4>
+                                <p>Messaging</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Live</h4>
+                                <p>Typing Indicators</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Online</h4>
+                                <p>Presence</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning">Instant</h4>
+                                <p>Updates</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="text-center">
+                        <i class="fas fa-bolt display-1 text-warning opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WebSocket Configuration -->
+    <section id="websocket-config" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">WebSocket Configuration</h2>
+                    <p class="lead text-muted">Get WebSocket connection information and configure real-time features.</p>
+                </div>
+            </div>
+
+            <!-- Get Connection Info -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-url">/websocket/connection-info</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Get WebSocket connection configuration including host, port, authentication endpoint, and app key for establishing real-time connections.
+                            </p>
+                            
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "host": "127.0.0.1",
+    "port": 8080,
+    "scheme": "http",
+    "app_key": "chatapp-key",
+    "auth_endpoint": "http://127.0.0.1:8000/broadcasting/auth",
+    "cluster": null,
+    "encrypted": false
+  }
+}</code></pre>
+
+                            <h5><i class="fas fa-info-circle text-info me-2"></i>Connection Details</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Description</th>
+                                            <th>Example</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>host</code></td>
+                                            <td>WebSocket server hostname</td>
+                                            <td>127.0.0.1</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>port</code></td>
+                                            <td>WebSocket server port</td>
+                                            <td>8080</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>scheme</code></td>
+                                            <td>Connection scheme (http/https)</td>
+                                            <td>http</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>app_key</code></td>
+                                            <td>Application key for authentication</td>
+                                            <td>chatapp-key</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>auth_endpoint</code></td>
+                                            <td>Authentication endpoint for private channels</td>
+                                            <td>http://127.0.0.1:8000/broadcasting/auth</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection Example -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="api-info-card">
+                        <h3 class="mb-4">
+                            <i class="fas fa-plug text-primary me-2"></i>
+                            WebSocket Connection Example
+                        </h3>
+                        <div class="row">
+                            <div class="col-12">
+                                <h5>JavaScript (Laravel Echo + Pusher)</h5>
+                                <pre><code class="language-javascript">import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+
+// Configure Echo with WebSocket connection
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'chatapp-key',
+    wsHost: '127.0.0.1',
+    wsPort: 8080,
+    wssPort: 8080,
+    forceTLS: false,
+    enabledTransports: ['ws', 'wss'],
+    auth: {
+        headers: {
+            Authorization: 'Bearer YOUR_TOKEN_HERE'
+        }
+    }
+});
+
+// Full WebSocket URL: ws://127.0.0.1:8080</code></pre>
+                                
+                                <h5 class="mt-4">React Native Configuration</h5>
+                                <pre><code class="language-javascript">import { Pusher } from '@pusher/pusher-websocket-react-native';
+
+const pusher = Pusher.getInstance();
+
+await pusher.init({
+  apiKey: 'chatapp-key',
+  cluster: '', // Leave empty for custom host
+  host: '127.0.0.1',
+  port: 8080,
+  useTLS: false,
+  authEndpoint: 'http://127.0.0.1:8000/broadcasting/auth',
+  auth: {
+    headers: {
+      Authorization: 'Bearer YOUR_TOKEN_HERE'
+    }
+  }
+});
+
+await pusher.connect();</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-time Features -->
+    <section id="realtime-features" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-6 fw-bold mb-4">Real-time Features</h2>
+                    <p class="lead text-muted">Implement live messaging, presence, and status updates.</p>
+                </div>
+            </div>
+
+            <!-- Online Status -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-url">/websocket/online-status</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Update user's online status and broadcast presence to connected clients. This enables real-time online/offline indicators.
+                            </p>
+                            
+                            <h5><i class="fas fa-arrow-right text-primary me-2"></i>Request Body</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                JSON Request
+                            </div>
+                            <pre><code class="language-json">{
+  "is_online": true
+}</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "Online status updated successfully",
+  "data": {
+    "user_id": 1,
+    "is_online": true,
+    "last_seen_at": "2025-07-14T19:42:31.000000Z"
+  }
+}</code></pre>
+
+                            <h5><i class="fas fa-broadcast-tower text-info me-2"></i>WebSocket Event</h5>
+                            <p class="text-muted">This endpoint broadcasts the following event to all connected clients:</p>
+                            <div class="code-block-header">
+                                <i class="fas fa-satellite-dish"></i>
+                                Broadcast Event
+                            </div>
+                            <pre><code class="language-javascript">// Listen for online status updates
+Echo.channel('presence')
+    .listen('UserOnlineStatusUpdated', (e) => {
+        console.log(`User ${e.user.name} is now ${e.is_online ? 'online' : 'offline'}`);
+        // Update UI to show user's online status
+    });</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicators -->
+            <div class="row mb-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-url">/websocket/chats/{chatId}/typing</span>
+                            <span class="badge bg-warning ms-2">Requires Authentication</span>
+                        </div>
+                        <div class="endpoint-body">
+                            <p class="endpoint-description">
+                                Send typing indicator to other participants in a chat. This creates a real-time "user is typing..." experience.
+                            </p>
+                            
+                            <h5><i class="fas fa-route text-info me-2"></i>Path Parameters</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Type</th>
+                                            <th>Required</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>chatId</code></td>
+                                            <td>integer</td>
+                                            <td><span class="badge bg-danger">Yes</span></td>
+                                            <td>The unique identifier of the chat</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5><i class="fas fa-arrow-right text-primary me-2"></i>Request Body</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-code"></i>
+                                JSON Request
+                            </div>
+                            <pre><code class="language-json">{
+  "is_typing": true
+}</code></pre>
+
+                            <h5><i class="fas fa-arrow-left text-success me-2"></i>Response</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-check-circle"></i>
+                                Success Response (200)
+                            </div>
+                            <pre><code class="language-json">{
+  "success": true,
+  "message": "Typing indicator sent successfully"
+}</code></pre>
+
+                            <h5><i class="fas fa-broadcast-tower text-info me-2"></i>WebSocket Event</h5>
+                            <div class="code-block-header">
+                                <i class="fas fa-satellite-dish"></i>
+                                Broadcast Event
+                            </div>
+                            <pre><code class="language-javascript">// Listen for typing indicators in a specific chat
+Echo.private(`chat.${chatId}`)
+    .listen('UserTyping', (e) => {
+        if (e.is_typing) {
+            showTypingIndicator(e.user.name);
+        } else {
+            hideTypingIndicator(e.user.name);
+        }
+    });</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

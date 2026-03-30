@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-600 hover:text-indigo-600 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Index
+                    </a>
+                    <div class="h-6 w-px bg-gray-300"></div>
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-indigo-100 rounded-lg p-1">
+                            <i class="fas fa-user-cog text-indigo-600"></i>
+                        </div>
+                        <span class="font-medium text-gray-900">User Management API</span>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                    Updated: 2025-09-15
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+            <div class="flex items-center space-x-4 mb-6">
+                <div class="bg-indigo-600 rounded-lg p-3">
+                    <i class="fas fa-user-cog text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">User Management API</h1>
+                    <p class="text-gray-600 mt-1">Profile settings, privacy controls, and account management</p>
+                </div>
+            </div>
+
+            <div class="bg-indigo-50 rounded-lg p-4">
+                <div class="flex items-center space-x-3 text-indigo-800">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <p class="font-medium">Base URL: http://127.0.0.1:8000/api</p>
+                        <p class="text-sm">8+ endpoints • Account settings • Privacy controls • Data export</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Navigation</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="#profile" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors">
+                    <i class="fas fa-user text-indigo-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Profile</div>
+                </a>
+                <a href="#privacy" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-pink-50 transition-colors">
+                    <i class="fas fa-shield-alt text-pink-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Privacy</div>
+                </a>
+                <a href="#notifications" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-orange-50 transition-colors">
+                    <i class="fas fa-bell text-orange-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Notifications</div>
+                </a>
+                <a href="#export" class="text-center p-3 bg-gray-50 rounded-lg hover:bg-green-50 transition-colors">
+                    <i class="fas fa-download text-green-600 mb-2 text-lg"></i>
+                    <div class="text-sm font-medium">Data Export</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="space-y-8">
+            <!-- Get Profile -->
+            <div id="profile" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-indigo-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/settings/profile</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get authenticated user's profile information</p>
+                    <div class="bg-indigo-50 rounded-lg p-4">
+                        <p class="text-indigo-800 text-sm">Returns complete user profile data including account details and settings.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Profile -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-blue-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/settings/profile</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Update user's profile information</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Updateable Fields</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">name</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">about</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">email</span>
+                            <span class="bg-gray-100 px-3 py-1 rounded-full text-center">password</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Settings -->
+            <div id="privacy" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-pink-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/settings/privacy</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get user's privacy settings</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Privacy Options</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div><strong>last_seen_privacy:</strong> everyone, contacts, nobody</div>
+                            <div><strong>profile_photo_privacy:</strong> everyone, contacts, nobody</div>
+                            <div><strong>about_privacy:</strong> everyone, contacts, nobody</div>
+                            <div><strong>read_receipts_enabled:</strong> true, false</div>
+                            <div><strong>groups_privacy:</strong> everyone, contacts</div>
+                            <div><strong>status_privacy:</strong> everyone, contacts, close_friends</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Privacy -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-purple-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/settings/privacy</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Update user's privacy settings</p>
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <p class="text-purple-800 text-sm">All fields are optional. Only provided fields will be updated.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Settings -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-teal-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-teal-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/settings/media-settings</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get user's media and storage settings</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Media Preferences</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div><strong>auto_download_photos:</strong> Auto-download photos</div>
+                            <div><strong>auto_download_videos:</strong> Auto-download videos</div>
+                            <div><strong>media_quality:</strong> high, medium, low</div>
+                            <div><strong>delete_media_after_days:</strong> Auto cleanup period</div>
+                            <div><strong>compress_images:</strong> Enable image compression</div>
+                            <div><strong>save_to_gallery:</strong> Auto-save to device gallery</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div id="notifications" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-orange-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/settings/notifications</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Get user's notification settings</p>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Notification Types</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div><strong>message_notifications:</strong> New messages</div>
+                            <div><strong>call_notifications:</strong> Incoming calls</div>
+                            <div><strong>group_notifications:</strong> Group activity</div>
+                            <div><strong>status_notifications:</strong> Status updates</div>
+                            <div><strong>notification_sound:</strong> Sound preference</div>
+                            <div><strong>vibrate:</strong> Vibration settings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Notifications -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-yellow-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/settings/notifications</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Update user's notification settings</p>
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <p class="text-yellow-800 text-sm">Customize notification preferences for different types of activities.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Export -->
+            <div id="export" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-green-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">GET</span>
+                        <span class="font-mono text-lg">/settings/export-data</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Export user's personal data</p>
+
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div><strong>profile:</strong> Basic account information</div>
+                            <div><strong>privacy_settings:</strong> Privacy preferences</div>
+                            <div><strong>export_generated_at:</strong> Export timestamp</div>
+                            <div><strong>note:</strong> Export information</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Account -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="bg-red-600 text-white px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">POST</span>
+                        <span class="font-mono text-lg">/settings/delete-account</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Permanently delete user account</p>
+
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <div class="text-red-800 text-sm">
+                            <strong>⚠️ Warning:</strong> This action cannot be undone. Requires password verification and confirmation text.
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h4 class="font-semibold text-gray-900 mb-3">Required Fields</h4>
+                        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm">
+                            <pre><code>{
+  "password": "current_password",
+  "confirmation": "DELETE_MY_ACCOUNT"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Overview -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">✨ Key Features</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="flex items-start space-x-3">
+                    <div class="bg-indigo-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-user-edit text-indigo-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Profile Management</h3>
+                        <p class="text-sm text-gray-600">Update name, bio, email, and password</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-pink-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-shield-alt text-pink-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Privacy Controls</h3>
+                        <p class="text-sm text-gray-600">Granular privacy settings</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-orange-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-bell text-orange-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Notification Settings</h3>
+                        <p class="text-sm text-gray-600">Customizable notification preferences</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-teal-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-images text-teal-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Media Preferences</h3>
+                        <p class="text-sm text-gray-600">Auto-download and compression settings</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-green-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-file-export text-green-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Data Export</h3>
+                        <p class="text-sm text-gray-600">GDPR-compliant data export</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="bg-red-100 rounded-full p-2 mt-1">
+                        <i class="fas fa-user-times text-red-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Account Deletion</h3>
+                        <p class="text-sm text-gray-600">Secure account deletion process</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Examples -->
+        <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">💻 Code Examples</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">JavaScript (Profile Management)</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code>// Get user profile
+const getProfile = async () => {
+  const response = await fetch('http://127.0.0.1:8000/api/settings/profile', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};
+
+// Update profile
+const updateProfile = async (data) => {
+  const response = await fetch('http://127.0.0.1:8000/api/settings/profile', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  return await response.json();
+};
+
+// Update privacy settings
+const updatePrivacy = async (settings) => {
+  const response = await fetch('http://127.0.0.1:8000/api/settings/privacy', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(settings)
+  });
+  return await response.json();
+};
+
+// Export user data
+const exportData = async () => {
+  const response = await fetch('http://127.0.0.1:8000/api/settings/export-data', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await response.json();
+};</code></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">cURL Commands</h3>
+                    <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <pre><code># Get user profile
+curl -X GET "http://127.0.0.1:8000/api/settings/profile" \
+  -H "Authorization: Bearer TOKEN"
+
+# Update profile
+curl -X POST "http://127.0.0.1:8000/api/settings/profile" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Name",
+    "about": "Updated bio"
+  }'
+
+# Update privacy settings
+curl -X POST "http://127.0.0.1:8000/api/settings/privacy" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "last_seen_privacy": "contacts",
+    "read_receipts_enabled": true
+  }'
+
+# Get notification settings
+curl -X GET "http://127.0.0.1:8000/api/settings/notifications" \
+  -H "Authorization: Bearer TOKEN"
+
+# Export user data
+curl -X GET "http://127.0.0.1:8000/api/settings/export-data" \
+  -H "Authorization: Bearer TOKEN"
+
+# Delete account (⚠️ DANGER!)
+curl -X POST "http://127.0.0.1:8000/api/settings/delete-account" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "password": "currentpassword",
+    "confirmation": "DELETE_MY_ACCOUNT"
+  }'</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Notes -->
+        <div class="bg-blue-50 rounded-lg p-6 mt-8">
+            <h2 class="text-xl font-bold text-blue-900 mb-4">🔧 Integration Notes</h2>
+            <ul class="space-y-2 text-blue-800">
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Profile updates are immediately reflected across all sessions</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Privacy settings take effect immediately for new interactions</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Password changes require current password verification</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Email changes may require verification in production</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-check-circle mt-1"></i>
+                    <span>Data export includes all user data for GDPR compliance</span>
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-6 mt-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Chat App API Documentation</p>
+        </div>
+    </footer>
+</body>
+</html>
