@@ -102,6 +102,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('chats/{chatId}/messages')->group(function () {
         Route::get('/', [MessageController::class, 'index']);
         Route::post('/', [MessageController::class, 'store']);
+        Route::post('/forward', [MessageController::class, 'forwardMessage']); // Forward message
         Route::get('/{messageId}', [MessageController::class, 'show']);
         Route::put('/{messageId}', [MessageController::class, 'update']);
         Route::delete('/{messageId}', [MessageController::class, 'destroy']);
@@ -124,6 +125,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('messages')->group(function () {
         Route::get('/', [MessageController::class, 'getAllMessages']); // Get all user messages
         Route::post('/', [MessageController::class, 'sendMessage']); // Send P2P message
+        Route::post('/forward', [MessageController::class, 'forwardMessage']); // Forward message
         Route::get('/{userId}', [MessageController::class, 'getConversation']); // Get conversation with specific user
         Route::delete('/{messageId}', [MessageController::class, 'destroy']);
         Route::post('/{messageId}/read', [MessageController::class, 'markAsRead']);

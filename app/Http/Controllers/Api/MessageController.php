@@ -714,4 +714,100 @@ class MessageController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Forward a message to another chat
+     */
+    public function forwardMessage(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'message_id' => 'required|exists:messages,id',
+                'target_chat_id' => 'required|exists:chats,id',
+                'additional_text' => 'nullable|string|max:1000'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $originalMessage = Message::findOrFail($request->message_id);
+            $targetChat = Chat::findOrFail($request->target_chat_id);
+            $sourceChat = $originalMessage->chat;
+
+            // Check if user is participant in both chats
+            if (!$sourceChat->participants()->where('user_id', Auth::id())->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not a participant in the source chat'
+                ], 403);
+            }
+
+            if (!$targetChat->participants()->where('user_id', Auth::id())->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not a participant in the target chat'
+                ], 403);
+            }
+
+            DB::beginTransaction();
+
+            // Create the forwarded message
+            $forwardedMessage = Message::create([
+                'chat_id' => $request->target_chat_id,
+                'sender_id' => Auth::id(),
+                'message_type' => $originalMessage->message_type,
+                'content' => $request->additional_text ?? $originalMessage->content,
+                'media_url' => $originalMessage->media_url,
+                'media_size' => $originalMessage->media_size,
+                'media_duration' => $originalMessage->media_duration,
+                'media_mime_type' => $originalMessage->media_mime_type,
+                'file_name' => $originalMessage->file_name,
+                'thumbnail_url' => $originalMessage->thumbnail_url,
+                'latitude' => $originalMessage->latitude,
+                'longitude' => $originalMessage->longitude,
+                'location_name' => $originalMessage->location_name,
+                'contact_data' => $originalMessage->contact_data,
+                'status' => 'sent',
+                'sent_at' => now(),
+            ]);
+
+            // Update target chat's last message and timestamp
+            $targetChat->update([
+                'last_message_id' => $forwardedMessage->id,
+                'updated_at' => now()
+            ]);
+
+            DB::commit();
+
+            // Load relationships for response
+            $forwardedMessage->load([
+                'sender:id,name,phone_number,avatar_url',
+                'chat:id,name,is_group'
+            ]);
+
+            // Broadcast the message to chat participants
+            broadcast(new MessageSent($forwardedMessage))->toOthers();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'message' => $forwardedMessage,
+                    'original_message_id' => $originalMessage->id
+                ],
+                'message' => 'Message forwarded successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error forwarding message: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
