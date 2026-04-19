@@ -15,7 +15,6 @@ use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\WebSocketController;
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\SearchController;
-use App\Http\Controllers\Api\StreamController;
 use App\Http\Controllers\Api\DiscoverController;
 use App\Http\Controllers\Api\ContactListController;
 use App\Http\Controllers\Api\BroadcastSettingsController;
@@ -225,15 +224,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{callId}/decline', [CallController::class, 'decline']); // Decline call (alias)
         Route::post('/{callId}/end', [CallController::class, 'end']);
         Route::get('/{callId}', [CallController::class, 'show']);
-        Route::get('/{callId}/stream-tokens', [CallController::class, 'getStreamTokens']); // Stream video tokens
-    });
-
-    // Stream Video routes
-    Route::prefix('stream')->group(function () {
-        Route::post('/token', [StreamController::class, 'generateToken']);
-        Route::get('/config', [StreamController::class, 'getConfig']);
-        Route::get('/validate', [StreamController::class, 'validateCredentials']);
-        Route::post('/token/user', [StreamController::class, 'generateTokenForUser']); // Admin endpoint
+        Route::get('/{callId}/agora-tokens', [CallController::class, 'getAgoraTokens']); // Agora video tokens
     });
 
     // User settings routes

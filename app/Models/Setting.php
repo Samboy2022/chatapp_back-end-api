@@ -115,4 +115,16 @@ class Setting extends Model
         }
         Cache::forget('settings.all');
     }
+
+    /**
+     * Get all settings as key-value pairs for views
+     */
+    public static function getSettings()
+    {
+        return Cache::remember('settings.all.keyed', 3600, function () {
+            return self::all()->mapWithKeys(function ($setting) {
+                return [$setting->key => self::castValue($setting->value, $setting->type)];
+            })->toArray();
+        });
+    }
 }

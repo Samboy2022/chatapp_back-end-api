@@ -413,7 +413,7 @@ const ChatListScreen = ({ navigation }) => {
         chatName: item.name 
       })}
     &gt;
-      &lt;Image source={{ uri: item.avatar_url }} style={styles.avatar} /&gt;
+      &lt;Image source={@{{ uri: item.avatar_url }}} style={styles.avatar} /&gt;
       &lt;View style={styles.chatContent}&gt;
         &lt;Text style={styles.chatName}&gt;{item.name}&lt;/Text&gt;
         &lt;Text style={styles.lastMessage}&gt;

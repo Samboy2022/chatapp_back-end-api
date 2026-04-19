@@ -37,8 +37,26 @@
                 </div>
 
                 <!-- CTA Button -->
-                <div class="flex items-center space-x-3">
+                <div class="hidden md:flex items-center space-x-3">
                     <a href="#download" class="flex items-center gap-2 px-4 py-2.5 bg-green-700 hover:bg-green-800 text-white text-sm font-medium rounded-xl transition-all">
+                        <i class="ph ph-download-simple"></i>
+                        Download Now
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                    <i class="ph ph-list text-xl text-gray-700"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-100">
+                <div class="flex flex-col space-y-4">
+                    <a href="#features" class="text-sm font-medium text-gray-600 hover:text-green-700 transition-colors py-2">Features</a>
+                    <a href="#stats" class="text-sm font-medium text-gray-600 hover:text-green-700 transition-colors py-2">Community</a>
+                    <a href="#download" class="text-sm font-medium text-gray-600 hover:text-green-700 transition-colors py-2">Download</a>
+                    <a href="#download" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-green-700 hover:bg-green-800 text-white text-sm font-medium rounded-xl transition-all mt-2">
                         <i class="ph ph-download-simple"></i>
                         Download Now
                     </a>
@@ -284,6 +302,12 @@
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
+                
+                // Close mobile menu if open
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
             });
         });
 
@@ -298,6 +322,22 @@
                 nav.classList.add('bg-white/80');
             }
         });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+                const icon = mobileMenuBtn.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.className = 'ph ph-list text-xl text-gray-700';
+                } else {
+                    icon.className = 'ph ph-x text-xl text-gray-700';
+                }
+            });
+        }
     </script>
 </body>
 </html>

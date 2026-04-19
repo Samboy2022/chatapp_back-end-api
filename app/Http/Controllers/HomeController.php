@@ -19,7 +19,10 @@ class HomeController extends Controller
             'users_today' => User::whereDate('created_at', today())->count()
         ];
 
-        return view('welcome', compact('stats'));
+        // Get application settings
+        $appSettings = \App\Models\Setting::getSettings();
+
+        return view('welcome', compact('stats', 'appSettings'));
     }
 
     public function about()

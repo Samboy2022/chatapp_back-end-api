@@ -11,7 +11,8 @@ use App\Events\CallInitiated;
 use App\Events\CallAccepted;
 use App\Events\CallEnded;
 use App\Events\CallRejected;
-use App\Services\StreamService;
+use App\Services\AgoraService;
+use App\Services\FcmService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -20,11 +21,13 @@ use Carbon\Carbon;
 
 class CallController extends Controller
 {
-    protected $streamService;
+    protected $agoraService;
+    protected $fcmService;
 
-    public function __construct(StreamService $streamService)
+    public function __construct(AgoraService $agoraService, FcmService $fcmService)
     {
-        $this->streamService = $streamService;
+        $this->agoraService = $agoraService;
+        $this->fcmService = $fcmService;
     }
 
     /**
@@ -200,23 +203,25 @@ class CallController extends Controller
                 'receiver:id,name,phone_number,avatar_url'
             ]);
 
-            // Generate Stream tokens for video calls
-            $streamTokens = null;
+            // Generate Agora tokens for video calls
+            $agoraTokens = null;
+            $channelName = 'call_' . $call->id;
+            
             if ($callType === 'video') {
                 try {
-                    $callerToken = $this->streamService->createUserToken(Auth::id());
-                    $receiverToken = $this->streamService->createUserToken($receiverId);
-                    $streamConfig = $this->streamService->getConfig();
+                    $callerToken = $this->agoraService->generateToken($channelName, Auth::id());
+                    $receiverToken = $this->agoraService->generateToken($channelName, $receiverId);
 
-                    $streamTokens = [
+                    $agoraTokens = [
                         'caller_token' => $callerToken,
                         'receiver_token' => $receiverToken,
-                        'api_key' => $streamConfig['api_key'],
-                        'expires_at' => now()->addHours(24)->toISOString()
+                        'channel' => $channelName,
+                        'app_id' => env('AGORA_APP_ID'),
+                        'expires_at' => now()->addHours(1)->toISOString()
                     ];
                 } catch (\Exception $e) {
                     // Log error but don't fail the call initiation
-                    \Log::warning('Failed to generate Stream tokens', [
+                    \Log::warning('Failed to generate Agora tokens', [
                         'call_id' => $call->id,
                         'error' => $e->getMessage()
                     ]);
@@ -231,9 +236,26 @@ class CallController extends Controller
             broadcast(new CallInitiated($call, $caller, $recipient));
 
             $responseData = $call;
-            if ($streamTokens) {
+            if ($agoraTokens) {
                 $responseData = $call->toArray();
-                $responseData['stream_tokens'] = $streamTokens;
+                $responseData['agora_tokens'] = $agoraTokens;
+            }
+
+            // Send FCM push notification if receiver has a device token
+            if (!empty($recipient->fcm_token) || !empty($recipient->device_token)) {
+                $deviceToken = $recipient->fcm_token ?? $recipient->device_token;
+                $this->fcmService->sendPushNotification(
+                    $deviceToken,
+                    'Incoming Call',
+                    $caller->name . ' is calling you...',
+                    [
+                        'call_id' => (string) $call->id,
+                        'channel' => $channelName,
+                        'caller_name' => $caller->name,
+                        'type' => 'incoming_call',
+                        'call_type' => $callType
+                    ]
+                );
             }
 
             return response()->json([
@@ -683,9 +705,9 @@ class CallController extends Controller
     }
 
     /**
-     * Get Stream video tokens for a call
+     * Get Agora video tokens for a call
      */
-    public function getStreamTokens($callId): JsonResponse
+    public function getAgoraTokens($callId): JsonResponse
     {
         try {
             $call = Call::findOrFail($callId);
@@ -698,14 +720,6 @@ class CallController extends Controller
                 ], 403);
             }
 
-            // Only generate tokens for video calls
-            if ($call->call_type !== 'video') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Stream tokens are only available for video calls'
-                ], 400);
-            }
-
             // Check if call is active
             if (!in_array($call->status, ['ringing', 'answered'])) {
                 return response()->json([
@@ -714,10 +728,11 @@ class CallController extends Controller
                 ], 410);
             }
 
+            $channelName = 'call_' . $call->id;
+
             // Generate tokens for both participants
-            $callerToken = $this->streamService->createUserToken($call->caller_id);
-            $receiverToken = $this->streamService->createUserToken($call->receiver_id);
-            $streamConfig = $this->streamService->getConfig();
+            $callerToken = $this->agoraService->generateToken($channelName, $call->caller_id);
+            $receiverToken = $this->agoraService->generateToken($channelName, $call->receiver_id);
 
             return response()->json([
                 'success' => true,
@@ -725,11 +740,11 @@ class CallController extends Controller
                     'call_id' => $call->id,
                     'caller_token' => $callerToken,
                     'receiver_token' => $receiverToken,
-                    'api_key' => $streamConfig['api_key'],
-                    'expires_at' => now()->addHours(24)->toISOString(),
-                    'room_id' => 'call_' . $call->id // Use call ID as room identifier
+                    'app_id' => env('AGORA_APP_ID'),
+                    'expires_at' => now()->addHours(1)->toISOString(),
+                    'channel' => $channelName // Use call ID as channel identifier
                 ],
-                'message' => 'Stream video tokens retrieved successfully'
+                'message' => 'Agora video tokens retrieved successfully'
             ]);
 
         } catch (\Exception $e) {

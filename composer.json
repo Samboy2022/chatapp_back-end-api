@@ -13,13 +13,15 @@
         "cloudinary-labs/cloudinary-laravel": "*",
         "cloudinary/cloudinary_php": "^3.1",
         "intervention/image": "^3.11",
+        "kreait/firebase-php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.1",
         "laravel/tinker": "^2.10.1",
         "predis/predis": "^3.0",
         "pusher/pusher-php-server": "^7.2",
-        "spatie/laravel-permission": "^6.19"
+        "spatie/laravel-permission": "^6.19",
+        "taylanunutmaz/agora-token-builder": "^1.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
