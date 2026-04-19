@@ -175,16 +175,29 @@
 
             <!-- Features Grid -->
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @php
+                    $defaultFeatures = [
+                        ['title' => 'Real-Time Chat', 'icon' => 'ph-chat-circle-dots', 'desc' => 'Instant messaging with farmers worldwide. Share photos, documents, and voice messages.'],
+                        ['title' => 'Video Calls', 'icon' => 'ph-video-camera', 'desc' => 'High-quality video calling for remote consultations and virtual farm tours.'],
+                        ['title' => 'Communities', 'icon' => 'ph-users-three', 'desc' => 'Join groups based on crops, regions, or farming techniques. Learn from experts.'],
+                        ['title' => 'Market Insights', 'icon' => 'ph-trend-up', 'desc' => 'Real-time crop prices and market trends to help you make informed decisions.'],
+                        ['title' => 'Secure & Private', 'icon' => 'ph-shield-check', 'desc' => 'End-to-end encryption ensures your conversations and data remain private.'],
+                        ['title' => 'Weather Updates', 'icon' => 'ph-cloud-sun', 'desc' => 'Localized weather forecasts and alerts to help plan your farming activities.']
+                    ];
+                @endphp
                 @for($i = 1; $i <= 6; $i++)
-                @if(isset($appSettings["landing_feature_{$i}_title"]))
+                @php
+                    $featTitle = $appSettings["landing_feature_{$i}_title"] ?? $defaultFeatures[$i-1]['title'];
+                    $featIcon = $appSettings["landing_feature_{$i}_icon"] ?? $defaultFeatures[$i-1]['icon'];
+                    $featDesc = $appSettings["landing_feature_{$i}_description"] ?? $defaultFeatures[$i-1]['desc'];
+                @endphp
                 <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all group">
                     <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-700 transition-colors">
-                        <i class="ph-bold {{ $appSettings["landing_feature_{$i}_icon"] ?? 'ph-sparkle' }} text-2xl text-green-700 group-hover:text-white transition-colors"></i>
+                        <i class="ph-bold {{ $featIcon }} text-2xl text-green-700 group-hover:text-white transition-colors"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $appSettings["landing_feature_{$i}_title"] }}</h3>
-                    <p class="text-gray-600 text-sm">{{ $appSettings["landing_feature_{$i}_description"] }}</p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $featTitle }}</h3>
+                    <p class="text-gray-600 text-sm">{{ $featDesc }}</p>
                 </div>
-                @endif
                 @endfor
             </div>
         </div>

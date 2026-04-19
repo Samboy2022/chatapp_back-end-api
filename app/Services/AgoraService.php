@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Taylanunutmaz\AgoraTokenBuilder\RtcTokenBuilder;
+use TaylanUnutmaz\AgoraTokenBuilder\RtcTokenBuilder;
 
 class AgoraService
 {
