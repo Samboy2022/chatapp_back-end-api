@@ -96,7 +96,8 @@ class UserController extends Controller
             $file = $request->file('avatar');
             $filename = 'avatar_' . time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('avatars', $filename, 'public');
-            $data['avatar_url'] = Storage::disk('public')->url($path);
+            // Store only the relative path
+            $data['avatar_url'] = $path;
         }
 
         $user = User::create($data);
@@ -196,7 +197,8 @@ class UserController extends Controller
             $file = $request->file('avatar');
             $filename = 'avatar_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('avatars', $filename, 'public');
-            $data['avatar_url'] = Storage::disk('public')->url($path);
+            // Store only the relative path
+            $data['avatar_url'] = $path;
         }
 
         $user->update($data);

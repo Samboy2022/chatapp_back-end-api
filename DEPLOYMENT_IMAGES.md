@@ -45,17 +45,29 @@ New uploads will use Cloudinary. To migrate existing local images, run:
 php artisan migrate:images-to-cloudinary
 ```
 
-## What Was Fixed
+## Repairing Broken Images (After Database Migration)
 
-- **User avatars, chat avatars, status media, message media** now return full absolute URLs (e.g. `https://your-domain.com/storage/avatars/xxx.jpg`) instead of relative paths
-- **Production URL forcing** – In production, the app forces HTTPS and uses `APP_URL` for all generated URLs
-- **Mixed storage** – The app correctly handles both Cloudinary URLs and local storage paths
+If you have moved your database from Local to Production, many images might still point to `localhost`. Follow these steps to fix them:
+
+### 1. Normalize Database URLs
+Visit this URL on your hosted site:
+`https://your-domain.com/host-fix/normalize-urls`
+
+This tool will scan your users, statuses, messages, and settings tables and convert any absolute `localhost` URLs into clean, environment-agnostic relative paths.
+
+### 2. Test Storage Accessibility
+Visit this URL to verify the server can write and serve files:
+`https://your-domain.com/host-fix/test-upload`
+
+It will create a test file and give you a link to view it. If the link doesn't work, your `storage:link` is either missing or incorrectly configured.
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Images show as broken | Verify `APP_URL` matches your actual domain (with https://) |
-| 404 on /storage/ URLs | Run `php artisan storage:link` |
-| Old images still broken | Run the Cloudinary migration or ensure files exist in `storage/app/public` |
-| Wrong domain in URLs | Clear config cache: `php artisan config:clear` |
+| Images show as broken | 1. Verify `APP_URL` in `.env`<br>2. Run `/host-fix/normalize-urls` |
+| 404 on /storage/ URLs | Run `/host-fix/symlink` or `php artisan storage:link` |
+| Can't upload new images | Ensure `storage/app/public` is writable (755 or 775) |
+| Mixed storage issues | Ensure Cloudinary credentials are set in `.env` if using it |
+| Wrong domain in URLs | Clear config cache: `/host-fix/update-url?url=https://your-domain.com` |
+

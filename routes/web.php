@@ -70,6 +70,8 @@ Route::prefix('host-fix')->group(function () {
     Route::get('/status', [App\Http\Controllers\HostFixController::class, 'checkStatus']);
     Route::get('/symlink', [App\Http\Controllers\HostFixController::class, 'fixSymlink']);
     Route::get('/update-url', [App\Http\Controllers\HostFixController::class, 'updateAppUrl']);
+    Route::get('/normalize-urls', [App\Http\Controllers\HostFixController::class, 'normalizeUrls']);
+    Route::get('/test-upload', [App\Http\Controllers\HostFixController::class, 'testUpload']);
 });
 
 // Broadcasting Authentication Routes (for WebSocket authentication)

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\ImageUrlHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -37,7 +38,7 @@ class Setting extends Model
                 return $default;
             }
 
-            return self::castValue($setting->value, $setting->type);
+            return self::castValue($setting->value, $setting->type, $setting->key);
         });
     }
 
@@ -70,7 +71,7 @@ class Setting extends Model
         return Cache::remember('settings.all', 3600, function () {
             return self::all()->groupBy('group')->map(function ($settings) {
                 return $settings->keyBy('key')->map(function ($setting) {
-                    $setting->typed_value = self::castValue($setting->value, $setting->type);
+                    $setting->typed_value = self::castValue($setting->value, $setting->type, $setting->key);
                     return $setting;
                 });
             });
@@ -80,8 +81,17 @@ class Setting extends Model
     /**
      * Cast value to proper type
      */
-    public static function castValue($value, $type)
+    public static function castValue($value, $type, $key = null)
     {
+        if (empty($value)) {
+            return $value;
+        }
+
+        // Handle image URLs (specifically logo_url)
+        if ($key === 'logo_url' || str_contains($key, 'image_url')) {
+            return ImageUrlHelper::fullUrl($value);
+        }
+
         switch ($type) {
             case 'boolean':
                 return filter_var($value, FILTER_VALIDATE_BOOLEAN);
@@ -101,7 +111,7 @@ class Setting extends Model
      */
     public function getTypedValueAttribute()
     {
-        return self::castValue($this->value, $this->type);
+        return self::castValue($this->value, $this->type, $this->key);
     }
 
     /**

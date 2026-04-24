@@ -24,8 +24,29 @@ class ImageUrlHelper
             return null;
         }
 
-        // Already a full URL (Cloudinary, S3, etc.) - return as-is
+        // Handle case where $value is already a full URL
         if (filter_var($value, FILTER_VALIDATE_URL)) {
+            // Check if it's a Cloudinary URL (always return as-is)
+            if (str_contains($value, 'cloudinary.com')) {
+                return $value;
+            }
+
+            // Check if it's a local/development URL that needs normalization
+            // If it contains localhost, 127.0.0.1, or doesn't match current APP_URL domain
+            $appUrl = config('app.url');
+            $currentHost = parse_url($appUrl, PHP_URL_HOST);
+            $valueHost = parse_url($value, PHP_URL_HOST);
+
+            if ($valueHost === 'localhost' || $valueHost === '127.0.0.1' || ($currentHost && $valueHost !== $currentHost)) {
+                // Extract the path and re-generate using current APP_URL
+                $path = parse_url($value, PHP_URL_PATH);
+                if ($path) {
+                    // Remove leading /storage/ if present to avoid double prefixing
+                    $cleanPath = preg_replace('/^\/?storage\//', '', $path);
+                    return URL::to('/storage/' . ltrim($cleanPath, '/'));
+                }
+            }
+
             return $value;
         }
 
@@ -37,7 +58,7 @@ class ImageUrlHelper
 
         // Local storage paths like "avatars/xxx", "statuses/xxx", "messages/xxx", etc.
         // These are stored in storage/app/public and served from /storage/
-        if (preg_match('#^(avatars|statuses|chat-avatars|group_avatars|messages|media)/.+#', $path)) {
+        if (preg_match('#^(avatars|statuses|chat-avatars|group_avatars|messages|media|logos)/.+#', $path)) {
             return URL::to('/storage/' . $path);
         }
 
