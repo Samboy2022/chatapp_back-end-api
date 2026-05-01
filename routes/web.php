@@ -171,6 +171,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::post('/api/create', [SettingController::class, 'create'])->name('api.create');
         Route::post('/api/delete', [SettingController::class, 'delete'])->name('api.delete');
         Route::post('/upload-logo', [SettingController::class, 'uploadLogo'])->name('upload-logo');
+        Route::post('/upload-firebase-json', [SettingController::class, 'uploadFirebaseJson'])->name('upload-firebase-json');
         Route::post('/remove-logo', [SettingController::class, 'removeLogo'])->name('remove-logo');
         Route::post('/clear-cache', [SettingController::class, 'clearCache'])->name('clear-cache');
         Route::post('/optimize', [SettingController::class, 'optimizeSystem'])->name('optimize');

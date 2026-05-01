@@ -12,7 +12,13 @@ class FcmService
 
     public function __construct()
     {
-        $credentialsPath = env('FIREBASE_CREDENTIALS');
+        $credentialsPath = \App\Models\Setting::get('firebase_credentials', env('FIREBASE_CREDENTIALS'));
+        
+        // If the path is relative (doesn't start with / or C:\), make it absolute using base_path()
+        if (!empty($credentialsPath) && !preg_match('/^([a-zA-Z]:\\\\|\/)/', $credentialsPath)) {
+            $credentialsPath = base_path($credentialsPath);
+        }
+
         if (!empty($credentialsPath) && file_exists($credentialsPath)) {
             $factory = (new Factory)->withServiceAccount($credentialsPath);
             $this->messaging = $factory->createMessaging();

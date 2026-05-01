@@ -148,6 +148,7 @@
                             <option value="notification">Notification</option>
                             <option value="landing">Landing Page</option>
                             <option value="colors">UI Colors</option>
+                            <option value="integrations">Integrations</option>
                         </select>
                     </div>
                 </div>
@@ -227,7 +228,8 @@ const groupIcons = {
     file: 'ph-file-cloud',
     chat: 'ph-chat-circle-text',
     user: 'ph-users',
-    notification: 'ph-bell'
+    notification: 'ph-bell',
+    integrations: 'ph-plugs'
 };
 
 const groupColors = {
@@ -236,7 +238,8 @@ const groupColors = {
     file: 'orange',
     chat: 'green',
     user: 'purple',
-    notification: 'red'
+    notification: 'red',
+    integrations: 'indigo'
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -389,6 +392,19 @@ function renderSettingField(setting) {
                 <input type="text" value="${escapeHtml(value)}" onchange="updateSetting('${setting.key}', this.value)"
                        class="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 text-sm font-mono"
                        placeholder="#000000">
+            </div>
+        `;
+    } else if (setting.key === 'firebase_credentials') {
+        inputHtml = `
+            <div class="flex gap-2 items-center">
+                <input type="text" value="${escapeHtml(value)}" onchange="updateSetting('${setting.key}', this.value)"
+                       class="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 text-sm"
+                       placeholder="storage/app/firebase/firebase-credentials.json">
+                <label class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all text-sm font-medium cursor-pointer shrink-0 border border-gray-200">
+                    <i class="ph ph-upload-simple"></i>
+                    Upload JSON
+                    <input type="file" accept=".json" class="hidden" onchange="uploadFirebaseJson(this)">
+                </label>
             </div>
         `;
     } else {
@@ -686,6 +702,48 @@ async function removeLogo() {
     } catch (error) {
         showStatus('error', 'Failed to remove logo');
     }
+}
+
+// Firebase JSON Upload Function
+async function uploadFirebaseJson(input) {
+    if (!input.files || !input.files[0]) return;
+    
+    const file = input.files[0];
+    
+    // Validate file type
+    if (!file.name.toLowerCase().endsWith('.json')) {
+        showStatus('error', 'Please select a valid .json file');
+        input.value = '';
+        return;
+    }
+    
+    showStatus('success', 'Uploading Firebase credentials...');
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+    
+    try {
+        const response = await fetch('{{ route("admin.settings.upload-firebase-json") }}', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showStatus('success', 'Firebase credentials uploaded successfully');
+            loadSettings(); // Refresh settings to show the updated path
+        } else {
+            showStatus('error', data.message || 'Failed to upload Firebase credentials');
+        }
+    } catch (error) {
+        console.error('Error uploading Firebase credentials:', error);
+        showStatus('error', 'Failed to upload Firebase credentials');
+    }
+    
+    // Reset input
+    input.value = '';
 }
 </script>
 @endpush

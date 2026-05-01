@@ -142,6 +142,17 @@ class CallController extends Controller
                 ], 403);
             }
 
+            // --- LAZY CLEANUP OF STALE CALLS ---
+            // 1. Clean up 'ringing' calls older than 60 seconds that were never answered or rejected
+            \App\Models\Call::where('status', 'ringing')
+                ->where('started_at', '<', now()->subSeconds(60))
+                ->update(['status' => 'ended', 'ended_at' => now()]);
+                
+            // 2. Clean up 'answered' calls older than 3 hours (in case the app crashed during an active call)
+            \App\Models\Call::where('status', 'answered')
+                ->where('started_at', '<', now()->subHours(3))
+                ->update(['status' => 'ended', 'ended_at' => now()]);
+
             // Check if there's already an active call between these users
             $activeCall = Call::where(function($query) use ($receiverId) {
                 $query->where(function($subQuery) use ($receiverId) {
@@ -203,29 +214,27 @@ class CallController extends Controller
                 'receiver:id,name,phone_number,avatar_url'
             ]);
 
-            // Generate Agora tokens for video calls
+            // Generate Agora tokens
             $agoraTokens = null;
             $channelName = 'call_' . $call->id;
             
-            if ($callType === 'video') {
-                try {
-                    $callerToken = $this->agoraService->generateToken($channelName, Auth::id());
-                    $receiverToken = $this->agoraService->generateToken($channelName, $receiverId);
+            try {
+                $callerToken = $this->agoraService->generateToken($channelName, 0);
+                $receiverToken = $this->agoraService->generateToken($channelName, 0);
 
-                    $agoraTokens = [
-                        'caller_token' => $callerToken,
-                        'receiver_token' => $receiverToken,
-                        'channel' => $channelName,
-                        'app_id' => env('AGORA_APP_ID'),
-                        'expires_at' => now()->addHours(1)->toISOString()
-                    ];
-                } catch (\Exception $e) {
-                    // Log error but don't fail the call initiation
-                    \Log::warning('Failed to generate Agora tokens', [
-                        'call_id' => $call->id,
-                        'error' => $e->getMessage()
-                    ]);
-                }
+                $agoraTokens = [
+                    'caller_token' => $callerToken,
+                    'receiver_token' => $receiverToken,
+                    'channel' => $channelName,
+                    'app_id' => \App\Models\Setting::get('agora_app_id', env('AGORA_APP_ID')),
+                    'expires_at' => now()->addHours(1)->toISOString()
+                ];
+            } catch (\Exception $e) {
+                // Log error but don't fail the call initiation
+                \Log::warning('Failed to generate Agora tokens', [
+                    'call_id' => $call->id,
+                    'error' => $e->getMessage()
+                ]);
             }
 
             // Get caller and recipient user objects
@@ -330,6 +339,7 @@ class CallController extends Controller
 
     /**
      * End a call
+     * Handles both "caller cancels while ringing" and "participant hangs up"
      */
     public function end($callId): JsonResponse
     {
@@ -344,12 +354,13 @@ class CallController extends Controller
                 ], 403);
             }
 
-            // Check if call is active
+            // Allow ending even if already ended (idempotent) — return success so
+            // the client-side doesn't get stuck on a 410 error.
             if (!in_array($call->status, ['ringing', 'answered'])) {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Call is not active'
-                ], 410);
+                    'success' => true,
+                    'message' => 'Call already ended'
+                ]);
             }
 
             // Calculate duration if call was answered
@@ -360,30 +371,47 @@ class CallController extends Controller
 
             // Update call status
             $call->update([
-                'status' => 'ended',
+                'status'   => 'ended',
                 'ended_at' => now(),
                 'duration' => $duration
             ]);
 
             $call->load([
-                'caller:id,name,phone_number,avatar_url',
-                'receiver:id,name,phone_number,avatar_url'
+                'caller:id,name,phone_number,avatar_url,fcm_token,device_token',
+                'receiver:id,name,phone_number,avatar_url,fcm_token,device_token'
             ]);
 
-            // Get caller and recipient user objects
-            $caller = $call->caller;
+            $caller    = $call->caller;
             $recipient = $call->receiver;
 
-            // Broadcast call ended event
+            // Determine the other party (the one who did NOT press end)
+            $otherParty = Auth::id() === $caller->id ? $recipient : $caller;
+
+            // 1. Broadcast WebSocket event (for foreground apps)
             broadcast(new CallEnded($call, $caller, $recipient));
+
+            // 2. Send FCM push to the OTHER party so their ringtone / call screen stops
+            $deviceToken = $otherParty->fcm_token ?? $otherParty->device_token ?? null;
+            if ($deviceToken) {
+                $this->fcmService->sendPushNotification(
+                    $deviceToken,
+                    'Call Ended',
+                    ($caller->id === Auth::id() ? $caller->name : $recipient->name) . ' ended the call',
+                    [
+                        'type'    => 'call_ended',
+                        'call_id' => (string) $call->id,
+                    ]
+                );
+            }
 
             return response()->json([
                 'success' => true,
-                'data' => $call,
+                'data'    => $call,
                 'message' => 'Call ended successfully'
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Error ending call: ' . $e->getMessage(), ['call_id' => $callId]);
             return response()->json([
                 'success' => false,
                 'message' => 'Error ending call: ' . $e->getMessage()
@@ -393,6 +421,7 @@ class CallController extends Controller
 
     /**
      * Decline a call
+     * Handles User B pressing "Decline" on their incoming call screen
      */
     public function decline($callId): JsonResponse
     {
@@ -407,39 +436,53 @@ class CallController extends Controller
                 ], 403);
             }
 
-            // Check if call is still ringing
-            if ($call->status !== 'ringing') {
+            // Idempotent — if already ended, don't error out
+            if (!in_array($call->status, ['ringing'])) {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Call is no longer available to decline'
-                ], 410);
+                    'success' => true,
+                    'message' => 'Call already handled'
+                ]);
             }
 
             // Update call status
             $call->update([
-                'status' => 'declined',
+                'status'   => 'declined',
                 'ended_at' => now()
             ]);
 
             $call->load([
-                'caller:id,name,phone_number,avatar_url',
-                'receiver:id,name,phone_number,avatar_url'
+                'caller:id,name,phone_number,avatar_url,fcm_token,device_token',
+                'receiver:id,name,phone_number,avatar_url,fcm_token,device_token'
             ]);
 
-            // Get caller and recipient user objects
-            $caller = $call->caller;
+            $caller    = $call->caller;
             $recipient = $call->receiver;
 
-            // Broadcast call rejected event
+            // 1. Broadcast WebSocket event
             broadcast(new CallRejected($call, $caller, $recipient));
+
+            // 2. Send FCM to CALLER so their outgoing ring stops
+            $callerToken = $caller->fcm_token ?? $caller->device_token ?? null;
+            if ($callerToken) {
+                $this->fcmService->sendPushNotification(
+                    $callerToken,
+                    'Call Declined',
+                    $recipient->name . ' is not available right now',
+                    [
+                        'type'    => 'call_declined',
+                        'call_id' => (string) $call->id,
+                    ]
+                );
+            }
 
             return response()->json([
                 'success' => true,
-                'data' => $call,
+                'data'    => $call,
                 'message' => 'Call declined successfully'
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Error declining call: ' . $e->getMessage(), ['call_id' => $callId]);
             return response()->json([
                 'success' => false,
                 'message' => 'Error declining call: ' . $e->getMessage()
@@ -730,9 +773,9 @@ class CallController extends Controller
 
             $channelName = 'call_' . $call->id;
 
-            // Generate tokens for both participants
-            $callerToken = $this->agoraService->generateToken($channelName, $call->caller_id);
-            $receiverToken = $this->agoraService->generateToken($channelName, $call->receiver_id);
+            // Generate tokens for both participants with uid 0
+            $callerToken = $this->agoraService->generateToken($channelName, 0);
+            $receiverToken = $this->agoraService->generateToken($channelName, 0);
 
             return response()->json([
                 'success' => true,
@@ -750,7 +793,7 @@ class CallController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error retrieving Stream tokens: ' . $e->getMessage()
+                'message' => 'Error retrieving Agora tokens: ' . $e->getMessage()
             ], 500);
         }
     }

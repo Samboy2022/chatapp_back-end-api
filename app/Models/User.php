@@ -40,6 +40,8 @@ class User extends Authenticatable
         'groups_privacy',
         'email_verified_at',
         'phone_verified_at',
+        'fcm_token',
+        'device_token',
     ];
 
     /**

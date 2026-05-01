@@ -336,4 +336,41 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Update user FCM/device token for push notifications
+     */
+    public function updateFcmToken(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'fcm_token' => 'required|string|max:512',
+            'device_type' => 'sometimes|string|in:android,ios,web',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $request->user()->update([
+                'fcm_token' => $request->fcm_token,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Device token updated successfully',
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update device token',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

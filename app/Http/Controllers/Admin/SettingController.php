@@ -232,6 +232,51 @@ class SettingController extends Controller
     }
 
     /**
+     * Upload Firebase JSON credentials
+     */
+    public function uploadFirebaseJson(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|max:2048' // 2MB max
+        ]);
+
+        try {
+            $file = $request->file('file');
+            
+            // Check extension manually because mimes:json can sometimes fail based on OS mimetype mapping
+            if (strtolower($file->getClientOriginalExtension()) !== 'json') {
+                throw new \Exception('Please select a valid .json file.');
+            }
+            
+            // Store it in storage/app/firebase
+            $filename = 'firebase-credentials.json';
+            $path = $file->storeAs('firebase', $filename);
+            
+            // Generate relative path string
+            $relativePath = 'storage/app/' . $path;
+            
+            // Update setting in database
+            \App\Models\Setting::set('firebase_credentials', $relativePath, 'string', 'integrations');
+            
+            // Clear caches
+            Cache::forget('setting.firebase_credentials');
+            Cache::forget('settings.all');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Firebase credentials uploaded successfully!',
+                'path' => $relativePath
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Firebase JSON upload failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload Firebase credentials: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Remove application logo
      */
     public function removeLogo()

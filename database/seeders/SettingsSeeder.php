@@ -603,6 +603,35 @@ class SettingsSeeder extends Seeder
                 'description' => 'Link to Google Play Store listing',
                 'is_public' => true
             ],
+
+            // ========== INTEGRATIONS SECTION ==========
+            [
+                'key' => 'agora_app_id',
+                'value' => '',
+                'type' => 'string',
+                'group' => 'integrations',
+                'label' => 'Agora App ID',
+                'description' => 'The App ID for your Agora RTC project',
+                'is_public' => false
+            ],
+            [
+                'key' => 'agora_app_certificate',
+                'value' => '',
+                'type' => 'string',
+                'group' => 'integrations',
+                'label' => 'Agora App Certificate',
+                'description' => 'The App Certificate for your Agora RTC project (required for secure tokens)',
+                'is_public' => false
+            ],
+            [
+                'key' => 'firebase_credentials',
+                'value' => 'storage/app/firebase/firebase-credentials.json',
+                'type' => 'string',
+                'group' => 'integrations',
+                'label' => 'Firebase Credentials Path',
+                'description' => 'Relative path to your Firebase Admin SDK service account JSON file',
+                'is_public' => false
+            ],
         ];
 
         foreach ($settings as $setting) {

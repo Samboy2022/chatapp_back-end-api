@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/refresh', [AuthController::class, 'refreshToken']);
         Route::put('/profile', [AuthController::class, 'updateProfile']);
         Route::put('/privacy', [AuthController::class, 'updatePrivacy']);
+        Route::post('/fcm-token', [AuthController::class, 'updateFcmToken']);
     });
 
     // Contact routes
