@@ -143,14 +143,22 @@ class CallController extends Controller
 
             // --- LAZY CLEANUP OF STALE CALLS ---
             // 1. Clean up 'ringing' calls older than 60 seconds that were never answered or rejected
-            \App\Models\Call::where('status', 'ringing')
+            $staleRingingCount = \App\Models\Call::where('status', 'ringing')
                 ->where('started_at', '<', now()->subSeconds(60))
                 ->update(['status' => 'ended', 'ended_at' => now()]);
                 
+            if ($staleRingingCount > 0) {
+                \Log::info("Lazy Cleanup: Ended {$staleRingingCount} stale ringing calls.");
+            }
+                
             // 2. Clean up 'answered' calls older than 3 hours (in case the app crashed during an active call)
-            \App\Models\Call::where('status', 'answered')
+            $staleAnsweredCount = \App\Models\Call::where('status', 'answered')
                 ->where('started_at', '<', now()->subHours(3))
                 ->update(['status' => 'ended', 'ended_at' => now()]);
+                
+            if ($staleAnsweredCount > 0) {
+                \Log::info("Lazy Cleanup: Ended {$staleAnsweredCount} stale answered calls.");
+            }
 
             // Check if there's already an active call between these users
             $activeCall = Call::where(function($query) use ($receiverId) {
