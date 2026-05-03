@@ -64,3 +64,8 @@ Broadcast::channel('presence-users', function ($user) {
         'last_seen_at' => $user->last_seen_at,
     ];
 });
+
+// Call private channel — for call signaling (ring, accept, end, reject)
+Broadcast::channel('call.{userId}', function ($user, $userId) {
+    return (int) $user->id === (int) $userId;
+});

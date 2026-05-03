@@ -106,8 +106,7 @@ class CallController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'receiver_id' => 'required|exists:users,id',
-                'type' => 'required|string|in:voice,video,audio'
+                'type' => 'required|string|in:video,audio'
             ]);
 
             if ($validator->fails()) {
@@ -219,8 +218,8 @@ class CallController extends Controller
             $channelName = 'call_' . $call->id;
             
             try {
-                $callerToken = $this->agoraService->generateToken($channelName, 0);
-                $receiverToken = $this->agoraService->generateToken($channelName, 0);
+                $callerToken = $this->agoraService->generateToken($channelName, Auth::id());
+                $receiverToken = $this->agoraService->generateToken($channelName, $receiverId);
 
                 $agoraTokens = [
                     'caller_token' => $callerToken,
@@ -251,20 +250,38 @@ class CallController extends Controller
             }
 
             // Send FCM push notification if receiver has a device token
-            if (!empty($recipient->fcm_token) || !empty($recipient->device_token)) {
-                $deviceToken = $recipient->fcm_token ?? $recipient->device_token;
-                $this->fcmService->sendPushNotification(
+            $receiverLoad = User::find($receiverId);
+            $deviceToken = $receiverLoad->fcm_token ?? $receiverLoad->device_token ?? null;
+
+            if ($deviceToken && $agoraTokens) {
+                $this->fcmService->sendCallNotification(
                     $deviceToken,
-                    'Incoming Call',
-                    $caller->name . ' is calling you...',
                     [
-                        'call_id' => (string) $call->id,
-                        'channel' => $channelName,
-                        'caller_name' => $caller->name,
-                        'type' => 'incoming_call',
-                        'call_type' => $callType
+                        'type'           => 'incoming_call',
+                        'call_id'        => (string) $call->id,
+                        'channel'        => $channelName,
+                        'caller_name'    => $caller->name,
+                        'caller_avatar'  => $caller->avatar_url ?? '',
+                        'call_type'      => $callType,
+                        // Give the receiver their own token so they can join
+                        'receiver_token' => $agoraTokens['receiver_token'],
+                        'app_id'         => $agoraTokens['app_id'],
                     ]
                 );
+                \Log::info('FCM sent to receiver', ['call_id' => $call->id, 'token_prefix' => substr($deviceToken, 0, 20)]);
+            } elseif ($deviceToken && !$agoraTokens) {
+                // Agora tokens failed but still notify
+                $this->fcmService->sendCallNotification(
+                    $deviceToken,
+                    [
+                        'type'        => 'incoming_call',
+                        'call_id'     => (string) $call->id,
+                        'caller_name' => $caller->name,
+                        'call_type'   => $callType,
+                    ]
+                );
+            } else {
+                \Log::warning('No FCM token for receiver', ['receiver_id' => $receiverId]);
             }
 
             return response()->json([
@@ -393,16 +410,18 @@ class CallController extends Controller
             // 2. Send FCM push to the OTHER party so their ringtone / call screen stops
             $deviceToken = $otherParty->fcm_token ?? $otherParty->device_token ?? null;
             if ($deviceToken) {
-                $this->fcmService->sendPushNotification(
+                $this->fcmService->sendCallNotification(
                     $deviceToken,
-                    'Call Ended',
-                    ($caller->id === Auth::id() ? $caller->name : $recipient->name) . ' ended the call',
                     [
                         'type'    => 'call_ended',
                         'call_id' => (string) $call->id,
                     ]
                 );
             }
+
+            // Hide sensitive tokens before returning
+            $caller->makeHidden(['fcm_token', 'device_token']);
+            $recipient->makeHidden(['fcm_token', 'device_token']);
 
             return response()->json([
                 'success' => true,
@@ -464,16 +483,18 @@ class CallController extends Controller
             // 2. Send FCM to CALLER so their outgoing ring stops
             $callerToken = $caller->fcm_token ?? $caller->device_token ?? null;
             if ($callerToken) {
-                $this->fcmService->sendPushNotification(
+                $this->fcmService->sendCallNotification(
                     $callerToken,
-                    'Call Declined',
-                    $recipient->name . ' is not available right now',
                     [
                         'type'    => 'call_declined',
                         'call_id' => (string) $call->id,
                     ]
                 );
             }
+
+            // Hide sensitive tokens before returning
+            $caller->makeHidden(['fcm_token', 'device_token']);
+            $recipient->makeHidden(['fcm_token', 'device_token']);
 
             return response()->json([
                 'success' => true,
@@ -773,9 +794,9 @@ class CallController extends Controller
 
             $channelName = 'call_' . $call->id;
 
-            // Generate tokens for both participants with uid 0
-            $callerToken = $this->agoraService->generateToken($channelName, 0);
-            $receiverToken = $this->agoraService->generateToken($channelName, 0);
+            // Generate tokens for both participants with their real user IDs
+            $callerToken = $this->agoraService->generateToken($channelName, $call->caller_id);
+            $receiverToken = $this->agoraService->generateToken($channelName, $call->receiver_id);
 
             return response()->json([
                 'success' => true,
@@ -783,7 +804,7 @@ class CallController extends Controller
                     'call_id' => $call->id,
                     'caller_token' => $callerToken,
                     'receiver_token' => $receiverToken,
-                    'app_id' => env('AGORA_APP_ID'),
+                    'app_id' => \App\Models\Setting::get('agora_app_id', env('AGORA_APP_ID')),
                     'expires_at' => now()->addHours(1)->toISOString(),
                     'channel' => $channelName // Use call ID as channel identifier
                 ],

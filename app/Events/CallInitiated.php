@@ -8,11 +8,11 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CallInitiated implements ShouldBroadcast
+class CallInitiated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -61,7 +61,7 @@ class CallInitiated implements ShouldBroadcast
             'caller_id' => $this->caller->id,
             'recipient_id' => $this->recipient->id,
             'caller_name' => $this->caller->name,
-            'caller_avatar' => $this->caller->avatar,
+            'caller_avatar' => $this->caller->avatar_url ?? '',
             'call_type' => $this->call->call_type,
             'timestamp' => now()->toISOString(),
             'metadata' => [

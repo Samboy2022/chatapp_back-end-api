@@ -86,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/refresh', [AuthController::class, 'refreshToken']);
         Route::put('/profile', [AuthController::class, 'updateProfile']);
         Route::put('/privacy', [AuthController::class, 'updatePrivacy']);
+        Route::post('/fcm-token', [AuthController::class, 'updateFcmToken']);
     });
 
     // Contact routes
@@ -211,7 +212,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{callId}/decline', [CallController::class, 'decline']); // Decline call (alias)
         Route::post('/{callId}/end', [CallController::class, 'end']);
         Route::get('/{callId}', [CallController::class, 'show']);
-        Route::get('/{callId}/stream-tokens', [CallController::class, 'getStreamTokens']); // Stream video tokens
+        Route::get('/{callId}/agora-tokens', [CallController::class, 'getAgoraTokens']); // Agora video tokens
     });
 
     // Stream Video routes
