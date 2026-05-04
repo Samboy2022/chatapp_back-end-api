@@ -249,7 +249,11 @@ class CallController extends Controller
             $recipient = $call->receiver;
 
             // Broadcast call event to receiver
-            broadcast(new CallInitiated($call, $caller, $recipient));
+            try {
+                broadcast(new CallInitiated($call, $caller, $recipient));
+            } catch (\Exception $e) {
+                \Log::warning('Failed to broadcast CallInitiated: ' . $e->getMessage());
+            }
 
             $responseData = $call;
             if ($agoraTokens) {
@@ -315,7 +319,7 @@ class CallController extends Controller
             $call = Call::findOrFail($callId);
 
             // Check if user is the receiver
-            if ($call->receiver_id !== Auth::id()) {
+            if ($call->receiver_id != Auth::id()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You are not authorized to answer this call'
@@ -346,7 +350,11 @@ class CallController extends Controller
             $recipient = $call->receiver;
 
             // Broadcast call accepted event
-            broadcast(new CallAccepted($call, $caller, $recipient));
+            try {
+                broadcast(new CallAccepted($call, $caller, $recipient));
+            } catch (\Exception $e) {
+                \Log::warning('Failed to broadcast CallAccepted: ' . $e->getMessage());
+            }
 
             return response()->json([
                 'success' => true,
@@ -372,7 +380,7 @@ class CallController extends Controller
             $call = Call::findOrFail($callId);
 
             // Check if user is participant in the call
-            if ($call->caller_id !== Auth::id() && $call->receiver_id !== Auth::id()) {
+            if ($call->caller_id != Auth::id() && $call->receiver_id != Auth::id()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You are not authorized to end this call'
@@ -410,10 +418,14 @@ class CallController extends Controller
             $recipient = $call->receiver;
 
             // Determine the other party (the one who did NOT press end)
-            $otherParty = Auth::id() === $caller->id ? $recipient : $caller;
+            $otherParty = Auth::id() == $caller->id ? $recipient : $caller;
 
             // 1. Broadcast WebSocket event (for foreground apps)
-            broadcast(new CallEnded($call, $caller, $recipient));
+            try {
+                broadcast(new CallEnded($call, $caller, $recipient));
+            } catch (\Exception $e) {
+                \Log::warning('Failed to broadcast CallEnded: ' . $e->getMessage());
+            }
 
             // 2. Send FCM push to the OTHER party so their ringtone / call screen stops
             $deviceToken = $otherParty->fcm_token ?? $otherParty->device_token ?? null;
@@ -456,7 +468,7 @@ class CallController extends Controller
             $call = Call::findOrFail($callId);
 
             // Check if user is the receiver
-            if ($call->receiver_id !== Auth::id()) {
+            if ($call->receiver_id != Auth::id()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You are not authorized to decline this call'
@@ -486,7 +498,11 @@ class CallController extends Controller
             $recipient = $call->receiver;
 
             // 1. Broadcast WebSocket event
-            broadcast(new CallRejected($call, $caller, $recipient));
+            try {
+                broadcast(new CallRejected($call, $caller, $recipient));
+            } catch (\Exception $e) {
+                \Log::warning('Failed to broadcast CallRejected: ' . $e->getMessage());
+            }
 
             // 2. Send FCM to CALLER so their outgoing ring stops
             $callerToken = $caller->fcm_token ?? $caller->device_token ?? null;
@@ -742,7 +758,11 @@ class CallController extends Controller
                 $caller = $call->caller;
                 $recipient = $call->receiver;
 
-                broadcast(new CallEnded($call, $caller, $recipient));
+                try {
+                    broadcast(new CallEnded($call, $caller, $recipient));
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to broadcast CallEnded in cleanup: ' . $e->getMessage());
+                }
                 $endedCount++;
             }
 

@@ -361,7 +361,11 @@ class CallController extends Controller
             // Load relationships and broadcast call ended event
             $call->load(['caller', 'receiver']);
             if ($call->caller && $call->receiver) {
-                broadcast(new CallEnded($call, $call->caller, $call->receiver));
+                try {
+                    broadcast(new CallEnded($call, $call->caller, $call->receiver));
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to broadcast CallEnded from admin dashboard: ' . $e->getMessage());
+                }
             }
 
             if (request()->expectsJson()) {

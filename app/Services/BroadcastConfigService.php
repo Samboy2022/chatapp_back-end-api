@@ -46,18 +46,22 @@ class BroadcastConfigService
      */
     private static function applyPusherConfig($settings)
     {
+        $scheme = $settings['pusher_scheme'] ?? env('PUSHER_SCHEME') ?: 'https';
+        $cluster = $settings['pusher_cluster'] ?? env('PUSHER_APP_CLUSTER') ?? env('PUSHER_CLUSTER') ?: 'mt1';
+        $host = $settings['pusher_host'] ?? env('PUSHER_HOST') ?: 'api-'.$cluster.'.pusherapp.com';
+        
         $pusherConfig = [
             'driver' => 'pusher',
             'key' => $settings['pusher_app_key'] ?? env('PUSHER_APP_KEY'),
             'secret' => $settings['pusher_app_secret'] ?? env('PUSHER_APP_SECRET'),
             'app_id' => $settings['pusher_app_id'] ?? env('PUSHER_APP_ID'),
             'options' => [
-                'cluster' => $settings['pusher_cluster'] ?? env('PUSHER_CLUSTER'),
-                'host' => $settings['pusher_host'] ?? env('PUSHER_HOST'),
-                'port' => $settings['pusher_port'] ?? env('PUSHER_PORT'),
-                'scheme' => $settings['pusher_scheme'] ?? env('PUSHER_SCHEME', 'http'),
-                'encrypted' => ($settings['pusher_scheme'] ?? 'http') === 'https',
-                'useTLS' => ($settings['pusher_scheme'] ?? 'http') === 'https',
+                'cluster' => $cluster,
+                'host' => $host,
+                'port' => $settings['pusher_port'] ?? env('PUSHER_PORT') ?: 443,
+                'scheme' => $scheme,
+                'encrypted' => $scheme === 'https',
+                'useTLS' => $scheme === 'https',
             ],
         ];
 
