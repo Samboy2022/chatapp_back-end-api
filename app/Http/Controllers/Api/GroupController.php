@@ -41,7 +41,7 @@ class GroupController extends Controller
                         return [
                             'id' => $participant->id,
                             'name' => $participant->name,
-                            'avatar' => $participant->avatar,
+                            'avatar' => $participant->avatar_url,
                             'phone_number' => $participant->phone_number,
                             'is_admin' => $participant->pivot->role === 'admin',
                             'role' => $participant->pivot->role,
@@ -140,7 +140,7 @@ class GroupController extends Controller
                     return [
                         'id' => $participant->id,
                         'name' => $participant->name,
-                        'avatar' => $participant->avatar,
+                        'avatar' => $participant->avatar_url,
                         'phone_number' => $participant->phone_number,
                         'is_admin' => $participant->pivot->role === 'admin',
                         'role' => $participant->pivot->role,
@@ -200,7 +200,7 @@ class GroupController extends Controller
                     return [
                         'id' => $participant->id,
                         'name' => $participant->name,
-                        'avatar' => $participant->avatar,
+                        'avatar' => $participant->avatar_url,
                         'phone_number' => $participant->phone_number,
                         'is_admin' => $participant->pivot->role === 'admin',
                         'role' => $participant->pivot->role,

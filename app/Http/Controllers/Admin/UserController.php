@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Chat;
 use App\Models\Message;
 use App\Models\Contact;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +15,13 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
+
     /**
      * Display a listing of the users.
      */
@@ -91,13 +99,12 @@ class UserController extends Controller
         $data['email_verified_at'] = now();
         $data['phone_verified_at'] = now();
 
-        // Handle avatar upload
+        // Handle avatar upload via Cloudinary
         if ($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
-            $filename = 'avatar_' . time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('avatars', $filename, 'public');
-            // Store only the relative path
-            $data['avatar_url'] = $path;
+            $result = $this->cloudinary->uploadAvatar($request->file('avatar'), 0);
+            if ($result['success']) {
+                $data['avatar_url'] = $result['avatar_url'];
+            }
         }
 
         $user = User::create($data);
@@ -186,19 +193,20 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
-        // Handle avatar upload
+        // Handle avatar upload via Cloudinary
         if ($request->hasFile('avatar')) {
-            // Delete old avatar
-            if ($user->avatar_url) {
-                $oldPath = str_replace('/storage/', '', parse_url($user->avatar_url, PHP_URL_PATH));
-                Storage::disk('public')->delete($oldPath);
+            // Delete old avatar from Cloudinary if it's a Cloudinary asset
+            if ($user->avatar_url && filter_var($user->avatar_url, FILTER_VALIDATE_URL) && str_contains($user->avatar_url, 'cloudinary.com')) {
+                $oldPublicId = $this->cloudinary->extractPublicId($user->avatar_url);
+                if ($oldPublicId) {
+                    $this->cloudinary->delete($oldPublicId, 'image');
+                }
             }
 
-            $file = $request->file('avatar');
-            $filename = 'avatar_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('avatars', $filename, 'public');
-            // Store only the relative path
-            $data['avatar_url'] = $path;
+            $result = $this->cloudinary->uploadAvatar($request->file('avatar'), $user->id);
+            if ($result['success']) {
+                $data['avatar_url'] = $result['avatar_url'];
+            }
         }
 
         $user->update($data);
