@@ -78,6 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/profile', [AuthController::class, 'updateProfile']);
         Route::put('/privacy', [AuthController::class, 'updatePrivacy']);
         Route::post('/fcm-token', [AuthController::class, 'updateFcmToken']);
+        Route::post('/test-fcm-notification', [AuthController::class, 'testFcmNotification']);
     });
 
     // Contact routes
@@ -118,7 +119,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/archive', [ChatController::class, 'archive']);
         Route::post('/pin', [ChatController::class, 'pin']);
         Route::post('/mute', [ChatController::class, 'mute']);
+        Route::post('/clear', [ChatController::class, 'clearChat']);
+        Route::post('/delete', [ChatController::class, 'deleteChat']);
         Route::post('/leave', [ChatController::class, 'leave']);
+        Route::post('/update-picture', [ChatController::class, 'updatePicture']);
+        Route::delete('/remove-picture', [ChatController::class, 'removePicture']);
     });
 
     // Message routes (global) - P2P messaging

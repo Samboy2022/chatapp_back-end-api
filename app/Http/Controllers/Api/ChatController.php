@@ -209,6 +209,7 @@ class ChatController extends Controller
             'name' => 'sometimes|string|max:255',
             'description' => 'sometimes|string|max:500',
             'avatar_url' => 'sometimes|url|max:500',
+            'group_picture' => 'sometimes|url|max:500',
         ]);
 
         if ($validator->fails()) {
@@ -241,7 +242,17 @@ class ChatController extends Controller
                 }
             }
 
-            $chat->update($request->only(['name', 'description', 'avatar_url']));
+            $updateData = $request->only(['name', 'description']);
+            
+            // Handle both avatar_url and group_picture field names
+            if ($request->has('avatar_url')) {
+                $updateData['avatar_url'] = $request->avatar_url;
+            }
+            if ($request->has('group_picture')) {
+                $updateData['avatar_url'] = $request->group_picture;
+            }
+
+            $chat->update($updateData);
 
             return response()->json([
                 'success' => true,
@@ -378,6 +389,181 @@ class ChatController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to mute chat',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Clear chat messages for current user
+     */
+    public function clearChat(Request $request, $chatId): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $chat = Chat::findOrFail($chatId);
+
+            if (!$chat->hasParticipant($user)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not a participant of this chat'
+                ], 403);
+            }
+
+            $chat->participants()->updateExistingPivot($user->id, [
+                'cleared_at' => now()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Chat cleared successfully'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to clear chat',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update chat picture/avatar
+     */
+    public function updatePicture(Request $request, $chatId): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'avatar_url' => 'sometimes|url|max:500',
+            'group_picture' => 'sometimes|url|max:500',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $user = $request->user();
+            $chat = Chat::findOrFail($chatId);
+
+            if (!$chat->hasParticipant($user)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not a participant of this chat'
+                ], 403);
+            }
+
+            // Only admins can update group picture
+            if ($chat->isGroup()) {
+                $participant = $chat->participants()->where('users.id', $user->id)->first();
+                if ($participant->pivot->role !== 'admin') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Only admins can update group picture'
+                    ], 403);
+                }
+            }
+
+            $avatarUrl = $request->avatar_url ?? $request->group_picture;
+            if ($avatarUrl) {
+                $chat->update(['avatar_url' => $avatarUrl]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Chat picture updated successfully',
+                'data' => [
+                    'chat' => $chat,
+                    'avatar_url' => $chat->avatar_url,
+                    'group_picture' => $chat->avatar_url,
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update chat picture',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Remove chat picture/avatar
+     */
+    public function removePicture(Request $request, $chatId): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $chat = Chat::findOrFail($chatId);
+
+            if (!$chat->hasParticipant($user)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not a participant of this chat'
+                ], 403);
+            }
+
+            // Only admins can remove group picture
+            if ($chat->isGroup()) {
+                $participant = $chat->participants()->where('users.id', $user->id)->first();
+                if ($participant->pivot->role !== 'admin') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Only admins can remove group picture'
+                    ], 403);
+                }
+            }
+
+            $chat->update(['avatar_url' => null]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Chat picture removed successfully'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to remove chat picture',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete chat for current user (soft delete)
+     */
+    public function deleteChat(Request $request, $chatId): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $chat = Chat::findOrFail($chatId);
+
+            if (!$chat->hasParticipant($user)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not a participant of this chat'
+                ], 403);
+            }
+
+            $chat->participants()->updateExistingPivot($user->id, [
+                'deleted_at' => now()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Chat deleted successfully'
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete chat',
                 'error' => $e->getMessage()
             ], 500);
         }

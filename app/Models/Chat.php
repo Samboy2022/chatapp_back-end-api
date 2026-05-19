@@ -30,6 +30,14 @@ class Chat extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * Accessor for backward compatibility - group_picture maps to avatar_url
+     */
+    public function getGroupPictureAttribute()
+    {
+        return $this->avatar_url;
+    }
+
     // Relationships
 
     /**

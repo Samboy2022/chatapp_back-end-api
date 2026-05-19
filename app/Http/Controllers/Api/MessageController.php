@@ -40,7 +40,8 @@ class MessageController extends Controller
             ->with([
                 'sender:id,name,phone_number,avatar_url',
                 'reactions.user:id,name',
-                'replyToMessage.sender:id,name'
+                'replyToMessage.sender:id,name',
+                'forwardedFrom.sender:id,name'
             ])
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
@@ -133,7 +134,8 @@ class MessageController extends Controller
             $message->load([
                 'sender:id,name,phone_number,avatar_url',
                 'reactions.user:id,name',
-                'replyToMessage.sender:id,name'
+                'replyToMessage.sender:id,name',
+                'forwardedFrom.sender:id,name'
             ]);
 
             // Broadcast the message to all participants
@@ -176,7 +178,8 @@ class MessageController extends Controller
             ->with([
                 'sender:id,name,phone_number,avatar_url',
                 'reactions.user:id,name',
-                'replyToMessage.sender:id,name'
+                'replyToMessage.sender:id,name',
+                'forwardedFrom.sender:id,name'
             ])
             ->firstOrFail();
 
@@ -234,8 +237,16 @@ class MessageController extends Controller
             $message->load([
                 'sender:id,name,phone_number,avatar_url',
                 'reactions.user:id,name',
-                'replyToMessage.sender:id,name'
+                'replyToMessage.sender:id,name',
+                'forwardedFrom.sender:id,name'
             ]);
+
+            // Broadcast edit event
+            try {
+                broadcast(new \App\Events\MessageEdited($message))->toOthers();
+            } catch (\Exception $e) {
+                \Log::warning('Failed to broadcast MessageEdited: ' . $e->getMessage());
+            }
 
             return response()->json([
                 'success' => true,
@@ -286,6 +297,13 @@ class MessageController extends Controller
             }
 
             $message->delete();
+
+            // Broadcast delete event
+            try {
+                broadcast(new \App\Events\MessageDeleted($message->id, $chat->id, true))->toOthers();
+            } catch (\Exception $e) {
+                \Log::warning('Failed to broadcast MessageDeleted: ' . $e->getMessage());
+            }
 
             return response()->json([
                 'success' => true,
@@ -772,6 +790,8 @@ class MessageController extends Controller
                 'longitude' => $originalMessage->longitude,
                 'location_name' => $originalMessage->location_name,
                 'contact_data' => $originalMessage->contact_data,
+                'forwarded_from_id' => $originalMessage->id,
+                'is_forwarded' => true,
                 'status' => 'sent',
                 'sent_at' => now(),
             ]);
@@ -787,11 +807,12 @@ class MessageController extends Controller
             // Load relationships for response
             $forwardedMessage->load([
                 'sender:id,name,phone_number,avatar_url',
-                'chat:id,name,is_group'
+                'chat:id,name,type',
+                'forwardedFrom.sender:id,name'
             ]);
 
             // Broadcast the message to chat participants
-            broadcast(new MessageSent($forwardedMessage))->toOthers();
+            broadcast(new MessageSent($forwardedMessage, Auth::user()))->toOthers();
 
             return response()->json([
                 'success' => true,

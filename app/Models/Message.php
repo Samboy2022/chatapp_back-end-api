@@ -17,6 +17,8 @@ class Message extends Model
         'chat_id',
         'sender_id',
         'reply_to_message_id',
+        'forwarded_from_id',
+        'is_forwarded',
         'message_type',
         'content',
         'media_url',
@@ -44,6 +46,7 @@ class Message extends Model
         'read_at' => 'datetime',
         'edited_at' => 'datetime',
         'is_deleted' => 'boolean',
+        'is_forwarded' => 'boolean',
         'media_size' => 'integer',
         'media_duration' => 'integer',
         'latitude' => 'decimal:8',
@@ -90,6 +93,14 @@ class Message extends Model
     public function reactions(): HasMany
     {
         return $this->hasMany(MessageReaction::class);
+    }
+
+    /**
+     * Get the original message this message was forwarded from
+     */
+    public function forwardedFrom(): BelongsTo
+    {
+        return $this->belongsTo(Message::class, 'forwarded_from_id');
     }
 
     // Helper methods
