@@ -198,7 +198,7 @@
                                 </div>
                                 <div>
                                     <div class="font-medium text-gray-900">Call #{{ $call->id }}</div>
-                                    <div class="text-xs text-gray-500">{{ ($call->participants ? $call->participants->count() : 0) + 1 }} participants</div>
+                                    <div class="text-xs text-gray-500">{{ ($call->callParticipants ? $call->callParticipants->count() : 0) + 1 }} participants</div>
                                 </div>
                             </div>
                         </td>

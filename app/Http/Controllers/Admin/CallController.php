@@ -18,7 +18,7 @@ class CallController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Call::with(['caller', 'receiver', 'chat', 'participants.user']);
+        $query = Call::with(['caller', 'receiver', 'chat', 'callParticipants.user']);
 
         // Search functionality
         if ($request->filled('search')) {
@@ -126,7 +126,7 @@ class CallController extends Controller
         $chat = Chat::with('participants')->find($request->chat_id);
         foreach ($chat->participants as $participant) {
             if ($participant->id !== $request->caller_id) {
-                $call->participants()->create([
+                $call->callParticipants()->create([
                     'user_id' => $participant->id,
                     'joined_at' => $data['started_at'],
                     'left_at' => $data['ended_at'],
@@ -144,13 +144,13 @@ class CallController extends Controller
      */
     public function show(Call $call)
     {
-        $call->load(['caller', 'chat.participants', 'participants.user']);
+        $call->load(['caller', 'chat.participants', 'callParticipants.user']);
         
         // Call statistics
         $stats = [
-            'total_participants' => $call->participants->count() + 1, // +1 for caller
-            'answered_participants' => $call->participants()->where('status', 'answered')->count(),
-            'missed_participants' => $call->participants()->where('status', 'missed')->count(),
+            'total_participants' => $call->callParticipants->count() + 1, // +1 for caller
+            'answered_participants' => $call->callParticipants()->where('status', 'answered')->count(),
+            'missed_participants' => $call->callParticipants()->where('status', 'missed')->count(),
             'duration_formatted' => $this->formatDuration($call->duration),
             'quality_score' => $call->quality_score ?: 'N/A',
             'call_rating' => $call->call_rating ?: 'Not Rated',
@@ -351,8 +351,8 @@ class CallController extends Controller
             ]);
 
             // Update all participants if they exist
-            if ($call->participants()->exists()) {
-                $call->participants()->update([
+            if ($call->callParticipants()->exists()) {
+                $call->callParticipants()->update([
                     'left_at' => $endedAt,
                     'status' => 'ended',
                 ]);

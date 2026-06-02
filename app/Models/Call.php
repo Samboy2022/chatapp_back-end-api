@@ -64,7 +64,7 @@ class Call extends Model
     /**
      * Get the call participants
      */
-    public function participants()
+    public function callParticipants()
     {
         return $this->hasMany(CallParticipant::class);
     }

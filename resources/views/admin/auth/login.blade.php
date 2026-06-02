@@ -15,13 +15,7 @@
 <body class="bg-gray-50 font-sans antialiased min-h-screen">
     <div class="min-h-screen flex">
         <!-- Left Side - Branding -->
-        <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-700 via-green-600 to-green-800 relative overflow-hidden">
-            <!-- Background Pattern -->
-            <div class="absolute inset-0 opacity-10">
-                <div class="absolute top-20 left-20 w-64 h-64 border-2 border-white rounded-full"></div>
-                <div class="absolute bottom-20 right-20 w-96 h-96 border-2 border-white rounded-full"></div>
-                <div class="absolute top-1/2 left-1/3 w-48 h-48 border-2 border-white rounded-full"></div>
-            </div>
+        <div class="hidden lg:flex lg:w-1/2 bg-slate-900 relative overflow-hidden">
             
             <!-- Content -->
             <div class="relative z-10 flex flex-col justify-center px-12 xl:px-20 w-full">
@@ -30,7 +24,7 @@
                     @if(isset($appSettings['logo_url']) && $appSettings['logo_url'])
                         <img src="{{ $appSettings['logo_url'] }}" alt="Logo" class="w-14 h-14 rounded-xl shadow-lg">
                     @else
-                        <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                        <div class="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center">
                             <span class="text-white text-2xl font-bold">{{ substr($appSettings['app_name'] ?? 'F', 0, 1) }}</span>
                         </div>
                     @endif
@@ -40,57 +34,57 @@
                 <!-- Main Text -->
                 <h1 class="text-4xl xl:text-5xl font-bold text-white leading-tight mb-6">
                     Welcome to<br>
-                    <span class="text-green-200">Admin Portal</span>
+                    <span class="text-green-500">Admin Portal</span>
                 </h1>
                 
-                <p class="text-lg text-green-100 mb-10 max-w-md">
+                <p class="text-lg text-slate-400 mb-10 max-w-md">
                     {{ $appSettings['app_description'] ?? 'Connect & Collaborate' }}. Manage your platform, users, and content from one powerful dashboard.
                 </p>
 
                 <!-- Features List -->
                 <div class="space-y-4">
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                        <div class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center">
                             <i class="ph-bold ph-users text-white text-lg"></i>
                         </div>
                         <div>
                             <p class="text-white font-medium">User Management</p>
-                            <p class="text-green-200 text-sm">Manage all users and permissions</p>
+                            <p class="text-slate-400 text-sm">Manage all users and permissions</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                        <div class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center">
                             <i class="ph-bold ph-chart-line-up text-white text-lg"></i>
                         </div>
                         <div>
                             <p class="text-white font-medium">Analytics Dashboard</p>
-                            <p class="text-green-200 text-sm">Real-time insights and reports</p>
+                            <p class="text-slate-400 text-sm">Real-time insights and reports</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                        <div class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center">
                             <i class="ph-bold ph-gear-six text-white text-lg"></i>
                         </div>
                         <div>
                             <p class="text-white font-medium">System Settings</p>
-                            <p class="text-green-200 text-sm">Configure your application</p>
+                            <p class="text-slate-400 text-sm">Configure your application</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Stats -->
-                <div class="flex gap-8 mt-12 pt-8 border-t border-white/20">
+                <div class="flex gap-8 mt-12 pt-8 border-t border-slate-800">
                     <div>
                         <p class="text-3xl font-bold text-white">250K+</p>
-                        <p class="text-green-200 text-sm">Active Users</p>
+                        <p class="text-slate-400 text-sm">Active Users</p>
                     </div>
                     <div>
                         <p class="text-3xl font-bold text-white">10M+</p>
-                        <p class="text-green-200 text-sm">Messages</p>
+                        <p class="text-slate-400 text-sm">Messages</p>
                     </div>
                     <div>
                         <p class="text-3xl font-bold text-white">99.9%</p>
-                        <p class="text-green-200 text-sm">Uptime</p>
+                        <p class="text-slate-400 text-sm">Uptime</p>
                     </div>
                 </div>
             </div>

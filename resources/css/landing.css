@@ -288,4 +288,6 @@ html { scroll-behavior: smooth; }
     }
     .reveal, .reveal-left, .reveal-right, .reveal-scale {
         opacity: 1;
-        transform: n
+        transform: none;
+    }
+}

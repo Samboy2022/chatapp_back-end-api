@@ -147,38 +147,53 @@
         </div>
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <a href="{{ route('admin.reports.export', ['type' => 'users']) }}" 
-                   class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:border-green-600 hover:bg-green-50 transition-all group">
-                    <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-green-700 group-hover:text-white flex items-center justify-center transition-colors">
-                        <i class="ph ph-users text-2xl"></i>
+                <div class="flex flex-col p-4 border border-gray-200 rounded-xl hover:border-green-600 hover:bg-green-50 transition-all group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-green-700 group-hover:text-white flex items-center justify-center transition-colors">
+                            <i class="ph ph-users text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900">Users Report</h4>
+                            <p class="text-xs text-gray-500">Export all users data</p>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="font-medium text-gray-900">Users Report</h4>
-                        <p class="text-xs text-gray-500">Export all users data</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="{{ route('admin.reports.export', ['type' => 'users', 'format' => 'csv']) }}" class="flex-1 flex items-center justify-center gap-1 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50"><i class="ph ph-file-csv"></i> CSV</a>
+                        <a href="{{ route('admin.reports.export', ['type' => 'users', 'format' => 'pdf']) }}" class="flex-1 flex items-center justify-center gap-1 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50"><i class="ph ph-file-pdf"></i> PDF</a>
                     </div>
-                </a>
+                </div>
 
-                <a href="{{ route('admin.reports.export', ['type' => 'messages']) }}" 
-                   class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:border-green-600 hover:bg-green-50 transition-all group">
-                    <div class="w-12 h-12 rounded-lg bg-green-50 text-green-600 group-hover:bg-green-700 group-hover:text-white flex items-center justify-center transition-colors">
-                        <i class="ph ph-chat-circle-text text-2xl"></i>
+                <div class="flex flex-col p-4 border border-gray-200 rounded-xl hover:border-green-600 hover:bg-green-50 transition-all group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-green-50 text-green-600 group-hover:bg-green-700 group-hover:text-white flex items-center justify-center transition-colors">
+                            <i class="ph ph-chat-circle-text text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900">Messages Report</h4>
+                            <p class="text-xs text-gray-500">Export all messages data</p>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="font-medium text-gray-900">Messages Report</h4>
-                        <p class="text-xs text-gray-500">Export all messages data</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="{{ route('admin.reports.export', ['type' => 'messages', 'format' => 'csv']) }}" class="flex-1 flex items-center justify-center gap-1 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50"><i class="ph ph-file-csv"></i> CSV</a>
+                        <a href="{{ route('admin.reports.export', ['type' => 'messages', 'format' => 'pdf']) }}" class="flex-1 flex items-center justify-center gap-1 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50"><i class="ph ph-file-pdf"></i> PDF</a>
                     </div>
-                </a>
+                </div>
 
-                <a href="{{ route('admin.reports.export', ['type' => 'calls']) }}" 
-                   class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:border-green-600 hover:bg-green-50 transition-all group">
-                    <div class="w-12 h-12 rounded-lg bg-orange-50 text-orange-600 group-hover:bg-green-700 group-hover:text-white flex items-center justify-center transition-colors">
-                        <i class="ph ph-phone text-2xl"></i>
+                <div class="flex flex-col p-4 border border-gray-200 rounded-xl hover:border-green-600 hover:bg-green-50 transition-all group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-orange-50 text-orange-600 group-hover:bg-green-700 group-hover:text-white flex items-center justify-center transition-colors">
+                            <i class="ph ph-phone text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900">Calls Report</h4>
+                            <p class="text-xs text-gray-500">Export all calls data</p>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="font-medium text-gray-900">Calls Report</h4>
-                        <p class="text-xs text-gray-500">Export all calls data</p>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="{{ route('admin.reports.export', ['type' => 'calls', 'format' => 'csv']) }}" class="flex-1 flex items-center justify-center gap-1 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50"><i class="ph ph-file-csv"></i> CSV</a>
+                        <a href="{{ route('admin.reports.export', ['type' => 'calls', 'format' => 'pdf']) }}" class="flex-1 flex items-center justify-center gap-1 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:border-gray-300 hover:bg-gray-50"><i class="ph ph-file-pdf"></i> PDF</a>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
     </div>

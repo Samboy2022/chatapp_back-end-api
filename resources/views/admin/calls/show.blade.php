@@ -94,9 +94,9 @@
         <div class="space-y-4">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Participants</h3>
             <div class="bg-gray-50 rounded-lg p-4">
-                @if($call->participants->count() > 0)
+                @if($call->callParticipants->count() > 0)
                     <div class="space-y-3">
-                        @foreach($call->participants as $participant)
+                        @foreach($call->callParticipants as $participant)
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
                                     @if($participant->user && $participant->user->avatar_url)

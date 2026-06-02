@@ -568,7 +568,7 @@ class CallController extends Controller
             ])->findOrFail($callId);
 
             // Check if user is participant in the call
-            if ($call->caller_id !== Auth::id() && $call->receiver_id !== Auth::id()) {
+            if ($call->caller_id != Auth::id() && $call->receiver_id != Auth::id()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You are not authorized to view this call'
@@ -826,7 +826,7 @@ class CallController extends Controller
             $call = Call::findOrFail($callId);
 
             // Check if user is participant in the call
-            if ($call->caller_id !== Auth::id() && $call->receiver_id !== Auth::id()) {
+            if ($call->caller_id != Auth::id() && $call->receiver_id != Auth::id()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You are not authorized to access this call'

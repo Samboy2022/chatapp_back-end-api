@@ -10,6 +10,8 @@ use App\Models\Call;
 use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 class ReportController extends Controller
@@ -174,7 +176,7 @@ class ReportController extends Controller
 
     private function exportUsers($format)
     {
-        $users = User::with(['sentMessages', 'receivedCalls'])
+        $users = User::withCount(['sentMessages', 'sentCalls'])
             ->get()
             ->map(function ($user) {
                 return [
@@ -185,11 +187,15 @@ class ReportController extends Controller
                     'Status' => $user->is_active ? 'Active' : 'Inactive',
                     'Verified' => $user->email_verified_at ? 'Yes' : 'No',
                     'Messages Sent' => $user->sent_messages_count ?? 0,
-                    'Calls Made' => $user->received_calls_count ?? 0,
+                    'Calls Made' => $user->sent_calls_count ?? 0,
                     'Joined Date' => $user->created_at->format('Y-m-d H:i:s'),
                     'Last Seen' => $user->last_seen_at ? $user->last_seen_at->format('Y-m-d H:i:s') : 'Never',
                 ];
             });
+
+        if ($format === 'pdf') {
+            return $this->downloadPdf($users, 'Users Report', 'users_report_' . date('Y-m-d'));
+        }
 
         return $this->downloadCsv($users, 'users_report_' . date('Y-m-d'));
     }
@@ -209,6 +215,10 @@ class ReportController extends Controller
                     'Sent At' => $message->created_at->format('Y-m-d H:i:s'),
                 ];
             });
+
+        if ($format === 'pdf') {
+            return $this->downloadPdf($messages, 'Messages Report', 'messages_report_' . date('Y-m-d'));
+        }
 
         return $this->downloadCsv($messages, 'messages_report_' . date('Y-m-d'));
     }
@@ -230,7 +240,32 @@ class ReportController extends Controller
                 ];
             });
 
+        if ($format === 'pdf') {
+            return $this->downloadPdf($calls, 'Calls Report', 'calls_report_' . date('Y-m-d'));
+        }
+
         return $this->downloadCsv($calls, 'calls_report_' . date('Y-m-d'));
+    }
+
+    private function exportChats($format)
+    {
+        $chats = Chat::withCount('messages')
+            ->get()
+            ->map(function ($chat) {
+                return [
+                    'ID' => $chat->id,
+                    'Name' => $chat->name ?? 'N/A',
+                    'Type' => ucfirst($chat->type),
+                    'Messages Count' => $chat->messages_count ?? 0,
+                    'Created At' => $chat->created_at->format('Y-m-d H:i:s'),
+                ];
+            });
+
+        if ($format === 'pdf') {
+            return $this->downloadPdf($chats, 'Chats Report', 'chats_report_' . date('Y-m-d'));
+        }
+
+        return $this->downloadCsv($chats, 'chats_report_' . date('Y-m-d'));
     }
 
     private function downloadCsv($data, $filename)
@@ -254,6 +289,25 @@ class ReportController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    private function downloadPdf($data, $title, $filename)
+    {
+        $headers = [];
+        $rows = [];
+        
+        if ($data->isNotEmpty()) {
+            $headers = array_keys($data->first());
+            $rows = $data->toArray();
+        }
+
+        $pdf = Pdf::loadView('admin.reports.pdf', [
+            'title' => $title,
+            'headers' => $headers,
+            'data' => $rows
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download("{$filename}.pdf");
     }
 
     // Helper methods for system metrics
