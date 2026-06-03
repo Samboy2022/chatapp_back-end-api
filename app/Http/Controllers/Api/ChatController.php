@@ -8,6 +8,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Api\StoreChatRequest;
+use App\Http\Requests\Api\UpdateChatRequest;
+use App\Http\Requests\Api\MuteChatRequest;
+use App\Http\Requests\Api\UpdateChatPictureRequest;
 
 class ChatController extends Controller
 {
@@ -70,24 +74,8 @@ class ChatController extends Controller
     /**
      * Create or get existing chat with user
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreChatRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'participants' => 'required|array',
-            'participants.*' => 'exists:users,id',
-            'type' => 'sometimes|in:private,group',
-            'name' => 'required_if:type,group|string|max:255',
-            'description' => 'sometimes|string|max:500',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation errors',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         try {
             $currentUser = $request->user();
             $participantIds = $request->participants;
@@ -203,23 +191,8 @@ class ChatController extends Controller
     /**
      * Update chat (for group chats)
      */
-    public function update(Request $request, $chatId): JsonResponse
+    public function update(UpdateChatRequest $request, $chatId): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string|max:500',
-            'avatar_url' => 'sometimes|url|max:500',
-            'group_picture' => 'sometimes|url|max:500',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation errors',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         try {
             $user = $request->user();
             $chat = Chat::findOrFail($chatId);
@@ -348,20 +321,8 @@ class ChatController extends Controller
     /**
      * Mute/unmute chat
      */
-    public function mute(Request $request, $chatId): JsonResponse
+    public function mute(MuteChatRequest $request, $chatId): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'duration_hours' => 'sometimes|integer|min:1|max:8760', // Max 1 year
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation errors',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         try {
             $user = $request->user();
             $chat = Chat::findOrFail($chatId);
@@ -431,21 +392,8 @@ class ChatController extends Controller
     /**
      * Update chat picture/avatar
      */
-    public function updatePicture(Request $request, $chatId): JsonResponse
+    public function updatePicture(UpdateChatPictureRequest $request, $chatId): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'avatar_url' => 'sometimes|url|max:500',
-            'group_picture' => 'sometimes|url|max:500',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation errors',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         try {
             $user = $request->user();
             $chat = Chat::findOrFail($chatId);

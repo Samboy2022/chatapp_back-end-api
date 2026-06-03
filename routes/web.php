@@ -103,7 +103,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/system-health', [DashboardController::class, 'systemHealth'])->name('system-health');
-    
+
     // API Documentation
     Route::prefix('api-documentation')->name('api-documentation.')->group(function () {
         Route::get('/', [ApiDocumentationController::class, 'index'])->name('index');
@@ -113,33 +113,33 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::get('/configuration', [ApiDocumentationController::class, 'configuration'])->name('configuration');
         Route::get('/testing', [ApiDocumentationController::class, 'testing'])->name('testing');
     });
-    
+
     // Users Management
     Route::resource('users', UserController::class);
     Route::patch('users/{userId}/toggle-block', [App\Http\Controllers\Admin\UserController::class, 'toggleBlock'])->name('users.toggle-block')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
     Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
     Route::get('users/export', [App\Http\Controllers\Admin\UserController::class, 'export'])->name('users.export')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
-    
+
     // Chats Management
     Route::resource('chats', ChatController::class);
     Route::patch('chats/{chat}/toggle-active', [ChatController::class, 'toggleActive'])->name('chats.toggleActive');
     Route::post('chats/{chat}/add-participant', [ChatController::class, 'addParticipant'])->name('chats.add-participant');
     Route::delete('chats/{chat}/remove-participant/{user}', [ChatController::class, 'removeParticipant'])->name('chats.remove-participant');
     Route::get('chats/export', [ChatController::class, 'export'])->name('chats.export');
-    
+
     // Messages Management
     Route::resource('messages', MessageController::class);
     Route::post('messages/{id}/restore', [MessageController::class, 'restore'])->name('messages.restore');
     Route::delete('messages/{message}/force-delete', [MessageController::class, 'forceDelete'])->name('messages.force-delete');
     Route::post('messages/{message}/moderate', [MessageController::class, 'moderate'])->name('messages.moderate');
     Route::get('messages/export', [MessageController::class, 'export'])->name('messages.export');
-    
+
     // Status Updates Management
     Route::resource('statuses', StatusController::class);
     Route::post('statuses/cleanup-expired', [StatusController::class, 'cleanupExpired'])->name('statuses.cleanup-expired');
     Route::post('statuses/{status}/extend', [StatusController::class, 'extend'])->name('statuses.extend');
     Route::get('statuses/export', [StatusController::class, 'export'])->name('statuses.export');
-    
+
     // Calls Management
 
     // Real-time Call Monitoring (must be defined BEFORE resource routes)
@@ -152,7 +152,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     // Call resource routes (must be defined AFTER specific routes)
     Route::resource('calls', CallController::class);
     Route::post('calls/{call}/end', [CallController::class, 'endCall'])->name('calls.end');
-    
+
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/', [ReportController::class, 'index'])->name('index');
@@ -161,7 +161,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::get('/performance', [ReportController::class, 'performance'])->name('performance');
         Route::get('/export', [ReportController::class, 'export'])->name('export');
     });
-    
+
     // Settings
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [SettingController::class, 'index'])->name('index');
@@ -222,6 +222,20 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::post('/chat', [App\Http\Controllers\Admin\AiSettingController::class, 'chat'])->name('chat');
     });
 });
+
+
+
+//DATA MIGRATION
+// Route::get('/migratedata', function () {
+//     try {
+//         // Added the '--force' option here to allow running in production
+//         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+//         return 'Success: <br>' . nl2br(\Illuminate\Support\Facades\Artisan::output());
+//     } catch (\Exception $e) {
+//         return 'Error: ' . $e->getMessage();
+//     }
+// });
+
 
 // Test route for Pusher broadcasting
 Route::get('/test-pusher', function () {

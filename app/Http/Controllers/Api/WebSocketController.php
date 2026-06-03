@@ -13,27 +13,17 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Api\TypingRequest;
+use App\Http\Requests\Api\UpdateOnlineStatusRequest;
 
 class WebSocketController extends Controller
 {
     /**
      * Handle typing indicator
      */
-    public function typing(Request $request, $chatId): JsonResponse
+    public function typing(TypingRequest $request, $chatId): JsonResponse
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'is_typing' => 'required|boolean',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             $chat = Chat::findOrFail($chatId);
             $user = Auth::user();
 
@@ -64,21 +54,9 @@ class WebSocketController extends Controller
     /**
      * Update user online status
      */
-    public function updateOnlineStatus(Request $request): JsonResponse
+    public function updateOnlineStatus(UpdateOnlineStatusRequest $request): JsonResponse
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'is_online' => 'required|boolean',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             $user = Auth::user();
             $isOnline = $request->is_online;
 

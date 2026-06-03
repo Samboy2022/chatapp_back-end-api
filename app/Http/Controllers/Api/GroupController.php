@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Api\StoreGroupRequest;
+use App\Http\Requests\Api\SendGroupMessageRequest;
 
 class GroupController extends Controller
 {
@@ -70,25 +72,9 @@ class GroupController extends Controller
     /**
      * Create a new group
      */
-    public function store(Request $request)
+    public function store(StoreGroupRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string|max:500',
-                'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'participants' => 'nullable|array',
-                'participants.*' => 'exists:users,id'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             $user = Auth::user();
             
             // Create the group chat
@@ -227,22 +213,9 @@ class GroupController extends Controller
     /**
      * Add members to a group
      */
-    public function addMembers(Request $request, $groupId)
+    public function addMembers(\Illuminate\Http\Request $request, $groupId)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'participants' => 'required|array',
-                'participants.*' => 'exists:users,id'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             $user = Auth::user();
             
             $group = Chat::where('type', 'group')
@@ -367,21 +340,9 @@ class GroupController extends Controller
     /**
      * Add a single user to group
      */
-    public function addUser(Request $request, $groupId)
+    public function addUser(\Illuminate\Http\Request $request, $groupId)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'user_id' => 'required|exists:users,id'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             $group = Chat::where('type', 'group')->findOrFail($groupId);
             $currentUser = Auth::user();
 
@@ -497,27 +458,9 @@ class GroupController extends Controller
     /**
      * Send message to group
      */
-    public function sendMessage(Request $request, $groupId)
+    public function sendMessage(SendGroupMessageRequest $request, $groupId)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'message' => 'required|string|max:5000',
-                'type' => 'required|in:text,image,video,audio,document,voice,location',
-                'reply_to_id' => 'nullable|exists:messages,id',
-                'media_url' => 'nullable|string',
-                'media_type' => 'nullable|string',
-                'media_size' => 'nullable|integer',
-                'duration' => 'nullable|integer'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             $group = Chat::where('type', 'group')->findOrFail($groupId);
             $currentUser = Auth::user();
 
@@ -529,17 +472,17 @@ class GroupController extends Controller
                 ], 403);
             }
 
-            // Create message
+            // Create message using correct column names
             $message = \App\Models\Message::create([
                 'chat_id' => $group->id,
                 'sender_id' => $currentUser->id,
-                'message' => $request->message,
-                'type' => $request->type,
-                'reply_to_id' => $request->reply_to_id,
+                'content' => $request->message,
+                'message_type' => $request->type,
+                'reply_to_message_id' => $request->reply_to_id,
                 'media_url' => $request->media_url,
-                'media_type' => $request->media_type,
+                'media_mime_type' => $request->media_type,
                 'media_size' => $request->media_size,
-                'duration' => $request->duration
+                'media_duration' => $request->duration
             ]);
 
             // Update group's last message

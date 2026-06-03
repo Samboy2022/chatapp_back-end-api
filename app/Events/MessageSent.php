@@ -59,7 +59,7 @@ class MessageSent implements ShouldBroadcast
                 'chat_id' => $this->message->chat_id,
                 'sender_id' => $this->message->sender_id,
                 'content' => $this->message->content,
-                'type' => $this->message->type,
+                'type' => $this->message->message_type,
                 'media_url' => $this->message->media_url,
                 'media_type' => $this->message->media_type,
                 'media_size' => $this->message->media_size,

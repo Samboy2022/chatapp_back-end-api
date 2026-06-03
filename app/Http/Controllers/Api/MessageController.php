@@ -15,6 +15,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Http\Requests\Api\StoreMessageRequest;
+use App\Http\Requests\Api\UpdateMessageRequest;
+use App\Http\Requests\Api\ReactToMessageRequest;
+use App\Http\Requests\Api\ForwardMessageRequest;
+use App\Http\Requests\Api\SendP2PMessageRequest;
 
 class MessageController extends Controller
 {
@@ -56,7 +61,7 @@ class MessageController extends Controller
     /**
      * Send a new message
      */
-    public function store(Request $request, $chatId): JsonResponse
+    public function store(StoreMessageRequest $request, $chatId): JsonResponse
     {
         try {
             $chat = Chat::findOrFail($chatId);
@@ -69,39 +74,9 @@ class MessageController extends Controller
                 ], 403);
             }
 
-            // Handle both 'type' and 'message_type' field names for compatibility
-            $requestData = $request->all();
-            if (isset($requestData['message_type']) && !isset($requestData['type'])) {
-                $requestData['type'] = $requestData['message_type'];
-            }
-
-            $validator = Validator::make($requestData, [
-                'type' => 'required|string|in:text,image,video,audio,voice,document,location,contact',
-                'content' => 'required_if:type,text|nullable|string',
-                'media_url' => 'required_if:type,image,video,audio,voice,document|nullable|string',
-                'media_type' => 'nullable|string',
-                'media_size' => 'nullable|integer',
-                'media_duration' => 'nullable|integer',
-                'latitude' => 'required_if:type,location|nullable|numeric',
-                'longitude' => 'required_if:type,location|nullable|numeric',
-                'location_name' => 'nullable|string',
-                'contact_name' => 'required_if:type,contact|nullable|string',
-                'contact_phone' => 'required_if:type,contact|nullable|string',
-                'reply_to_message_id' => 'nullable|exists:messages,id'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             DB::beginTransaction();
 
-            // Use the normalized type field
-            $messageType = $requestData['type'];
+            $messageType = $request->type;
 
             $message = Message::create([
                 'chat_id' => $chatId,
@@ -193,7 +168,7 @@ class MessageController extends Controller
     /**
      * Update a message (edit content)
      */
-    public function update(Request $request, $chatId, $messageId): JsonResponse
+    public function update(UpdateMessageRequest $request, $chatId, $messageId): JsonResponse
     {
         try {
             $chat = Chat::findOrFail($chatId);
@@ -215,18 +190,6 @@ class MessageController extends Controller
                     'success' => false,
                     'message' => 'Only text messages can be edited'
                 ], 400);
-            }
-
-            $validator = Validator::make($request->all(), [
-                'content' => 'required|string|max:4000'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
             }
 
             $message->update([
@@ -368,7 +331,7 @@ class MessageController extends Controller
     /**
      * Add reaction to message
      */
-    public function react(Request $request, $chatId, $messageId): JsonResponse
+    public function react(ReactToMessageRequest $request, $chatId, $messageId): JsonResponse
     {
         try {
             $chat = Chat::findOrFail($chatId);
@@ -379,18 +342,6 @@ class MessageController extends Controller
                     'success' => false,
                     'message' => 'You are not a participant in this chat'
                 ], 403);
-            }
-
-            $validator = Validator::make($request->all(), [
-                'emoji' => 'required|string|max:10'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
             }
 
             $message = Message::where('chat_id', $chatId)
@@ -507,28 +458,9 @@ class MessageController extends Controller
     /**
      * Send a P2P message
      */
-    public function sendMessage(Request $request): JsonResponse
+    public function sendMessage(SendP2PMessageRequest $request): JsonResponse
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'receiver_id' => 'required|exists:users,id',
-                'message' => 'required|string|max:5000',
-                'type' => 'required|in:text,image,video,audio,document,voice,location',
-                'reply_to_id' => 'nullable|exists:messages,id',
-                'media_url' => 'nullable|string',
-                'media_type' => 'nullable|string',
-                'media_size' => 'nullable|integer',
-                'duration' => 'nullable|integer'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             $receiverId = $request->receiver_id;
             $senderId = Auth::id();
 
@@ -736,23 +668,9 @@ class MessageController extends Controller
     /**
      * Forward a message to another chat
      */
-    public function forwardMessage(Request $request): JsonResponse
+    public function forwardMessage(ForwardMessageRequest $request): JsonResponse
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'message_id' => 'required|exists:messages,id',
-                'target_chat_id' => 'required|exists:chats,id',
-                'additional_text' => 'nullable|string|max:1000'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
             $originalMessage = Message::findOrFail($request->message_id);
             $targetChat = Chat::findOrFail($request->target_chat_id);
             $sourceChat = $originalMessage->chat;
