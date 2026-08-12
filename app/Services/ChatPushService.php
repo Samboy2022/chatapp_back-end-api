@@ -84,15 +84,19 @@ class ChatPushService
      */
     private function recipientsFor(Message $message): array
     {
+        // `participants()` is a belongsToMany onto users, so these conditions
+        // are stated against the pivot explicitly. Bare column names happen to
+        // resolve today only because `users` has no column of the same name —
+        // a fragile thing to depend on.
         return $message->chat
             ->participants()
-            ->where('user_id', '!=', $message->sender_id)
-            ->whereNull('left_at')
+            ->wherePivot('user_id', '!=', $message->sender_id)
+            ->wherePivotNull('left_at')
             ->where(function ($query) {
-                $query->whereNull('muted_until')
-                      ->orWhere('muted_until', '<=', now());
+                $query->whereNull('chat_participants.muted_until')
+                      ->orWhere('chat_participants.muted_until', '<=', now());
             })
-            ->pluck('user_id')
+            ->pluck('users.id')
             ->map(fn ($id) => (string) $id)
             ->all();
     }

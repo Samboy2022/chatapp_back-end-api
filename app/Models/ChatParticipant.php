@@ -9,6 +9,14 @@ class ChatParticipant extends Pivot
 {
     protected $table = 'chat_participants';
 
+    /**
+     * The chat_participants table has no created_at/updated_at columns, and
+     * Eloquent's default is to maintain them — so any write through this model
+     * ("Unknown column 'updated_at'") failed. Membership is timestamped by
+     * `joined_at` / `left_at` instead.
+     */
+    public $timestamps = false;
+
     protected $fillable = [
         'chat_id',
         'user_id',
