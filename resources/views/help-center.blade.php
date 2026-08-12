@@ -105,8 +105,7 @@
                 <i class="ph-bold ph-headset text-4xl text-green-700 mb-4"></i>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">Still need help?</h3>
                 <p class="text-gray-600 mb-6">Our support team is here to assist you</p>
-                <a href="/contact" class="inline-flex items-center gap-2 px-6 py-3 bg-green-700 hover:bg-green-800 text-white font-medium rounded-xl transition-all">
-                    <i class="ph-bold ph-envelope"></i>
+                <a href="/contact" class="inline-flex items-center justify-center px-8 py-3.5 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full transition-all shadow-md whitespace-nowrap">
                     Contact Support
                 </a>
             </div>

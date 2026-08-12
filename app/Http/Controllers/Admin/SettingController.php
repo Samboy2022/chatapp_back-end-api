@@ -185,6 +185,58 @@ class SettingController extends Controller
     /**
      * Upload application logo
      */
+    /**
+     * Upload an image for any setting row whose type is `image`.
+     *
+     * Generic on purpose: the branding logo and every walkthrough slide share
+     * this endpoint, so adding another image setting needs no new code — just
+     * a new row.
+     */
+    public function uploadSettingImage(Request $request, \App\Services\MediaStorageService $media)
+    {
+        $request->validate([
+            'key' => 'required|string|exists:settings,key',
+            'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+        ]);
+
+        try {
+            $setting = \App\Models\Setting::where('key', $request->key)->firstOrFail();
+
+            if ($setting->type !== 'image') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This setting does not accept an image',
+                ], 422);
+            }
+
+            $result = $media->putImage($request->file('image'), 'branding');
+
+            if (!$result['success']) {
+                throw new \Exception($result['error'] ?? 'Upload failed');
+            }
+
+            $setting->value = $result['url'];
+            $setting->save();
+
+            Cache::forget("setting.{$setting->key}");
+            Cache::forget('settings.all');
+            Cache::forget('api.app.branding');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Image uploaded successfully',
+                'data' => ['key' => $setting->key, 'value' => $setting->value],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Setting image upload failed: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload image',
+            ], 500);
+        }
+    }
+
     public function uploadLogo(Request $request)
     {
         $request->validate([

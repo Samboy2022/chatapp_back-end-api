@@ -12,7 +12,7 @@ use App\Events\CallAccepted;
 use App\Events\CallEnded;
 use App\Events\CallRejected;
 use App\Services\AgoraService;
-use App\Services\FcmService;
+use App\Services\OneSignalService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -22,12 +22,12 @@ use Carbon\Carbon;
 class CallController extends Controller
 {
     protected $agoraService;
-    protected $fcmService;
+    protected $push;
 
-    public function __construct(AgoraService $agoraService, FcmService $fcmService)
+    public function __construct(AgoraService $agoraService, OneSignalService $push)
     {
         $this->agoraService = $agoraService;
-        $this->fcmService = $fcmService;
+        $this->push = $push;
     }
 
     /**
@@ -264,17 +264,19 @@ class CallController extends Controller
                 $responseData['agora_tokens'] = $agoraTokens;
             }
 
-            // Send FCM push notification if receiver has a device token
+            // Ring the receiver's phone
             $receiverLoad = User::find($receiverId);
 
             if (!$receiverLoad) {
-                \Log::error('Receiver not found for FCM notification', ['receiver_id' => $receiverId]);
+                \Log::error('Receiver not found for call notification', ['receiver_id' => $receiverId]);
             } else {
-                $deviceToken = $receiverLoad->fcm_token ?? $receiverLoad->device_token ?? null;
+                // Addressed by account, not device: OneSignal resolves the
+                // external id to whatever phones this user is signed in on.
+                $receiverExternalId = (string) $receiverLoad->id;
 
-                if ($deviceToken && $agoraTokens) {
-                    $fcmSent = $this->fcmService->sendCallNotification(
-                        $deviceToken,
+                if ($agoraTokens) {
+                    $pushSent = $this->push->sendCallNotification(
+                        $receiverExternalId,
                         [
                             'type'           => 'incoming_call',
                             'call_id'        => (string) $call->id,
@@ -290,17 +292,17 @@ class CallController extends Controller
                         ]
                     );
 
-                    if ($fcmSent) {
-                        \Log::info('FCM sent to receiver', ['call_id' => $call->id, 'token_prefix' => substr($deviceToken, 0, 20)]);
+                    if ($pushSent) {
+                        \Log::info('Call push sent', ['call_id' => $call->id, 'receiver_id' => $receiverId]);
                     } else {
-                        \Log::warning('FCM send failed — token may be stale', ['receiver_id' => $receiverId, 'token_prefix' => substr($deviceToken, 0, 20)]);
-                        // Clear stale token so next login will re-register
-                        $receiverLoad->update(['fcm_token' => null]);
+                        // Nothing to clean up — there is no stored token to go
+                        // stale. Pusher and polling still cover this receiver.
+                        \Log::warning('Call push not delivered', ['receiver_id' => $receiverId]);
                     }
-                } elseif ($deviceToken && !$agoraTokens) {
-                    // Agora tokens failed but still notify
-                    $this->fcmService->sendCallNotification(
-                        $deviceToken,
+                } else {
+                    // Agora tokens failed but still ring the phone
+                    $this->push->sendCallNotification(
+                        $receiverExternalId,
                         [
                             'type'        => 'incoming_call',
                             'call_id'     => (string) $call->id,
@@ -308,8 +310,6 @@ class CallController extends Controller
                             'call_type'   => $callType,
                         ]
                     );
-                } else {
-                    \Log::warning('No FCM token for receiver', ['receiver_id' => $receiverId]);
                 }
             }
 
@@ -431,8 +431,8 @@ class CallController extends Controller
             ]);
 
             $call->load([
-                'caller:id,name,phone_number,avatar_url,fcm_token,device_token',
-                'receiver:id,name,phone_number,avatar_url,fcm_token,device_token'
+                'caller:id,name,phone_number,avatar_url',
+                'receiver:id,name,phone_number,avatar_url'
             ]);
 
             $caller    = $call->caller;
@@ -448,11 +448,10 @@ class CallController extends Controller
                 \Log::warning('Failed to broadcast CallEnded: ' . $e->getMessage());
             }
 
-            // 2. Send FCM push to the OTHER party so their ringtone / call screen stops
-            $deviceToken = $otherParty->fcm_token ?? $otherParty->device_token ?? null;
-            if ($deviceToken) {
-                $this->fcmService->sendCallNotification(
-                    $deviceToken,
+            // 2. Tell the OTHER party so their ringtone / call screen stops
+            if ($otherParty) {
+                $this->push->sendCallNotification(
+                    (string) $otherParty->id,
                     [
                         'type'    => 'call_ended',
                         'call_id' => (string) $call->id,
@@ -461,8 +460,6 @@ class CallController extends Controller
             }
 
             // Hide sensitive tokens before returning
-            $caller->makeHidden(['fcm_token', 'device_token']);
-            $recipient->makeHidden(['fcm_token', 'device_token']);
 
             return response()->json([
                 'success' => true,
@@ -511,8 +508,8 @@ class CallController extends Controller
             ]);
 
             $call->load([
-                'caller:id,name,phone_number,avatar_url,fcm_token,device_token',
-                'receiver:id,name,phone_number,avatar_url,fcm_token,device_token'
+                'caller:id,name,phone_number,avatar_url',
+                'receiver:id,name,phone_number,avatar_url'
             ]);
 
             $caller    = $call->caller;
@@ -525,11 +522,10 @@ class CallController extends Controller
                 \Log::warning('Failed to broadcast CallRejected: ' . $e->getMessage());
             }
 
-            // 2. Send FCM to CALLER so their outgoing ring stops
-            $callerToken = $caller->fcm_token ?? $caller->device_token ?? null;
-            if ($callerToken) {
-                $this->fcmService->sendCallNotification(
-                    $callerToken,
+            // 2. Tell the CALLER so their outgoing ring stops
+            if ($caller) {
+                $this->push->sendCallNotification(
+                    (string) $caller->id,
                     [
                         'type'    => 'call_declined',
                         'call_id' => (string) $call->id,
@@ -538,8 +534,6 @@ class CallController extends Controller
             }
 
             // Hide sensitive tokens before returning
-            $caller->makeHidden(['fcm_token', 'device_token']);
-            $recipient->makeHidden(['fcm_token', 'device_token']);
 
             return response()->json([
                 'success' => true,

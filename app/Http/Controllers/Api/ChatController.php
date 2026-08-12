@@ -108,6 +108,17 @@ class ChatController extends Controller
                 }
                 $chat = Chat::getOrCreatePrivateChat($currentUser, $otherUser);
             } else {
+                // Respect the admin-configured cap before creating anything.
+                $maxGroupSize = (int) (\App\Models\Setting::get('max_group_size', 256) ?: 256);
+
+                if (count($participantIds) > $maxGroupSize) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "A group can have at most {$maxGroupSize} members.",
+                        'errors' => ['participants' => ["Maximum group size is {$maxGroupSize}."]],
+                    ], 422);
+                }
+
                 // Create group chat
                 $chat = Chat::create([
                     'type' => 'group',

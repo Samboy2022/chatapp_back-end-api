@@ -44,7 +44,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
                             <textarea rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none" placeholder="Your message..."></textarea>
                         </div>
-                        <button type="submit" class="w-full px-6 py-3 bg-green-700 hover:bg-green-800 text-white font-medium rounded-lg transition-all">
+                        <button type="submit" class="w-full px-6 py-3.5 bg-green-700 hover:bg-green-800 text-white font-bold rounded-full transition-all shadow-md hover:shadow-lg">
                             Send Message
                         </button>
                     </form>

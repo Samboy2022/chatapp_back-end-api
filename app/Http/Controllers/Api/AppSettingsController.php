@@ -12,8 +12,66 @@ use Illuminate\Support\Facades\Validator;
 class AppSettingsController extends Controller
 {
     /**
+     * Everything the mobile app needs to skin itself: name, logo, theme
+     * colours, the walkthrough slides and the group size cap.
+     *
+     * Deliberately one endpoint and one cache entry — the app calls this at
+     * launch, before it has a session, so it must be cheap and unauthenticated.
+     */
+    public function branding(): JsonResponse
+    {
+        $branding = Cache::remember('api.app.branding', 900, function () {
+            $get = fn (string $key, $default = null) => Setting::get($key, $default);
+
+            $slides = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $title = $get("onboarding_{$i}_title");
+                $image = $get("onboarding_{$i}_image");
+                $description = $get("onboarding_{$i}_description");
+
+                // Skip slides the admin has emptied out — the app renders
+                // however many it is given rather than assuming four.
+                if (blank($title) && blank($image) && blank($description)) {
+                    continue;
+                }
+
+                $slides[] = [
+                    'title' => $title ?? '',
+                    'description' => $description ?? '',
+                    'image_url' => blank($image) ? null : $image,
+                ];
+            }
+
+            return [
+                'app' => [
+                    'name' => $get('app_name', 'Farmers Network'),
+                    'tagline' => $get('app_tagline', ''),
+                    'description' => $get('app_description', ''),
+                    'logo_url' => blank($get('app_logo_url')) ? $get('logo_url') : $get('app_logo_url'),
+                    'icon_url' => blank($get('app_icon_url')) ? null : $get('app_icon_url'),
+                ],
+                'colors' => [
+                    'primary' => $get('mobile_color_primary', '#128C7E'),
+                    'secondary' => $get('mobile_color_secondary', '#25D366'),
+                    'accent' => $get('mobile_color_accent', '#34B7F1'),
+                ],
+                'onboarding' => $slides,
+                'limits' => [
+                    'max_group_size' => (int) ($get('max_group_size', 256) ?: 256),
+                ],
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $branding,
+            'message' => 'Branding retrieved successfully',
+        ]);
+    }
+
+    /**
      * Get all public settings
-     * 
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse

@@ -15,27 +15,26 @@
 
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center space-x-1">
-                <a href="/" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
+                <a href="/" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-full transition-all">
                     Home
                 </a>
-                <a href="/about-us" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
+                <a href="/about-us" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-full transition-all">
                     About
                 </a>
-                <a href="/help-center" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
+                <a href="/help-center" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-full transition-all">
                     Help
                 </a>
-                <a href="/contact" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
+                <a href="/contact" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-full transition-all">
                     Contact
                 </a>
                 <div class="w-px h-6 bg-gray-200 mx-2"></div>
-                <a href="/admin/login" class="px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50 rounded-lg transition-all flex items-center gap-2">
-                    <i class="ph ph-sign-in"></i>
+                <a href="/admin/login" class="px-5 py-2 text-sm font-semibold text-green-700 hover:bg-green-50 rounded-full border border-green-200 transition-all whitespace-nowrap">
                     Admin
                 </a>
             </div>
 
             <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="md:hidden p-2 text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
+            <button id="mobileMenuBtn" class="md:hidden p-2 text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-full transition-all">
                 <i class="ph-bold ph-list text-xl"></i>
             </button>
         </div>
@@ -43,21 +42,20 @@
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="hidden md:hidden pb-4 pt-2 border-t border-gray-100 mt-2">
             <div class="flex flex-col space-y-1">
-                <a href="/" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
+                <a href="/" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-full transition-all whitespace-nowrap">
                     Home
                 </a>
-                <a href="/about-us" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
+                <a href="/about-us" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-full transition-all whitespace-nowrap">
                     About Us
                 </a>
-                <a href="/help-center" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
+                <a href="/help-center" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-full transition-all whitespace-nowrap">
                     Help Center
                 </a>
-                <a href="/contact" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
+                <a href="/contact" class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-green-700 hover:bg-green-50 rounded-full transition-all whitespace-nowrap">
                     Contact
                 </a>
                 <div class="border-t border-gray-100 my-2"></div>
-                <a href="/admin/login" class="px-4 py-2.5 text-sm font-medium text-green-700 hover:bg-green-50 rounded-lg transition-all flex items-center gap-2">
-                    <i class="ph ph-sign-in"></i>
+                <a href="/admin/login" class="px-4 py-2.5 text-sm font-medium text-green-700 hover:bg-green-50 rounded-full border border-green-200 transition-all text-center whitespace-nowrap">
                     Admin Login
                 </a>
             </div>

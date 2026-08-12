@@ -84,6 +84,7 @@ Route::prefix('admin-api')->group(function () {
     Route::get('calls/recent-activity', [App\Http\Controllers\Admin\CallController::class, 'recentActivity']);
 
     // Settings system tools (for testing)
+    Route::post('settings/upload-image', [App\Http\Controllers\Admin\SettingController::class, 'uploadSettingImage']);
     Route::post('settings/clear-cache', [App\Http\Controllers\Admin\SettingController::class, 'clearCache']);
     Route::post('settings/optimize', [App\Http\Controllers\Admin\SettingController::class, 'optimizeSystem']);
     Route::post('settings/test-email', [App\Http\Controllers\Admin\SettingController::class, 'testEmail']);
@@ -133,6 +134,26 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::delete('messages/{message}/force-delete', [MessageController::class, 'forceDelete'])->name('messages.force-delete');
     Route::post('messages/{message}/moderate', [MessageController::class, 'moderate'])->name('messages.moderate');
     Route::get('messages/export', [MessageController::class, 'export'])->name('messages.export');
+
+    // Moderation — user-submitted abuse reports and block relationships
+    Route::prefix('moderation')->name('moderation.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\ModerationController::class, 'index'])->name('index');
+        Route::get('/blocks', [App\Http\Controllers\Admin\ModerationController::class, 'blocks'])->name('blocks');
+        Route::get('/{report}', [App\Http\Controllers\Admin\ModerationController::class, 'show'])->name('show');
+        Route::post('/{report}/status', [App\Http\Controllers\Admin\ModerationController::class, 'updateStatus'])->name('status');
+        Route::post('/users/{user}/toggle-block', [App\Http\Controllers\Admin\ModerationController::class, 'toggleUserBlock'])->name('toggle-block');
+    });
+
+    // Radio Management — programmes, the live station and the archive
+    Route::resource('radio', App\Http\Controllers\Admin\RadioController::class)
+        ->parameters(['radio' => 'radio'])
+        ->except(['show']);
+    Route::post('radio/{radio}/toggle-active', [App\Http\Controllers\Admin\RadioController::class, 'toggleActive'])->name('radio.toggle-active');
+    Route::post('radio/{radio}/set-live', [App\Http\Controllers\Admin\RadioController::class, 'setLive'])->name('radio.set-live');
+
+    // TV Channels — the second tab of the app's Radio screen
+    Route::resource('tv-channels', App\Http\Controllers\Admin\TvChannelController::class)->except(['show']);
+    Route::post('tv-channels/{tvChannel}/toggle-active', [App\Http\Controllers\Admin\TvChannelController::class, 'toggleActive'])->name('tv-channels.toggle-active');
 
     // Status Updates Management
     Route::resource('statuses', StatusController::class);

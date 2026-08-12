@@ -92,6 +92,69 @@
         </div>
     </div>
 
+    <!-- Hero App Screens (3 Mobile App Frames) Upload Section -->
+    <div id="heroAppScreensSection" class="bg-white border border-gray-100 rounded-2xl shadow-sm mb-6 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-white border border-gray-200 rounded-lg shadow-sm text-green-600">
+                    <i class="ph ph-device-mobile text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-900">Hero Mobile App Frames (3 Screenshots Showcase)</h3>
+                    <p class="text-xs text-gray-500">Upload or set image URLs for the 3 phone frames in the landing page hero section</p>
+                </div>
+            </div>
+            <span class="px-3 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full border border-green-200">
+                Hero Showcase
+            </span>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- App Screen 1 (Left Phone) -->
+                <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-200/80 flex flex-col items-center text-center">
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold mb-3">Left Phone Frame</span>
+                    <div class="w-32 h-56 rounded-2xl border-4 border-slate-900 bg-slate-900 overflow-hidden shadow-lg mb-4 relative group">
+                        <img id="preview_screen_1" src="{{ $appSettings['landing_hero_app_screen_1'] ?? 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=800&fit=crop' }}" alt="Screen 1" class="w-full h-full object-cover">
+                    </div>
+                    <label class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl transition-all text-xs font-bold cursor-pointer shadow-md shadow-green-700/20 mb-2">
+                        <i class="ph ph-upload-simple text-sm"></i>
+                        Upload Left Screen
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadSettingImageDirect('landing_hero_app_screen_1', this, 'preview_screen_1')">
+                    </label>
+                    <input type="url" value="{{ $appSettings['landing_hero_app_screen_1'] ?? '' }}" onchange="updateSetting('landing_hero_app_screen_1', this.value)" placeholder="Or paste image URL" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs outline-none focus:border-green-600">
+                </div>
+
+                <!-- App Screen 2 (Middle Phone - Main) -->
+                <div class="bg-green-50/50 p-5 rounded-2xl border border-green-200 flex flex-col items-center text-center relative shadow-sm">
+                    <span class="px-3 py-1 bg-green-700 text-white rounded-full text-xs font-bold mb-3">Middle Main Frame</span>
+                    <div class="w-36 h-60 rounded-3xl border-4 border-slate-900 bg-slate-900 overflow-hidden shadow-xl mb-4 relative group">
+                        <img id="preview_screen_2" src="{{ $appSettings['landing_hero_app_screen_2'] ?? 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=800&fit=crop' }}" alt="Screen 2" class="w-full h-full object-cover">
+                    </div>
+                    <label class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl transition-all text-xs font-bold cursor-pointer shadow-md shadow-green-700/20 mb-2">
+                        <i class="ph ph-upload-simple text-sm"></i>
+                        Upload Main Screen
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadSettingImageDirect('landing_hero_app_screen_2', this, 'preview_screen_2')">
+                    </label>
+                    <input type="url" value="{{ $appSettings['landing_hero_app_screen_2'] ?? '' }}" onchange="updateSetting('landing_hero_app_screen_2', this.value)" placeholder="Or paste image URL" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs outline-none focus:border-green-600">
+                </div>
+
+                <!-- App Screen 3 (Right Phone) -->
+                <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-200/80 flex flex-col items-center text-center">
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold mb-3">Right Phone Frame</span>
+                    <div class="w-32 h-56 rounded-2xl border-4 border-slate-900 bg-slate-900 overflow-hidden shadow-lg mb-4 relative group">
+                        <img id="preview_screen_3" src="{{ $appSettings['landing_hero_app_screen_3'] ?? 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=400&h=800&fit=crop' }}" alt="Screen 3" class="w-full h-full object-cover">
+                    </div>
+                    <label class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl transition-all text-xs font-bold cursor-pointer shadow-md shadow-green-700/20 mb-2">
+                        <i class="ph ph-upload-simple text-sm"></i>
+                        Upload Right Screen
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadSettingImageDirect('landing_hero_app_screen_3', this, 'preview_screen_3')">
+                    </label>
+                    <input type="url" value="{{ $appSettings['landing_hero_app_screen_3'] ?? '' }}" onchange="updateSetting('landing_hero_app_screen_3', this.value)" placeholder="Or paste image URL" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs outline-none focus:border-green-600">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Container -->
     <div id="settingsContainer" class="space-y-6">
         <div class="flex items-center justify-center py-12">
@@ -392,6 +455,26 @@ function renderSettingField(setting) {
                 <input type="text" value="${escapeHtml(value)}" onchange="updateSetting('${setting.key}', this.value)"
                        class="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 text-sm font-mono"
                        placeholder="#000000">
+            </div>
+        `;
+    } else if (setting.type === 'image') {
+        // Preview + upload + clear. Used by the logo and every walkthrough slide.
+        const preview = value
+            ? `<img src="${escapeHtml(value)}" alt="" class="w-20 h-20 object-cover rounded-xl border border-gray-200 bg-gray-50">`
+            : `<div class="w-20 h-20 rounded-xl border border-dashed border-gray-300 bg-gray-50 flex items-center justify-center text-gray-300"><i class="ph ph-image text-2xl"></i></div>`;
+        inputHtml = `
+            <div class="flex items-start gap-3">
+                ${preview}
+                <div class="flex-1 space-y-2">
+                    <label class="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all text-sm font-medium cursor-pointer border border-gray-200">
+                        <i class="ph ph-upload-simple"></i>
+                        ${value ? 'Replace image' : 'Upload image'}
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadSettingImage('${setting.key}', this)">
+                    </label>
+                    <input type="url" value="${escapeHtml(value)}" onchange="updateSetting('${setting.key}', this.value)"
+                           placeholder="…or paste an image URL"
+                           class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600 text-xs">
+                </div>
             </div>
         `;
     } else if (setting.key === 'firebase_credentials') {
@@ -705,6 +788,46 @@ async function removeLogo() {
 }
 
 // Firebase JSON Upload Function
+// Upload artwork for any `image`-typed setting (logo, walkthrough slides).
+async function uploadSettingImage(key, input) {
+    if (!input.files || !input.files[0]) return;
+
+    const file = input.files[0];
+
+    if (!file.type.startsWith('image/')) {
+        showStatus('error', 'Please select an image file');
+        input.value = '';
+        return;
+    }
+
+    showStatus('success', 'Uploading image...');
+
+    const formData = new FormData();
+    formData.append('key', key);
+    formData.append('image', file);
+    formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+    try {
+        const response = await fetch('/admin-api/settings/upload-image', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showStatus('success', 'Image uploaded');
+            loadSettings(); // Refresh so the preview picks up the new URL
+        } else {
+            showStatus('error', data.message || 'Failed to upload image');
+        }
+    } catch (error) {
+        showStatus('error', 'Failed to upload image');
+    }
+
+    input.value = '';
+}
+
 async function uploadFirebaseJson(input) {
     if (!input.files || !input.files[0]) return;
     
@@ -743,6 +866,48 @@ async function uploadFirebaseJson(input) {
     }
     
     // Reset input
+    input.value = '';
+}
+
+async function uploadSettingImageDirect(key, input, previewId) {
+    if (!input.files || !input.files[0]) return;
+
+    const file = input.files[0];
+
+    if (!file.type.startsWith('image/')) {
+        showStatus('error', 'Please select an image file');
+        input.value = '';
+        return;
+    }
+
+    showStatus('success', 'Uploading image...');
+
+    const formData = new FormData();
+    formData.append('key', key);
+    formData.append('image', file);
+    formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+    try {
+        const response = await fetch('/admin-api/settings/upload-image', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showStatus('success', 'App screen image uploaded successfully!');
+            if (previewId && data.data && data.data.value) {
+                document.getElementById(previewId).src = data.data.value;
+            }
+            loadSettings();
+        } else {
+            showStatus('error', data.message || 'Failed to upload image');
+        }
+    } catch (error) {
+        showStatus('error', 'Failed to upload image');
+    }
+
     input.value = '';
 }
 </script>

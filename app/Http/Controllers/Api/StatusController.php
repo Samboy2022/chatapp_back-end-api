@@ -72,7 +72,7 @@ class StatusController extends Controller
                     'media_url' => $status->media_url,
                     'caption' => $status->content,
                     'background_color' => $status->background_color,
-                    'text_color' => null,
+                    'text_color' => $status->text_color,
                     'font_family' => $status->font_style,
                     'created_at' => $status->created_at,
                     'expires_at' => $status->expires_at,
@@ -141,6 +141,7 @@ class StatusController extends Controller
                 'content' => $request->content ?? $request->caption,
                 'media_url' => $request->media_url,
                 'background_color' => $request->background_color,
+                'text_color' => $request->text_color,
                 'font_style' => $request->font_family,
                 'privacy_settings' => $privacySettings,
                 'expires_at' => $expiresAt

@@ -20,6 +20,7 @@ class Status extends Model
         'media_url',
         'thumbnail_url',
         'background_color',
+        'text_color',
         'font_style',
         'privacy_settings',
         'expires_at'

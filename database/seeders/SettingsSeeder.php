@@ -247,6 +247,33 @@ class SettingsSeeder extends Seeder
                 'description' => 'Main hero section image',
                 'is_public' => true
             ],
+            [
+                'key' => 'landing_hero_app_screen_1',
+                'value' => 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=800&fit=crop',
+                'type' => 'image',
+                'group' => 'landing',
+                'label' => 'Hero App Screen 1 (Left Phone)',
+                'description' => 'Mobile app screenshot for the left phone frame in hero section',
+                'is_public' => true
+            ],
+            [
+                'key' => 'landing_hero_app_screen_2',
+                'value' => 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=800&fit=crop',
+                'type' => 'image',
+                'group' => 'landing',
+                'label' => 'Hero App Screen 2 (Middle Phone - Main)',
+                'description' => 'Mobile app screenshot for the main middle phone frame in hero section',
+                'is_public' => true
+            ],
+            [
+                'key' => 'landing_hero_app_screen_3',
+                'value' => 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=400&h=800&fit=crop',
+                'type' => 'image',
+                'group' => 'landing',
+                'label' => 'Hero App Screen 3 (Right Phone)',
+                'description' => 'Mobile app screenshot for the right phone frame in hero section',
+                'is_public' => true
+            ],
 
             // ========== LANDING PAGE - STATS ==========
             [

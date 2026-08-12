@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\StatusController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\CallController;
+use App\Http\Controllers\Api\RadioController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\WebSocketController;
 use App\Http\Controllers\Api\GroupController;
@@ -84,6 +85,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Contact routes
     Route::prefix('contacts')->group(function () {
         Route::get('/', [ContactController::class, 'index']);
+        // Add a contact by phone number or email, and check first whether that
+        // person is on the network at all.
+        Route::post('/', [ContactController::class, 'store']);
+        Route::post('/lookup', [ContactController::class, 'lookup']);
         Route::post('/sync', [ContactController::class, 'sync']);
         Route::get('/blocked', [ContactController::class, 'getBlocked']);
         Route::get('/favorites', [ContactController::class, 'getFavorites']);
@@ -91,6 +96,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/block/{contactId}', [ContactController::class, 'block']);
         Route::post('/unblock/{contactId}', [ContactController::class, 'unblock']);
         Route::post('/favorite/{contactId}', [ContactController::class, 'toggleFavorite']);
+        // Keep the wildcards last so they can't swallow /lookup, /sync, etc.
+        Route::put('/{contactUserId}/name', [ContactController::class, 'rename']);
+        Route::delete('/{contactUserId}', [ContactController::class, 'destroy']);
+    });
+
+    // Reporting users / messages
+    Route::prefix('reports')->group(function () {
+        Route::get('/', [App\Http\Controllers\Api\ReportController::class, 'index']);
+        Route::get('/reasons', [App\Http\Controllers\Api\ReportController::class, 'reasons']);
+        Route::post('/', [App\Http\Controllers\Api\ReportController::class, 'store']);
     });
 
     // Chat routes
@@ -173,6 +188,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Search routes
     Route::prefix('search')->group(function () {
+        // One query across chats, messages and contacts.
+        Route::get('/', [SearchController::class, 'globalSearch']);
         Route::get('/users', [SearchController::class, 'searchUsers']);
         Route::get('/messages', [SearchController::class, 'searchMessages']);
     });
@@ -214,6 +231,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/chat/{chatId}', [MediaController::class, 'getChatMedia']);
         Route::get('/stats', [MediaController::class, 'getMediaStats']);
         Route::get('/{id}', [MediaController::class, 'getMediaById']);
+    });
+
+    // Radio + TV routes (admin-curated public content)
+    Route::prefix('radio')->group(function () {
+        Route::get('/', [RadioController::class, 'index']);            // everything in one call
+        Route::get('/live', [RadioController::class, 'live']);
+        Route::get('/programs', [RadioController::class, 'programs']);
+        Route::get('/tv-channels', [RadioController::class, 'tvChannels']);
+        // Keep the {id} routes last so they don't swallow the static ones.
+        Route::get('/programs/{id}', [RadioController::class, 'show']);
+        Route::post('/programs/{id}/play', [RadioController::class, 'play']);
+        Route::get('/programs/{id}/download', [RadioController::class, 'download']);
     });
 
     // Call routes
@@ -310,6 +339,8 @@ Route::middleware('auth:sanctum')->prefix('ai-chat')->group(function () {
 // App settings routes (public - no authentication required)
 Route::prefix('app-settings')->group(function () {
     Route::get('/', [AppSettingsController::class, 'index']);
+    // Unauthenticated on purpose — the app skins itself before login.
+    Route::get('/branding', [AppSettingsController::class, 'branding']);
     Route::get('/config', [AppSettingsController::class, 'getAppConfig']);
     Route::get('/version', [AppSettingsController::class, 'getVersion']);
     Route::get('/groups', [AppSettingsController::class, 'getGroups']);

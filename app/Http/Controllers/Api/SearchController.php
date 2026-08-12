@@ -13,6 +13,110 @@ use Illuminate\Support\Facades\Validator;
 class SearchController extends Controller
 {
     /**
+     * One query, every kind of result: chats, messages and contacts.
+     *
+     * The app previously had to pick an endpoint per section, so the search
+     * field only ever looked at whichever list you happened to be on. This
+     * answers all three in a single round trip.
+     */
+    public function globalSearch(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'q' => 'required|string|min:1|max:255',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Enter something to search for',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $query = trim($request->input('q'));
+        $limit = (int) $request->input('limit', 20);
+        $user = Auth::user();
+
+        // ── Chats the user is in ─────────────────────────────────────────────
+        $chats = Chat::whereHas('participants', fn ($q) => $q->where('user_id', $user->id))
+            ->where(function ($q) use ($query, $user) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                  // A private chat has no name of its own — match the other
+                  // person instead, which is what the user sees in the list.
+                  ->orWhereHas('participants', function ($p) use ($query, $user) {
+                      $p->where('users.id', '!=', $user->id)
+                        ->where('users.name', 'LIKE', "%{$query}%");
+                  });
+            })
+            ->with([
+                'participants:id,name,avatar_url,is_online',
+                'latestMessage:id,chat_id,content,created_at',
+            ])
+            ->limit($limit)
+            ->get()
+            ->map(fn ($chat) => [
+                'id' => (string) $chat->id,
+                'type' => $chat->type,
+                'name' => $chat->name,
+                'avatar_url' => $chat->avatar_url,
+                'participants' => $chat->participants,
+                'last_message' => $chat->latestMessage?->content,
+            ]);
+
+        // ── Messages inside those chats ──────────────────────────────────────
+        $messages = Message::where('content', 'LIKE', "%{$query}%")
+            ->whereHas('chat.participants', fn ($q) => $q->where('user_id', $user->id))
+            ->with(['chat:id,name,type', 'sender:id,name,avatar_url'])
+            ->latest()
+            ->limit($limit)
+            ->get()
+            ->map(fn ($message) => [
+                'id' => (string) $message->id,
+                'chat_id' => (string) $message->chat_id,
+                'content' => $message->content,
+                'chat_name' => $message->chat?->name ?? $message->sender?->name,
+                'sender_name' => $message->sender?->name,
+                'created_at' => $message->created_at?->toIso8601String(),
+            ]);
+
+        // ── The user's own contacts ──────────────────────────────────────────
+        $contacts = \App\Models\Contact::where('user_id', $user->id)
+            ->where(function ($q) use ($query) {
+                $q->where('contact_name', 'LIKE', "%{$query}%")
+                  ->orWhereHas('contactUser', function ($u) use ($query) {
+                      $u->where('name', 'LIKE', "%{$query}%")
+                        ->orWhere('phone_number', 'LIKE', "%{$query}%");
+                  });
+            })
+            ->with('contactUser:id,name,phone_number,avatar_url,is_online')
+            ->limit($limit)
+            ->get()
+            ->filter(fn ($contact) => $contact->contactUser !== null)
+            ->map(fn ($contact) => [
+                'id' => (string) $contact->contact_user_id,
+                // The nickname wins — that's the name this user knows them by.
+                'name' => $contact->contact_name ?: $contact->contactUser->name,
+                'phone_number' => $contact->contactUser->phone_number,
+                'avatar_url' => $contact->contactUser->avatar_url,
+                'is_online' => (bool) $contact->contactUser->is_online,
+            ])
+            ->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'query' => $query,
+                'chats' => $chats,
+                'messages' => $messages,
+                'contacts' => $contacts,
+                'total' => $chats->count() + $messages->count() + $contacts->count(),
+            ],
+            'message' => 'Search completed',
+        ]);
+    }
+
+    /**
      * Search for users by phone number or email
      */
     public function searchUsers(Request $request)

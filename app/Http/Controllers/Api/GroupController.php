@@ -233,15 +233,32 @@ class GroupController extends Controller
                 ], 404);
             }
 
-            // Add new participants
-            foreach ($request->participants as $participantId) {
-                // Check if user is not already a member
-                if (!$group->participants()->where('user_id', $participantId)->exists()) {
-                    $group->participants()->attach($participantId, [
-                        'role' => 'member',
-                        'joined_at' => now(),
-                    ]);
-                }
+            $requested = collect($request->participants ?? [])->unique();
+
+            // Only count people who aren't already in — re-adding an existing
+            // member shouldn't count against the cap.
+            $existingIds = $group->participants()->pluck('users.id');
+            $newIds = $requested->reject(fn ($id) => $existingIds->contains($id));
+
+            $maxGroupSize = (int) (\App\Models\Setting::get('max_group_size', 256) ?: 256);
+            $resultingSize = $existingIds->count() + $newIds->count();
+
+            if ($resultingSize > $maxGroupSize) {
+                $room = max(0, $maxGroupSize - $existingIds->count());
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $room === 0
+                        ? "This group is full ({$maxGroupSize} members)."
+                        : "You can only add {$room} more member(s) — the limit is {$maxGroupSize}.",
+                ], 422);
+            }
+
+            foreach ($newIds as $participantId) {
+                $group->participants()->attach($participantId, [
+                    'role' => 'member',
+                    'joined_at' => now(),
+                ]);
             }
 
             return response()->json([

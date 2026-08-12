@@ -14,6 +14,209 @@ use Illuminate\Support\Facades\DB;
 class ContactController extends Controller
 {
     /**
+     * Find a user by phone number or email without adding them.
+     *
+     * The app calls this first so it can tell the difference between
+     * "they're on Farmers Network — start chatting" and "not here yet — send
+     * them an invite", instead of failing with a generic error.
+     */
+    public function lookup(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'phone_number' => 'required_without:email|nullable|string|max:32',
+            'email' => 'required_without:phone_number|nullable|email|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Enter a phone number or an email address',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = $this->findUserByIdentifier($request->phone_number, $request->email);
+
+        if (!$user) {
+            return response()->json([
+                'success' => true,
+                'data' => ['on_network' => false, 'user' => null],
+                'message' => 'That person is not on Farmers Network yet',
+            ]);
+        }
+
+        if ($user->id === Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'That is your own account',
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'on_network' => true,
+                'user' => $user->only([
+                    'id', 'name', 'phone_number', 'country_code', 'email', 'avatar_url', 'is_online',
+                ]),
+                'already_added' => Contact::where('user_id', Auth::id())
+                    ->where('contact_user_id', $user->id)
+                    ->exists(),
+            ],
+            'message' => 'User found',
+        ]);
+    }
+
+    /**
+     * Add someone to the signed-in user's contacts by phone number or email.
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'phone_number' => 'required_without:email|nullable|string|max:32',
+            'email' => 'required_without:phone_number|nullable|email|max:255',
+            'name' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Enter a phone number or an email address',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = $this->findUserByIdentifier($request->phone_number, $request->email);
+
+        if (!$user) {
+            // 404 with a machine-readable flag so the client can offer to
+            // invite rather than showing a failure.
+            return response()->json([
+                'success' => false,
+                'data' => ['on_network' => false],
+                'message' => 'That person is not on Farmers Network yet — send them an invite',
+            ], 404);
+        }
+
+        if ($user->id === Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot add yourself as a contact',
+            ], 422);
+        }
+
+        $contact = Contact::updateOrCreate(
+            ['user_id' => Auth::id(), 'contact_user_id' => $user->id],
+            [
+                // Prefer the name the adder typed; fall back to the profile name.
+                'contact_name' => $request->filled('name') ? $request->name : $user->name,
+                'added_at' => now(),
+            ]
+        );
+
+        $contact->load('contactUser:id,name,phone_number,country_code,avatar_url,last_seen_at,is_online');
+
+        return response()->json([
+            'success' => true,
+            'data' => ['contact' => $contact, 'on_network' => true],
+            'message' => "{$contact->contact_name} has been added to your contacts",
+        ], 201);
+    }
+
+    /**
+     * Rename a contact.
+     *
+     * This only changes how that person appears in *this* user's contact list
+     * and chat headers — their actual profile name is untouched, exactly like
+     * renaming someone in a phone's address book.
+     */
+    public function rename(Request $request, $contactUserId): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'contact_name' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Enter a name for this contact',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $contact = Contact::where('user_id', Auth::id())
+            ->where('contact_user_id', $contactUserId)
+            ->first();
+
+        if (!$contact) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Contact not found',
+            ], 404);
+        }
+
+        $contact->update(['contact_name' => trim($request->contact_name)]);
+        $contact->load('contactUser:id,name,phone_number,country_code,avatar_url,about,last_seen_at,is_online');
+
+        return response()->json([
+            'success' => true,
+            'data' => ['contact' => $contact],
+            'message' => 'Contact renamed',
+        ]);
+    }
+
+    /**
+     * Remove someone from the signed-in user's contacts.
+     */
+    public function destroy($contactUserId): JsonResponse
+    {
+        $deleted = Contact::where('user_id', Auth::id())
+            ->where('contact_user_id', $contactUserId)
+            ->delete();
+
+        return response()->json([
+            'success' => (bool) $deleted,
+            'message' => $deleted ? 'Contact removed' : 'Contact not found',
+        ], $deleted ? 200 : 404);
+    }
+
+    /**
+     * Resolve a user from a phone number or email.
+     *
+     * Phone numbers are matched on their trailing digits so a number stored as
+     * `08031234567` still matches one entered as `+234 803 123 4567` — people
+     * do not type country codes consistently, and a strict equality check
+     * would make the feature look broken.
+     */
+    private function findUserByIdentifier(?string $phoneNumber, ?string $email): ?User
+    {
+        if (filled($email)) {
+            $user = User::where('email', trim(strtolower($email)))->first();
+            if ($user) {
+                return $user;
+            }
+        }
+
+        if (blank($phoneNumber)) {
+            return null;
+        }
+
+        $digits = preg_replace('/\D+/', '', $phoneNumber);
+        if (strlen($digits) < 7) {
+            return null;
+        }
+
+        // Compare the last 9 digits — enough to be unique in practice while
+        // tolerating a leading 0 or a country code on either side.
+        $tail = substr($digits, -9);
+
+        return User::whereRaw(
+            "RIGHT(REGEXP_REPLACE(COALESCE(phone_number, ''), '[^0-9]', ''), 9) = ?",
+            [$tail]
+        )->first();
+    }
+
+    /**
      * Get user's contacts list
      */
     public function index(Request $request): JsonResponse
@@ -28,9 +231,15 @@ class ContactController extends Controller
                 ->orderBy('contact_name');
 
             if ($search) {
-                $contactsQuery->where(function($query) use ($search) {
+                // `phone_number` lives on users, not contacts — querying it
+                // here threw a "column not found" and broke contact search.
+                $contactsQuery->where(function ($query) use ($search) {
                     $query->where('contact_name', 'LIKE', "%{$search}%")
-                          ->orWhere('phone_number', 'LIKE', "%{$search}%");
+                          ->orWhereHas('contactUser', function ($q) use ($search) {
+                              $q->where('name', 'LIKE', "%{$search}%")
+                                ->orWhere('phone_number', 'LIKE', "%{$search}%")
+                                ->orWhere('email', 'LIKE', "%{$search}%");
+                          });
                 });
             }
 
@@ -56,9 +265,10 @@ class ContactController extends Controller
     public function sync(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'contacts' => 'required|array',
-            'contacts.*.name' => 'required|string',
-            'contacts.*.phone' => 'required|string',
+            'contacts' => 'required|array|max:2000',
+            'contacts.*.name' => 'required|string|max:255',
+            'contacts.*.phone' => 'required|string|max:32',
+            'contacts.*.email' => 'nullable|email|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -77,25 +287,40 @@ class ContactController extends Controller
 
         try {
             foreach ($deviceContacts as $deviceContact) {
-                $cleanPhone = preg_replace('/[^0-9+]/', '', $deviceContact['phone']);
+                // Exact string matching used to be the rule here, so a number
+                // saved on the phone as "0803 123 4567" never matched an
+                // account stored as "+2348031234567" — sync silently found
+                // nobody. Reuse the same tolerant matcher as lookup/add.
+                $appUser = $this->findUserByIdentifier(
+                    $deviceContact['phone'],
+                    $deviceContact['email'] ?? null
+                );
 
-                $appUser = User::where('phone_number', $cleanPhone)->first();
-
-                if ($appUser) {
-                    $existingContact = Contact::where('user_id', Auth::id())
-                        ->where('contact_user_id', $appUser->id)
-                        ->first();
-
-                    if (!$existingContact) {
-                        $contact = Contact::create([
-                            'user_id' => Auth::id(),
-                            'contact_user_id' => $appUser->id,
-                            'contact_name' => $deviceContact['name'],
-                        ]);
-                        $newContactsCount++;
-                        $syncedContacts[] = $contact;
-                    }
+                if (!$appUser || $appUser->id === Auth::id()) {
+                    continue;
                 }
+
+                $existingContact = Contact::where('user_id', Auth::id())
+                    ->where('contact_user_id', $appUser->id)
+                    ->first();
+
+                if ($existingContact) {
+                    continue;
+                }
+
+                $contact = Contact::create([
+                    'user_id' => Auth::id(),
+                    'contact_user_id' => $appUser->id,
+                    // Prefer the name as saved on the device — that's what the
+                    // owner recognises.
+                    'contact_name' => $deviceContact['name'],
+                    'added_at' => now(),
+                ]);
+
+                $contact->load('contactUser:id,name,phone_number,avatar_url,is_online');
+
+                $newContactsCount++;
+                $syncedContacts[] = $contact;
             }
 
             DB::commit();

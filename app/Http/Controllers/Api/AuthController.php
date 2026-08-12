@@ -375,53 +375,45 @@ class AuthController extends Controller
     }
 
     /**
-     * Send a test FCM push notification to the authenticated user
-     * Useful for debugging call notification delivery
+     * Send a test push to the signed-in user.
+     *
+     * Useful for confirming a device is actually reachable — it exercises the
+     * same path a real incoming call uses.
      */
     public function testFcmNotification(Request $request): JsonResponse
     {
         try {
             $user = $request->user();
-            $deviceToken = $user->fcm_token ?? $user->device_token ?? null;
+            $push = app(\App\Services\OneSignalService::class);
 
-            if (!$deviceToken) {
+            if (!$push->isConfigured()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No FCM token registered for this user',
-                ], 400);
+                    'message' => 'OneSignal is not configured. Add the REST API key in admin settings.',
+                ], 503);
             }
 
-            $fcmService = app(\App\Services\FcmService::class);
-            $sent = $fcmService->sendCallNotification(
-                $deviceToken,
-                [
-                    'type' => 'incoming_call',
-                    'call_id' => 'test_' . time(),
-                    'channel' => 'test_channel',
-                    'caller_name' => 'Test Notification',
-                    'caller_avatar' => '',
-                    'call_type' => 'audio',
-                    'receiver_token' => 'test_token',
-                    'app_id' => 'test_app_id',
-                ]
-            );
+            $sent = $push->sendCallNotification((string) $user->id, [
+                'type' => 'incoming_call',
+                'call_id' => 'test_' . time(),
+                'channel' => 'test_channel',
+                'caller_name' => 'Test Notification',
+                'caller_avatar' => '',
+                'call_type' => 'audio',
+                'receiver_token' => 'test_token',
+                'app_id' => 'test_app_id',
+            ]);
 
-            if ($sent) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Test FCM notification sent successfully',
-                    'token_prefix' => substr($deviceToken, 0, 20),
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'FCM service failed to send notification. Check Firebase credentials.',
-                ], 500);
-            }
+            return response()->json([
+                'success' => $sent,
+                'message' => $sent
+                    ? 'Test notification sent'
+                    : 'No subscribed device for this account. Open the app and allow notifications, then try again.',
+            ], $sent ? 200 : 400);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error sending test notification: ' . $e->getMessage(),
+                'message' => 'Failed to send test notification',
             ], 500);
         }
     }
