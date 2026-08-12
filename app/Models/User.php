@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Helpers\ImageUrlHelper;
+use App\Helpers\PhoneNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -179,6 +180,37 @@ class User extends Authenticatable
     public function isOnline(): bool
     {
         return $this->is_online;
+    }
+
+    /**
+     * Find an account from whatever the user typed into a "phone or email" box.
+     *
+     * A phone number is matched against every spelling it might have been
+     * stored as — `+2347026591356`, `2347026591356`, `07026591356`,
+     * `7026591356` — so an account created before phone normalisation existed
+     * is still reachable. New rows are all E.164, so over time only the first
+     * of those ever matches.
+     */
+    public static function findByLogin(?string $login): ?self
+    {
+        $login = trim((string) $login);
+
+        if ($login === '') {
+            return null;
+        }
+
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            return static::where('email', strtolower($login))->first();
+        }
+
+        if (!PhoneNumber::looksLikePhone($login)) {
+            // Neither a valid email nor a plausible number — but it may still
+            // be an email the user mistyped, so try an exact match before
+            // giving up.
+            return static::where('email', strtolower($login))->first();
+        }
+
+        return static::whereIn('phone_number', PhoneNumber::variants($login))->first();
     }
 
     /**

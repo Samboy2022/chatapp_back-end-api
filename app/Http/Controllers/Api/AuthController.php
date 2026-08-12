@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\PhoneNumber;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,6 +18,27 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
+        // Canonicalise before validating, so the `unique` rule compares the
+        // same form we're about to store. Without this, one person could
+        // register twice — once as 07026591356 and once as +2347026591356.
+        $normalizedPhone = PhoneNumber::normalize(
+            $request->input('phone_number'),
+            $request->input('country_code')
+        );
+
+        if ($normalizedPhone === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => ['phone_number' => ['Please enter a valid phone number.']],
+            ], 422);
+        }
+
+        $request->merge([
+            'phone_number' => $normalizedPhone,
+            'email' => strtolower(trim((string) $request->input('email'))),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -83,10 +105,9 @@ class AuthController extends Controller
         }
 
         try {
-            // Check if login is email or phone
-            $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone_number';
-            
-            $user = User::where($loginField, $request->login)->first();
+            // Matches an email, or a phone number in any of the forms a user
+            // might type it: 07026591356 and +2347026591356 both land here.
+            $user = User::findByLogin($request->login);
 
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([
@@ -175,6 +196,26 @@ class AuthController extends Controller
      */
     public function updateProfile(Request $request): JsonResponse
     {
+        // Same canonicalisation as registration — otherwise editing a profile
+        // could quietly reintroduce a non-normalised number that then fails to
+        // log in.
+        if ($request->has('phone_number')) {
+            $normalized = PhoneNumber::normalize(
+                $request->input('phone_number'),
+                $request->input('country_code') ?? $request->user()->country_code
+            );
+
+            if ($normalized === null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation errors',
+                    'errors' => ['phone_number' => ['Please enter a valid phone number.']],
+                ], 422);
+            }
+
+            $request->merge(['phone_number' => $normalized]);
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|max:255|unique:users,email,' . $request->user()->id,

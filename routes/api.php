@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\AppConfigController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\ContactController;
@@ -36,6 +37,20 @@ use App\Http\Controllers\Api\AppSettingsController;
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+
+    // Passwordless login and password recovery.
+    //
+    // Throttled on top of the per-recipient cooldown in OtpService: that
+    // cooldown stops one number being spammed, this stops one host walking
+    // through many numbers and burning the SMS balance.
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('/otp/request', [OtpAuthController::class, 'requestLoginCode']);
+        Route::post('/otp/verify', [OtpAuthController::class, 'verifyLoginCode']);
+
+        Route::post('/password/forgot', [OtpAuthController::class, 'forgotPassword']);
+        Route::post('/password/verify-code', [OtpAuthController::class, 'verifyPasswordResetCode']);
+        Route::post('/password/reset', [OtpAuthController::class, 'resetPassword']);
+    });
 });
 
 // Public test route for connection testing
@@ -80,6 +95,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/privacy', [AuthController::class, 'updatePrivacy']);
         Route::post('/fcm-token', [AuthController::class, 'updateFcmToken']);
         Route::post('/test-fcm-notification', [AuthController::class, 'testFcmNotification']);
+
+        // Email verification for the signed-in account.
+        Route::post('/email/verify/request', [OtpAuthController::class, 'requestEmailVerification']);
+        Route::post('/email/verify/confirm', [OtpAuthController::class, 'confirmEmailVerification']);
     });
 
     // Contact routes
@@ -335,6 +354,10 @@ Route::middleware('auth:sanctum')->prefix('ai-chat')->group(function () {
     // Delete conversation(s)
     Route::delete('/history', [App\Http\Controllers\Api\AiChatController::class, 'clearHistory']);
 });
+
+// Features-screen slides (public — no user data, and the screen paints it
+// before anything else).
+Route::get('/sliders', [App\Http\Controllers\Api\SliderController::class, 'index']);
 
 // App settings routes (public - no authentication required)
 Route::prefix('app-settings')->group(function () {

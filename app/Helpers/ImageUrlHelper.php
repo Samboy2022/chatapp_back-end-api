@@ -31,22 +31,34 @@ class ImageUrlHelper
                 return $value;
             }
 
-            // Check if it's a local/development URL that needs normalization
-            // If it contains localhost, 127.0.0.1, or doesn't match current APP_URL domain
+            // Re-point a URL that is one of *our own* stored files but carries
+            // a stale host — a row written on localhost, or before the domain
+            // changed.
+            //
+            // The test is deliberately narrow: only URLs whose path is under
+            // /storage/ are ours to rewrite. Matching on "host differs from
+            // APP_URL" alone, as this once did, also caught every legitimate
+            // external image — an Unsplash or CDN URL was rewritten to
+            // https://our-app/storage/photo-abc123 and 404'd.
             $appUrl = config('app.url');
             $currentHost = parse_url($appUrl, PHP_URL_HOST);
             $valueHost = parse_url($value, PHP_URL_HOST);
+            $valuePath = parse_url($value, PHP_URL_PATH) ?: '';
 
-            if ($valueHost === 'localhost' || $valueHost === '127.0.0.1' || ($currentHost && $valueHost !== $currentHost)) {
-                // Extract the path and re-generate using current APP_URL
-                $path = parse_url($value, PHP_URL_PATH);
-                if ($path) {
-                    // Remove leading /storage/ if present to avoid double prefixing
-                    $cleanPath = preg_replace('/^\/?storage\//', '', $path);
-                    return URL::to('/storage/' . ltrim($cleanPath, '/'));
-                }
+            $isOurStoragePath = (bool) preg_match('#^/?storage/#', $valuePath);
+            $isLocalDevHost = in_array($valueHost, ['localhost', '127.0.0.1', '::1'], true)
+                || str_ends_with((string) $valueHost, '.test')
+                || str_ends_with((string) $valueHost, '.local');
+
+            $hostIsForeign = $currentHost && $valueHost !== $currentHost;
+
+            if ($isOurStoragePath && ($isLocalDevHost || $hostIsForeign)) {
+                // Strip the /storage/ prefix so re-adding it can't double up.
+                $cleanPath = preg_replace('/^\/?storage\//', '', $valuePath);
+                return URL::to('/storage/' . ltrim($cleanPath, '/'));
             }
 
+            // Anything else absolute is left exactly as the admin entered it.
             return $value;
         }
 

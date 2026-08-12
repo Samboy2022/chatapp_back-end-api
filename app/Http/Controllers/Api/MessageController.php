@@ -116,6 +116,10 @@ class MessageController extends Controller
             // Broadcast the message to all participants
             broadcast(new MessageSent($message, Auth::user()));
 
+            // Broadcasting only reaches people who already have the app open.
+            // This is what reaches everyone else.
+            app(\App\Services\ChatPushService::class)->notifyNewMessage($message);
+
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -519,6 +523,8 @@ class MessageController extends Controller
             // Broadcast message
             broadcast(new MessageSent($message, $message->sender))->toOthers();
 
+            app(\App\Services\ChatPushService::class)->notifyNewMessage($message);
+
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -731,6 +737,8 @@ class MessageController extends Controller
 
             // Broadcast the message to chat participants
             broadcast(new MessageSent($forwardedMessage, Auth::user()))->toOthers();
+
+            app(\App\Services\ChatPushService::class)->notifyNewMessage($forwardedMessage);
 
             return response()->json([
                 'success' => true,

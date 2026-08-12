@@ -764,6 +764,11 @@ class SettingController extends Controller
     public function testEmail()
     {
         try {
+            // Use the SMTP details saved on this page, not whatever is in .env
+            // — otherwise "Test Email" reports success on a config the app
+            // will never actually send with.
+            \App\Services\MailConfigService::apply(force: true);
+
             $adminEmail = \App\Models\Setting::get('admin_email', config('mail.from.address'));
 
             // Send test email
@@ -776,6 +781,49 @@ class SettingController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to send test email: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Send a real SMS through Termii to confirm the credentials work.
+     *
+     * Worth having as its own button: an unapproved sender ID or an empty
+     * wallet only shows up at send time, and discovering that through users
+     * failing to log in is the bad way to find out.
+     */
+    public function testSms(Request $request, \App\Services\TermiiService $termii)
+    {
+        $request->validate([
+            'phone_number' => 'required|string',
+        ]);
+
+        $phone = \App\Helpers\PhoneNumber::normalize($request->input('phone_number'));
+
+        if ($phone === null) {
+            return redirect()->back()->with('error', 'That phone number is not valid.');
+        }
+
+        if (!$termii->isConfigured()) {
+            return redirect()->back()->with('error', 'Add your Termii API key under the SMS tab first.');
+        }
+
+        $appName = \App\Models\Setting::get('app_name') ?: config('app.name');
+        $result = $termii->send($phone, "Test message from {$appName}. Your SMS settings are working.");
+
+        if (!$result['success']) {
+            return redirect()->back()->with('error', 'SMS failed: ' . $result['message']);
+        }
+
+        $balance = isset($result['balance']) ? ' Remaining balance: ' . $result['balance'] . '.' : '';
+
+        return redirect()->back()->with('success', 'Test SMS sent to ' . \App\Helpers\PhoneNumber::format($phone) . '.' . $balance);
+    }
+
+    /**
+     * Current Termii credit, for the settings page to display.
+     */
+    public function smsBalance(\App\Services\TermiiService $termii)
+    {
+        return response()->json($termii->balance());
     }
 
     public function resetSettings()

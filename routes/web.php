@@ -148,6 +148,13 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::resource('radio', App\Http\Controllers\Admin\RadioController::class)
         ->parameters(['radio' => 'radio'])
         ->except(['show']);
+    // Features-screen slider management.
+    // `reorder` sits before the resource routes so /sliders/reorder isn't
+    // swallowed by /sliders/{slider}.
+    Route::post('sliders/reorder', [App\Http\Controllers\Admin\SliderController::class, 'reorder'])->name('sliders.reorder');
+    Route::post('sliders/{slider}/toggle-active', [App\Http\Controllers\Admin\SliderController::class, 'toggleActive'])->name('sliders.toggle-active');
+    Route::resource('sliders', App\Http\Controllers\Admin\SliderController::class)->except(['show']);
+
     Route::post('radio/{radio}/toggle-active', [App\Http\Controllers\Admin\RadioController::class, 'toggleActive'])->name('radio.toggle-active');
     Route::post('radio/{radio}/set-live', [App\Http\Controllers\Admin\RadioController::class, 'setLive'])->name('radio.set-live');
 
@@ -198,6 +205,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::post('/optimize', [SettingController::class, 'optimizeSystem'])->name('optimize');
         Route::post('/backup', [SettingController::class, 'backupDatabase'])->name('backup');
         Route::post('/test-email', [SettingController::class, 'testEmail'])->name('test-email');
+        Route::post('/test-sms', [SettingController::class, 'testSms'])->name('test-sms');
+        Route::get('/sms-balance', [SettingController::class, 'smsBalance'])->name('sms-balance');
         Route::get('/export', [SettingController::class, 'exportSettings'])->name('export');
         Route::post('/import', [SettingController::class, 'importSettings'])->name('import');
         Route::post('/reset', [SettingController::class, 'resetSettings'])->name('reset');

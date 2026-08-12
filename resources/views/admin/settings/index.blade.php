@@ -212,6 +212,10 @@
                             <option value="landing">Landing Page</option>
                             <option value="colors">UI Colors</option>
                             <option value="integrations">Integrations</option>
+                            <option value="otp">OTP &amp; Verification</option>
+                            <option value="sms">SMS Gateway</option>
+                            <option value="email">Email / SMTP</option>
+                            <option value="phone">Phone Numbers</option>
                         </select>
                     </div>
                 </div>
@@ -292,7 +296,11 @@ const groupIcons = {
     chat: 'ph-chat-circle-text',
     user: 'ph-users',
     notification: 'ph-bell',
-    integrations: 'ph-plugs'
+    integrations: 'ph-plugs',
+    otp: 'ph-shield-check',
+    sms: 'ph-chat-dots',
+    email: 'ph-envelope-simple',
+    phone: 'ph-phone'
 };
 
 const groupColors = {
@@ -302,7 +310,11 @@ const groupColors = {
     chat: 'green',
     user: 'purple',
     notification: 'red',
-    integrations: 'indigo'
+    integrations: 'indigo',
+    otp: 'green',
+    sms: 'purple',
+    email: 'blue',
+    phone: 'indigo'
 };
 
 document.addEventListener('DOMContentLoaded', function() {

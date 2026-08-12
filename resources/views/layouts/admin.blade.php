@@ -106,6 +106,13 @@
           <span>TV Channels</span>
         </a>
         <a
+          href="{{ route('admin.sliders.index') }}"
+          class="nav-item {{ request()->routeIs('admin.sliders.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-images text-base"></i>
+          <span>Sliders</span>
+        </a>
+        <a
           href="{{ route('admin.reports.index') }}"
           class="nav-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
         >
