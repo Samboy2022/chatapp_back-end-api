@@ -6,13 +6,15 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 use App\Models\Chat;
 
-class UserTyping implements ShouldBroadcast
+// Broadcast immediately, not via the queue: with QUEUE_CONNECTION=database and
+// no worker running, queued broadcasts never left the jobs table.
+class UserTyping implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -38,7 +40,10 @@ class UserTyping implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel('presence-chat.' . $this->chat->id),
+            // The conversation's private channel, which the app subscribes to.
+            // This was PresenceChannel('presence-chat.N'), which Laravel
+            // publishes as "presence-presence-chat.N" — nobody listened there.
+            new PrivateChannel('chat.' . $this->chat->id),
         ];
     }
 
@@ -53,6 +58,9 @@ class UserTyping implements ShouldBroadcast
                 'name' => $this->user->name,
                 'avatar_url' => $this->user->avatar_url,
             ],
+            // Flat fields are what the app reads.
+            'user_id' => $this->user->id,
+            'user_name' => $this->user->name,
             'chat_id' => $this->chat->id,
             'is_typing' => $this->isTyping,
             'timestamp' => now()->toISOString(),

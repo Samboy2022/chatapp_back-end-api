@@ -66,7 +66,9 @@ Route::get('/contact', function () {
 })->name('contact');
 
 // Host Fix Routes (Temporary Tool for Shared Hosting)
-Route::prefix('host-fix')->group(function () {
+// Admin-only: these rewrite .env and replace public/storage, and were open to
+// anyone on the internet. Settings → Maintenance now covers the same jobs.
+Route::prefix('host-fix')->middleware('admin.auth')->group(function () {
     Route::get('/status', [App\Http\Controllers\HostFixController::class, 'checkStatus']);
     Route::get('/symlink', [App\Http\Controllers\HostFixController::class, 'fixSymlink']);
     Route::get('/update-url', [App\Http\Controllers\HostFixController::class, 'updateAppUrl']);
@@ -77,8 +79,10 @@ Route::prefix('host-fix')->group(function () {
 // Broadcasting Authentication Routes (for WebSocket authentication)
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
-// Public Admin API Routes (for testing)
-Route::prefix('admin-api')->group(function () {
+// Admin API routes used by the admin pages' JavaScript. Admin-only: this
+// group used to be public, so anyone could export every setting (Agora
+// certificate and API keys included) or trigger a database backup.
+Route::prefix('admin-api')->middleware('admin.auth')->group(function () {
     Route::get('calls/active', [App\Http\Controllers\Admin\CallController::class, 'activeCalls']);
     Route::get('calls/realtime-stats', [App\Http\Controllers\Admin\CallController::class, 'realtimeStats']);
     Route::get('calls/recent-activity', [App\Http\Controllers\Admin\CallController::class, 'recentActivity']);
@@ -210,6 +214,30 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::get('/export', [SettingController::class, 'exportSettings'])->name('export');
         Route::post('/import', [SettingController::class, 'importSettings'])->name('import');
         Route::post('/reset', [SettingController::class, 'resetSettings'])->name('reset');
+
+        // Maintenance: migrations, caches, backups, queue, maintenance mode.
+        Route::prefix('maintenance')->name('maintenance.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\MaintenanceController::class, 'index'])->name('index');
+            Route::get('/overview', [App\Http\Controllers\Admin\MaintenanceController::class, 'overview'])->name('overview');
+            Route::get('/migrations', [App\Http\Controllers\Admin\MaintenanceController::class, 'migrations'])->name('migrations');
+            Route::post('/migrations/pretend', [App\Http\Controllers\Admin\MaintenanceController::class, 'pretend'])->name('pretend');
+            Route::post('/migrations/run', [App\Http\Controllers\Admin\MaintenanceController::class, 'migrate'])->name('migrate');
+            Route::post('/migrations/force', [App\Http\Controllers\Admin\MaintenanceController::class, 'forceMigrate'])->name('force');
+            Route::get('/migrations/rollback-preview', [App\Http\Controllers\Admin\MaintenanceController::class, 'rollbackPreview'])->name('rollback-preview');
+            Route::post('/migrations/rollback', [App\Http\Controllers\Admin\MaintenanceController::class, 'rollback'])->name('rollback');
+            Route::post('/cache/clear', [App\Http\Controllers\Admin\MaintenanceController::class, 'clearCache'])->name('cache.clear');
+            Route::post('/cache/optimize', [App\Http\Controllers\Admin\MaintenanceController::class, 'optimize'])->name('cache.optimize');
+            Route::post('/backups', [App\Http\Controllers\Admin\MaintenanceController::class, 'backup'])->name('backups.create');
+            Route::get('/backups/{filename}', [App\Http\Controllers\Admin\MaintenanceController::class, 'downloadBackup'])->name('backups.download');
+            Route::delete('/backups/{filename}', [App\Http\Controllers\Admin\MaintenanceController::class, 'deleteBackup'])->name('backups.delete');
+            Route::post('/queue/retry', [App\Http\Controllers\Admin\MaintenanceController::class, 'retryFailedJobs'])->name('queue.retry');
+            Route::post('/queue/restart', [App\Http\Controllers\Admin\MaintenanceController::class, 'restartQueue'])->name('queue.restart');
+            Route::post('/storage/link', [App\Http\Controllers\Admin\MaintenanceController::class, 'linkStorage'])->name('storage.link');
+            Route::post('/down', [App\Http\Controllers\Admin\MaintenanceController::class, 'down'])->name('down');
+            Route::post('/up', [App\Http\Controllers\Admin\MaintenanceController::class, 'up'])->name('up');
+            Route::get('/log', [App\Http\Controllers\Admin\MaintenanceController::class, 'log'])->name('log');
+            Route::post('/log/clear', [App\Http\Controllers\Admin\MaintenanceController::class, 'clearLog'])->name('log.clear');
+        });
     });
 
     // Profile Management

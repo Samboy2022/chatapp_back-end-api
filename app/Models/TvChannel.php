@@ -37,8 +37,9 @@ class TvChannel extends Model
 
     public function scopeOrdered(Builder $query): Builder
     {
-        // Live channels float to the top regardless of manual ordering.
-        return $query->orderByDesc('is_live')->orderBy('sort_order')->orderByDesc('id');
+        // Live channels float to the top regardless of manual ordering; after
+        // that, a newly added channel goes below the ones already there.
+        return $query->orderByDesc('is_live')->orderBy('sort_order')->orderBy('id');
     }
 
     public function incrementViewCount(): void

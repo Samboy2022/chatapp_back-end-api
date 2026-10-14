@@ -184,7 +184,9 @@ class Chat extends Model
         $lastReadMessageId = $participant->pivot->last_read_message_id;
 
         if (!$lastReadMessageId) {
-            return $this->messages()->count();
+            // Never opened: everything the others sent is unread, but not
+            // the user's own messages.
+            return $this->messages()->where('sender_id', '!=', $user->id)->count();
         }
 
         return $this->messages()

@@ -6,13 +6,15 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Message;
 use App\Models\User;
 
-class MessageRead implements ShouldBroadcast
+// Broadcast immediately, not via the queue: with QUEUE_CONNECTION=database and
+// no worker running, queued broadcasts never left the jobs table.
+class MessageRead implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,14 +22,18 @@ class MessageRead implements ShouldBroadcast
     public $reader;
     public $chat;
 
+    /** Every message this receipt covers; [$message] alone when empty. */
+    public $messageIds;
+
     /**
      * Create a new event instance.
      */
-    public function __construct(Message $message, User $reader)
+    public function __construct(Message $message, User $reader, array $messageIds = [])
     {
         $this->message = $message;
         $this->reader = $reader;
         $this->chat = $message->chat;
+        $this->messageIds = $messageIds ?: [$message->id];
     }
 
     /**
@@ -49,6 +55,7 @@ class MessageRead implements ShouldBroadcast
     {
         return [
             'message_id' => $this->message->id,
+            'message_ids' => array_values($this->messageIds),
             'chat_id' => $this->chat->id,
             'reader' => [
                 'id' => $this->reader->id,

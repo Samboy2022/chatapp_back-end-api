@@ -20,6 +20,7 @@ use App\Http\Requests\Api\UpdateMessageRequest;
 use App\Http\Requests\Api\ReactToMessageRequest;
 use App\Http\Requests\Api\ForwardMessageRequest;
 use App\Http\Requests\Api\SendP2PMessageRequest;
+use App\Services\MessageReceiptService;
 
 class MessageController extends Controller
 {
@@ -40,6 +41,9 @@ class MessageController extends Controller
 
         $perPage = $request->get('per_page', 50);
         $page = $request->get('page', 1);
+
+        // Fetching the conversation is the recipient's device receiving it.
+        app(MessageReceiptService::class)->markDelivered(Auth::user(), (int) $chatId);
 
         $messages = Message::where('chat_id', $chatId)
             ->with([
@@ -100,8 +104,8 @@ class MessageController extends Controller
                 'updated_at' => now()
             ]);
 
-            // Mark message as delivered for sender
-            $message->update(['status' => 'delivered']);
+            // Stays `sent` (one tick) until a recipient's app fetches it —
+            // see MessageReceiptService::markDelivered.
 
             DB::commit();
 
@@ -113,8 +117,14 @@ class MessageController extends Controller
                 'forwardedFrom.sender:id,name'
             ]);
 
-            // Broadcast the message to all participants
-            broadcast(new MessageSent($message, Auth::user()));
+            // Broadcast the message to all participants. Immediate now (not
+            // queued), so a Pusher failure would surface here — and must not
+            // turn a stored message into a 500 the app then re-sends.
+            try {
+                broadcast(new MessageSent($message, Auth::user()));
+            } catch (\Throwable $e) {
+                \Log::warning('MessageSent broadcast failed: ' . $e->getMessage());
+            }
 
             // Broadcasting only reaches people who already have the app open.
             // This is what reaches everyone else.
@@ -181,7 +191,7 @@ class MessageController extends Controller
                 ->firstOrFail();
 
             // Check if user is the sender
-            if ($message->sender_id !== Auth::id()) {
+            if ((int) $message->sender_id !== (int) Auth::id()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You can only edit your own messages'
@@ -248,7 +258,7 @@ class MessageController extends Controller
                 ->where('role', 'admin')
                 ->exists();
 
-            if ($message->sender_id !== Auth::id() && !$isAdmin) {
+            if ((int) $message->sender_id !== (int) Auth::id() && !$isAdmin) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You can only delete your own messages or you must be an admin'
@@ -288,10 +298,14 @@ class MessageController extends Controller
     /**
      * Mark message as read
      */
-    public function markAsRead(Request $request, $messageId): JsonResponse
+    public function markAsRead(Request $request): JsonResponse
     {
         try {
-            $message = Message::findOrFail($messageId);
+            // Shared by /chats/{chatId}/messages/{messageId}/read and
+            // /messages/{messageId}/read. Route parameters are passed
+            // positionally, so a `$messageId` argument got the chat id on the
+            // first route — read it by name instead.
+            $message = Message::findOrFail($request->route('messageId'));
             $chat = $message->chat;
 
             // Check if user is participant in this chat
@@ -302,21 +316,9 @@ class MessageController extends Controller
                 ], 403);
             }
 
-            // Message is already loaded above
-
-            // Update participant's read status
-            $chat->participants()
-                ->where('user_id', Auth::id())
-                ->update([
-                    'last_read_message_id' => $messageId
-                ]);
-
-            // Update message status to read if sender is not the current user
-            if ($message->sender_id !== Auth::id()) {
-                $message->update(['status' => 'read']);
-
-                // Broadcast message read event
-                broadcast(new MessageRead($message, Auth::user()));
+            // Reading one message reads the chat up to it, like opening it.
+            if ((int) $message->sender_id !== (int) Auth::id()) {
+                app(MessageReceiptService::class)->markChatRead($chat, Auth::user());
             }
 
             return response()->json([
@@ -328,6 +330,37 @@ class MessageController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error marking message as read: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mark everything in the chat read for the current user — what the app
+     * calls while the conversation is open.
+     */
+    public function bulkRead(Request $request, $chatId): JsonResponse
+    {
+        $chat = Chat::findOrFail($chatId);
+
+        if (!$chat->participants()->where('user_id', Auth::id())->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not a participant in this chat'
+            ], 403);
+        }
+
+        try {
+            $readIds = app(MessageReceiptService::class)->markChatRead($chat, Auth::user());
+
+            return response()->json([
+                'success' => true,
+                'data' => ['message_ids' => $readIds],
+                'message' => 'Messages marked as read'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error marking messages as read: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -521,7 +554,11 @@ class MessageController extends Controller
             $message->load(['sender:id,name,phone_number,avatar_url', 'replyToMessage.sender:id,name']);
 
             // Broadcast message
-            broadcast(new MessageSent($message, $message->sender))->toOthers();
+            try {
+                broadcast(new MessageSent($message, $message->sender))->toOthers();
+            } catch (\Throwable $e) {
+                \Log::warning('MessageSent broadcast failed: ' . $e->getMessage());
+            }
 
             app(\App\Services\ChatPushService::class)->notifyNewMessage($message);
 
@@ -736,7 +773,11 @@ class MessageController extends Controller
             ]);
 
             // Broadcast the message to chat participants
-            broadcast(new MessageSent($forwardedMessage, Auth::user()))->toOthers();
+            try {
+                broadcast(new MessageSent($forwardedMessage, Auth::user()))->toOthers();
+            } catch (\Throwable $e) {
+                \Log::warning('MessageSent broadcast failed: ' . $e->getMessage());
+            }
 
             app(\App\Services\ChatPushService::class)->notifyNewMessage($forwardedMessage);
 

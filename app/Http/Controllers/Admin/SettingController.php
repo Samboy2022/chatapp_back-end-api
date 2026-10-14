@@ -492,7 +492,10 @@ class SettingController extends Controller
             Artisan::call('config:clear');
 
             // Then optimize (only the essential parts)
-            Artisan::call('optimize');
+            // Not `optimize`: that also caches config, and code across the app
+            // still reads env() at runtime (OTP SMS, push, uploads, calls),
+            // which returns null once config is cached.
+            \App\Services\SystemMaintenance::cacheSafely();
 
             // Get the output
             $output = Artisan::output();
@@ -517,7 +520,10 @@ class SettingController extends Controller
             // Run optimization commands one by one
             Artisan::call('cache:clear');
             Artisan::call('config:clear');
-            Artisan::call('optimize');
+            // Not `optimize`: that also caches config, and code across the app
+            // still reads env() at runtime (OTP SMS, push, uploads, calls),
+            // which returns null once config is cached.
+            \App\Services\SystemMaintenance::cacheSafely();
 
             // Log completion
             Log::info('Background system optimization completed successfully');
@@ -561,189 +567,17 @@ class SettingController extends Controller
      */
     private function createDatabaseBackup()
     {
-        try {
-            $filename = 'farmersnetwork_backup_' . date('Y-m-d_H-i-s') . '.sql';
-            $backupPath = storage_path('app/backups/' . $filename);
-
-            // Create backups directory if it doesn't exist
-            $backupDir = dirname($backupPath);
-            if (!file_exists($backupDir)) {
-                mkdir($backupDir, 0755, true);
-            }
-
-            // Try mysqldump first if available
-            if ($this->isMysqldumpAvailable()) {
-                try {
-                    return $this->createMysqldumpBackup($backupPath, $filename);
-                } catch (\Exception $e) {
-                    Log::warning('mysqldump failed, falling back to PHP backup: ' . $e->getMessage());
-                    // Fall through to PHP backup
-                }
-            }
-
-            // Fallback to PHP-based backup
-            return $this->createPhpBackup($backupPath, $filename);
-
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Check if mysqldump is available
-     */
-    private function isMysqldumpAvailable()
-    {
-        $output = [];
-        $returnVar = 0;
-
-        // Check if mysqldump is available
-        exec('mysqldump --version 2>&1', $output, $returnVar);
-
-        return $returnVar === 0;
-    }
-
-    /**
-     * Create backup using mysqldump
-     */
-    private function createMysqldumpBackup($backupPath, $filename)
-    {
-        $dbConfig = config('database.connections.' . config('database.default'));
-
-        // Build mysqldump command with proper password handling
-        $commandParts = [
-            'mysqldump',
-            '--user=' . escapeshellarg($dbConfig['username']),
-            '--host=' . escapeshellarg($dbConfig['host']),
-            '--port=' . escapeshellarg($dbConfig['port'] ?? 3306),
-            '--single-transaction',
-            '--routines',
-            '--triggers'
-        ];
-
-        // Only add password option if password exists
-        if (!empty($dbConfig['password'])) {
-            $commandParts[] = '--password=' . escapeshellarg($dbConfig['password']);
-        }
-
-        $commandParts[] = escapeshellarg($dbConfig['database']);
-
-        $command = implode(' ', $commandParts);
-
-        // Execute command and redirect output to file
-        $fullCommand = $command . ' > ' . escapeshellarg($backupPath) . ' 2>&1';
-
-        $output = [];
-        $returnCode = 0;
-        exec($fullCommand, $output, $returnCode);
-
-        if ($returnCode !== 0) {
-            // If mysqldump failed, try to get more details
-            $errorDetails = implode("\n", $output);
-            if (empty($errorDetails) && file_exists($backupPath)) {
-                $errorDetails = file_get_contents($backupPath);
-            }
-            throw new \Exception('mysqldump failed (code: ' . $returnCode . '): ' . $errorDetails);
-        }
-
-        // Check if backup file was created and has content
-        if (!file_exists($backupPath) || filesize($backupPath) === 0) {
-            throw new \Exception('Backup file was not created or is empty');
-        }
-
-        $fileSize = $this->formatBytes(filesize($backupPath));
-        Log::info("Database backup created using mysqldump: {$filename} ({$fileSize})");
+        // Shared with Settings → Maintenance; see DatabaseBackupService.
+        $backup = app(\App\Services\DatabaseBackupService::class)->create();
+        $size = $this->formatBytes($backup['size']);
 
         return [
             'success' => true,
-            'message' => "Database backup created successfully using mysqldump: {$filename} ({$fileSize})",
-            'filename' => $filename,
-            'path' => $backupPath,
-            'method' => 'mysqldump',
-            'size' => $fileSize
-        ];
-    }
-
-    /**
-     * Create backup using PHP and Laravel's database connection
-     */
-    private function createPhpBackup($backupPath, $filename)
-    {
-        $database = config('database.connections.' . config('database.default') . '.database');
-
-        // Get all tables
-        $tables = \DB::select('SHOW TABLES');
-        $tableKey = 'Tables_in_' . $database;
-
-        $backup = "-- Database Backup\n";
-        $backup .= "-- Generated on: " . date('Y-m-d H:i:s') . "\n";
-        $backup .= "-- Database: {$database}\n";
-        $backup .= "-- Method: PHP Laravel Backup\n\n";
-
-        $backup .= "SET FOREIGN_KEY_CHECKS=0;\n";
-        $backup .= "SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";\n";
-        $backup .= "SET time_zone = \"+00:00\";\n\n";
-
-        foreach ($tables as $table) {
-            $tableName = $table->$tableKey;
-
-            // Get table structure
-            $createTable = \DB::select("SHOW CREATE TABLE `{$tableName}`");
-            $backup .= "-- Table structure for `{$tableName}`\n";
-            $backup .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
-            $backup .= $createTable[0]->{'Create Table'} . ";\n\n";
-
-            // Get table data
-            $rows = \DB::table($tableName)->get();
-
-            if ($rows->count() > 0) {
-                $backup .= "-- Data for table `{$tableName}`\n";
-                $backup .= "LOCK TABLES `{$tableName}` WRITE;\n";
-
-                $columns = array_keys((array)$rows->first());
-                $columnList = '`' . implode('`, `', $columns) . '`';
-
-                $insertValues = [];
-                foreach ($rows as $row) {
-                    $values = [];
-                    foreach ((array)$row as $value) {
-                        if (is_null($value)) {
-                            $values[] = 'NULL';
-                        } else {
-                            $values[] = "'" . addslashes($value) . "'";
-                        }
-                    }
-                    $insertValues[] = '(' . implode(', ', $values) . ')';
-                }
-
-                // Insert in batches to avoid memory issues
-                $batchSize = 100;
-                $batches = array_chunk($insertValues, $batchSize);
-
-                foreach ($batches as $batch) {
-                    $backup .= "INSERT INTO `{$tableName}` ({$columnList}) VALUES\n";
-                    $backup .= implode(",\n", $batch) . ";\n";
-                }
-
-                $backup .= "UNLOCK TABLES;\n\n";
-            }
-        }
-
-        $backup .= "SET FOREIGN_KEY_CHECKS=1;\n";
-
-        // Write backup to file
-        file_put_contents($backupPath, $backup);
-
-        $fileSize = $this->formatBytes(filesize($backupPath));
-        Log::info("Database backup created using PHP method: {$filename} ({$fileSize})");
-
-        return [
-            'success' => true,
-            'message' => "Database backup created successfully using PHP method: {$filename} ({$fileSize})",
-            'filename' => $filename,
-            'path' => $backupPath,
-            'method' => 'php',
-            'size' => $fileSize
+            'message' => "Database backup created ({$backup['method']}): {$backup['filename']} ({$size})",
+            'filename' => $backup['filename'],
+            'path' => $backup['path'],
+            'method' => $backup['method'],
+            'size' => $size,
         ];
     }
 
