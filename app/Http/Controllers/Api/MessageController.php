@@ -740,7 +740,10 @@ class MessageController extends Controller
                 'chat_id' => $request->target_chat_id,
                 'sender_id' => Auth::id(),
                 'message_type' => $originalMessage->message_type,
-                'content' => $request->additional_text ?? $originalMessage->content,
+                // The forwarded message arrives unchanged. The note used to
+                // replace it — a forwarded text with a note arrived as just
+                // the note.
+                'content' => $originalMessage->content,
                 'media_url' => $originalMessage->media_url,
                 'media_size' => $originalMessage->media_size,
                 'media_duration' => $originalMessage->media_duration,
@@ -757,9 +760,24 @@ class MessageController extends Controller
                 'sent_at' => now(),
             ]);
 
+            // The optional note goes after it as an ordinary message from the
+            // forwarder, as WhatsApp does.
+            $noteMessage = null;
+            $note = trim((string) $request->additional_text);
+            if ($note !== '') {
+                $noteMessage = Message::create([
+                    'chat_id' => $request->target_chat_id,
+                    'sender_id' => Auth::id(),
+                    'message_type' => 'text',
+                    'content' => $note,
+                    'status' => 'sent',
+                    'sent_at' => now(),
+                ]);
+            }
+
             // Update target chat's last message and timestamp
             $targetChat->update([
-                'last_message_id' => $forwardedMessage->id,
+                'last_message_id' => ($noteMessage ?? $forwardedMessage)->id,
                 'updated_at' => now()
             ]);
 
@@ -772,19 +790,25 @@ class MessageController extends Controller
                 'forwardedFrom.sender:id,name'
             ]);
 
-            // Broadcast the message to chat participants
-            try {
-                broadcast(new MessageSent($forwardedMessage, Auth::user()))->toOthers();
-            } catch (\Throwable $e) {
-                \Log::warning('MessageSent broadcast failed: ' . $e->getMessage());
+            $noteMessage?->load('sender:id,name,phone_number,avatar_url');
+
+            // Broadcast the message (and note) to chat participants
+            foreach (array_filter([$forwardedMessage, $noteMessage]) as $sent) {
+                try {
+                    broadcast(new MessageSent($sent, Auth::user()))->toOthers();
+                } catch (\Throwable $e) {
+                    \Log::warning('MessageSent broadcast failed: ' . $e->getMessage());
+                }
             }
 
-            app(\App\Services\ChatPushService::class)->notifyNewMessage($forwardedMessage);
+            // One push for the pair: the note is what the recipient reads first.
+            app(\App\Services\ChatPushService::class)->notifyNewMessage($noteMessage ?? $forwardedMessage);
 
             return response()->json([
                 'success' => true,
                 'data' => [
                     'message' => $forwardedMessage,
+                    'note_message' => $noteMessage,
                     'original_message_id' => $originalMessage->id
                 ],
                 'message' => 'Message forwarded successfully'

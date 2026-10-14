@@ -212,39 +212,62 @@ class MediaController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Validation failed',
+                    'message' => $validator->errors()->first() ?: 'Validation failed',
                     'errors' => $validator->errors()
                 ], 422);
             }
 
-            $file = $request->file('chat_avatar');
-            $chatId = $request->chat_id;
-
-            // Upload to Cloudinary
-            $result = $this->cloudinary->uploadImage($file, 'chat-avatars', true);
-
-            if (!$result['success']) {
+            $chat = \App\Models\Chat::findOrFail($request->chat_id);
+            $participant = $chat->participants()->where('users.id', Auth::id())->first();
+            if (!$participant) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Chat avatar upload failed',
-                    'error' => $result['error']
+                    'message' => 'You are not a member of this group'
+                ], 403);
+            }
+            if ($chat->isGroup() && $participant->pivot->role !== 'admin'
+                && (int) $chat->created_by !== (int) Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only group admins can change the group picture'
+                ], 403);
+            }
+
+            // Cloudinary, falling back to local storage — the same path the
+            // admin uploads use, so a Cloudinary hiccup doesn't fail it.
+            $result = app(\App\Services\MediaStorageService::class)
+                ->putImage($request->file('chat_avatar'), 'chat-avatars');
+
+            if (!($result['success'] ?? false)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Group picture upload failed',
+                    'error' => $result['error'] ?? null
                 ], 500);
             }
+
+            // Saved here, like the profile upload saves the user's avatar: the
+            // app used to need a second request, and when that one failed the
+            // picture was uploaded but never shown.
+            $chat->update(['avatar_url' => $result['url']]);
+            $chat->refresh();
 
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'public_id' => $result['public_id'],
-                    'avatar_url' => $result['url'],
-                    'thumbnail_url' => $result['thumbnail_url'],
+                    'public_id' => $result['public_id'] ?? null,
+                    'avatar_url' => $chat->avatar_url,
+                    'group_picture' => $chat->avatar_url,
+                    'url' => $chat->avatar_url,
+                    'saved' => true,
                 ],
-                'message' => 'Chat avatar uploaded successfully'
+                'message' => 'Group picture updated'
             ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Chat avatar upload failed',
+                'message' => 'Group picture upload failed',
                 'error' => $e->getMessage()
             ], 500);
         }

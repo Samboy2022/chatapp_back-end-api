@@ -176,9 +176,14 @@ class GroupController extends Controller
 
             $groupData = [
                 'id' => $group->id,
+                'type' => 'group',
                 'name' => $group->name,
                 'description' => $group->description,
                 'avatar' => $group->avatar_url,
+                // The keys the app reads; it ignored `avatar`, so a changed
+                // picture vanished again when group info reloaded.
+                'avatar_url' => $group->avatar_url,
+                'group_picture' => $group->avatar_url,
                 'created_by' => $group->created_by,
                 'created_at' => $group->created_at,
                 'updated_at' => $group->updated_at,
@@ -211,6 +216,60 @@ class GroupController extends Controller
     }
 
     /**
+     * Update a group's name, description and/or picture (admins only).
+     */
+    public function update(Request $request, $groupId)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|nullable|string|max:500',
+            'group_picture' => 'sometimes|nullable|string|max:2048',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = Auth::user();
+        $group = Chat::where('type', 'group')->where('id', $groupId)->first();
+        if (!$group) {
+            return response()->json(['success' => false, 'message' => 'Group not found'], 404);
+        }
+
+        $participant = $group->participants()->where('users.id', $user->id)->first();
+        if (!$participant || ($participant->pivot->role !== 'admin' && (int) $group->created_by !== (int) $user->id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only group admins can edit group info'
+            ], 403);
+        }
+
+        $changes = [];
+        if ($request->has('name')) $changes['name'] = trim($request->name);
+        if ($request->has('description')) $changes['description'] = $request->description;
+        if ($request->has('group_picture')) $changes['avatar_url'] = $request->group_picture;
+        if ($changes) $group->update($changes);
+
+        $group->refresh();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $group->id,
+                'type' => 'group',
+                'name' => $group->name,
+                'description' => $group->description,
+                'avatar_url' => $group->avatar_url,
+                'group_picture' => $group->avatar_url,
+            ],
+            'message' => 'Group info updated'
+        ]);
+    }
+
+    /**
      * Add members to a group
      */
     public function addMembers(\Illuminate\Http\Request $request, $groupId)
@@ -233,12 +292,33 @@ class GroupController extends Controller
                 ], 404);
             }
 
-            $requested = collect($request->participants ?? [])->unique();
+            // The app sends `user_ids`; this only read `participants`, so adding
+            // members answered "added successfully" and added nobody.
+            $requested = collect($request->input('user_ids', $request->input('participants', [])))
+                ->map(fn ($id) => (int) $id)
+                ->filter()
+                ->unique()
+                ->values();
+
+            if ($requested->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Choose at least one person to add'
+                ], 422);
+            }
+
+            $knownIds = User::whereIn('id', $requested)->pluck('id');
+            if ($knownIds->count() !== $requested->count()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Some of these people could not be found'
+                ], 422);
+            }
 
             // Only count people who aren't already in — re-adding an existing
             // member shouldn't count against the cap.
-            $existingIds = $group->participants()->pluck('users.id');
-            $newIds = $requested->reject(fn ($id) => $existingIds->contains($id));
+            $existingIds = $group->participants()->pluck('users.id')->map(fn ($id) => (int) $id);
+            $newIds = $requested->reject(fn ($id) => $existingIds->contains($id))->values();
 
             $maxGroupSize = (int) (\App\Models\Setting::get('max_group_size', 256) ?: 256);
             $resultingSize = $existingIds->count() + $newIds->count();
@@ -261,9 +341,26 @@ class GroupController extends Controller
                 ]);
             }
 
+            if ($newIds->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Everyone you chose is already in the group'
+                ], 422);
+            }
+
+            $group->touch();
+            $added = User::whereIn('id', $newIds)->get(['id', 'name', 'phone_number', 'avatar_url']);
+
             return response()->json([
                 'success' => true,
-                'message' => 'Members added successfully'
+                'data' => [
+                    'added_count' => $added->count(),
+                    'added' => $added,
+                    'member_count' => $existingIds->count() + $added->count(),
+                ],
+                'message' => $added->count() === 1
+                    ? "{$added->first()->name} was added"
+                    : "{$added->count()} people were added"
             ]);
 
         } catch (\Exception $e) {
