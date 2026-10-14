@@ -198,6 +198,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [GroupController::class, 'index']);
         Route::post('/', [GroupController::class, 'store']);
         Route::get('/{groupId}', [GroupController::class, 'show']);
+        Route::match(['put', 'patch'], '/{groupId}', [GroupController::class, 'update']); // Edit name/description/picture
         Route::post('/{groupId}/users', [GroupController::class, 'addUser']); // Add single user
         Route::post('/{groupId}/members', [GroupController::class, 'addMembers']); // Add multiple users
         Route::delete('/{groupId}/users/{userId}', [GroupController::class, 'removeUser']); // Remove single user

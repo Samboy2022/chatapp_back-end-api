@@ -41,10 +41,13 @@ class ChatController extends Controller
                     
                     // Fix: Properly handle muted_until from pivot data
                     $chat->is_muted = false;
+                    $chat->muted_until = null;
                     if ($chat->pivot->muted_until) {
                         try {
                             $mutedUntil = \Carbon\Carbon::parse($chat->pivot->muted_until);
                             $chat->is_muted = $mutedUntil->isFuture();
+                            // So the app can say "Muted until …".
+                            $chat->muted_until = $chat->is_muted ? $mutedUntil->toISOString() : null;
                         } catch (\Exception $e) {
                             // If parsing fails, assume not muted
                             $chat->is_muted = false;
@@ -349,8 +352,25 @@ class ChatController extends Controller
                 ], 403);
             }
 
-            $duration = $request->get('duration_hours', 24); // Default 24 hours
-            $mutedUntil = now()->addHours($duration);
+            if (!$request->boolean('mute', true)) {
+                $chat->participants()->updateExistingPivot($user->id, ['muted_until' => null]);
+
+                return response()->json([
+                    'success' => true,
+                    'data' => ['is_muted' => false, 'muted_until' => null, 'always' => false],
+                    'message' => 'Chat unmuted'
+                ], 200);
+            }
+
+            // "Always" is stored as a far-future date: muted_until is the only
+            // column, and everything that checks it compares against now. It
+            // is a TIMESTAMP, which ends in January 2038 — later dates fail.
+            $always = $request->boolean('always');
+            $mutedUntil = match (true) {
+                $always => \Carbon\Carbon::create(2037, 12, 31, 23, 59, 59),
+                $request->filled('duration_minutes') => now()->addMinutes((int) $request->duration_minutes),
+                default => now()->addHours((int) $request->get('duration_hours', 24)),
+            };
 
             $chat->participants()->updateExistingPivot($user->id, [
                 'muted_until' => $mutedUntil
@@ -358,7 +378,12 @@ class ChatController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Chat muted for {$duration} hours"
+                'data' => [
+                    'is_muted' => true,
+                    'muted_until' => $mutedUntil->toISOString(),
+                    'always' => $always,
+                ],
+                'message' => $always ? 'Chat muted' : 'Chat muted until ' . $mutedUntil->toDayDateTimeString()
             ], 200);
 
         } catch (\Exception $e) {

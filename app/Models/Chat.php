@@ -22,6 +22,8 @@ class Chat extends Model
         'created_by',
         'max_participants',
         'is_active',
+        // Written on every send; without this the writes were silently dropped.
+        'last_message_id',
     ];
 
     protected $casts = [
