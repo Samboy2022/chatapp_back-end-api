@@ -182,6 +182,14 @@ class CallController extends Controller
                 ], 409);
             }
 
+            // No point ringing someone for a call nobody can join.
+            if (!$this->agoraService->isConfigured()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Calling is not available right now. Please try again later.'
+                ], 503);
+            }
+
             // Find or create a private chat between the users
             $chat = Chat::where('type', 'private')
                 ->whereHas('participants', function ($query) {
@@ -234,17 +242,24 @@ class CallController extends Controller
                     'caller_token' => $callerToken,
                     'receiver_token' => $receiverToken,
                     'channel' => $channelName,
-                    'app_id' => \App\Models\Setting::get('agora_app_id', env('AGORA_APP_ID')),
-                    'caller_uid' => Auth::id(),
-                    'receiver_uid' => $receiverId,
+                    'app_id' => $this->agoraService->appId(),
+                    'caller_uid' => (int) Auth::id(),
+                    'receiver_uid' => (int) $receiverId,
                     'expires_at' => now()->addHours(1)->toISOString()
                 ];
             } catch (\Exception $e) {
-                // Log error but don't fail the call initiation
-                \Log::warning('Failed to generate Agora tokens', [
+                // Without tokens neither side can join: close the call record
+                // instead of ringing the other phone for a dead call.
+                \Log::error('Failed to generate Agora tokens', [
                     'call_id' => $call->id,
                     'error' => $e->getMessage()
                 ]);
+                $call->update(['status' => 'ended', 'ended_at' => now()]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Calling is not available right now. Please try again later.'
+                ], 503);
             }
 
             // Get caller and recipient user objects
@@ -841,15 +856,21 @@ class CallController extends Controller
             $callerToken = $this->agoraService->generateToken($channelName, $call->caller_id);
             $receiverToken = $this->agoraService->generateToken($channelName, $call->receiver_id);
 
+            $isCaller = (int) $call->caller_id === (int) Auth::id();
+
             return response()->json([
                 'success' => true,
                 'data' => [
                     'call_id' => $call->id,
+                    // The requester's own credentials, so a client never has
+                    // to work out which side it is.
+                    'token' => $isCaller ? $callerToken : $receiverToken,
+                    'uid' => (int) Auth::id(),
                     'caller_token' => $callerToken,
                     'receiver_token' => $receiverToken,
-                    'caller_uid' => $call->caller_id,
-                    'receiver_uid' => $call->receiver_id,
-                    'app_id' => \App\Models\Setting::get('agora_app_id', env('AGORA_APP_ID')),
+                    'caller_uid' => (int) $call->caller_id,
+                    'receiver_uid' => (int) $call->receiver_id,
+                    'app_id' => $this->agoraService->appId(),
                     'expires_at' => now()->addHours(1)->toISOString(),
                     'channel' => $channelName // Use call ID as channel identifier
                 ],

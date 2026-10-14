@@ -138,6 +138,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [MessageController::class, 'index']);
         Route::post('/', [MessageController::class, 'store']);
         Route::post('/forward', [MessageController::class, 'forwardMessage']); // Forward message
+        Route::post('/bulk-read', [MessageController::class, 'bulkRead']); // Read receipts for the whole chat
         Route::get('/{messageId}', [MessageController::class, 'show']);
         Route::put('/{messageId}', [MessageController::class, 'update']);
         Route::delete('/{messageId}', [MessageController::class, 'destroy']);

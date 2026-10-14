@@ -128,10 +128,17 @@
         </a>
         <a
           href="{{ route('admin.settings.index') }}"
-          class="nav-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+          class="nav-item {{ request()->routeIs('admin.settings.*') && !request()->routeIs('admin.settings.maintenance.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
         >
           <i class="ph ph-gear-six text-base"></i>
           <span>Settings</span>
+        </a>
+        <a
+          href="{{ route('admin.settings.maintenance.index') }}"
+          class="nav-item {{ request()->routeIs('admin.settings.maintenance.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-wrench text-base"></i>
+          <span>Maintenance</span>
         </a>
         <a
           href="{{ route('admin.ai-settings.index') }}"

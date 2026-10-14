@@ -46,9 +46,9 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Stream / channel URL <span class="text-red-500">*</span></label>
                 <input type="url" name="stream_url" required
                        value="{{ old('stream_url', $channel->stream_url ?? '') }}"
-                       placeholder="https://www.youtube.com/@arefantv"
+                       placeholder="https://www.youtube.com/watch?v=..."
                        class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-600">
-                <p class="mt-1.5 text-xs text-gray-500">A YouTube channel/video URL or an HLS (.m3u8) stream. Opened in the app's built-in browser.</p>
+                <p class="mt-1.5 text-xs text-gray-500">Plays inside the app's player. Use a YouTube video or live link (youtube.com/watch?v=..., youtu.be/..., youtube.com/live/...) or an HLS (.m3u8) / MP4 stream. A YouTube channel page (youtube.com/@name) can't be embedded, so it opens in the YouTube app instead.</p>
             </div>
         </div>
     </div>

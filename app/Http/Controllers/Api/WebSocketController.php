@@ -104,23 +104,17 @@ class WebSocketController extends Controller
             }
 
             // Don't mark own messages as read
-            if ($message->sender_id === $user->id) {
+            if ((int) $message->sender_id === (int) $user->id) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Cannot mark your own message as read'
                 ], 400);
             }
 
-            // Update message read status
-            $message->update(['read_at' => now()]);
-
-            // Update participant's last read message
-            $message->chat->participants()
-                ->where('user_id', $user->id)
-                ->update(['last_read_message_id' => $message->id]);
-
-            // Broadcast message read event
-            broadcast(new MessageRead($message, $user));
+            // Same receipt rules as the REST endpoints: status, read_at, the
+            // participant's read marker and the broadcast.
+            app(\App\Services\MessageReceiptService::class)->markChatRead($message->chat, $user);
+            $message->refresh();
 
             return response()->json([
                 'success' => true,

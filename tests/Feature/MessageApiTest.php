@@ -112,7 +112,7 @@ class MessageApiTest extends TestCase
             'sender_id' => $this->user->id,
             'message_type' => 'text',
             'content' => 'Hello, world!',
-            'status' => 'delivered'
+            'status' => 'sent' // one tick until a recipient fetches it
         ]);
     }
 

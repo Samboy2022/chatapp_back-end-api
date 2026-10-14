@@ -22,7 +22,11 @@ class ChatController extends Controller
     {
         try {
             $user = $request->user();
-            
+
+            // The chat list poll is how new messages reach the device, so
+            // this is where they become "delivered" (two grey ticks).
+            app(\App\Services\MessageReceiptService::class)->markDelivered($user);
+
             $chats = $user->chats()
                 ->with([
                     'latestMessage.sender:id,name,avatar_url',

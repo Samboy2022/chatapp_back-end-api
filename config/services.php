@@ -28,6 +28,15 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Voice/video calls. The admin Settings page can override app_id and
+    // app_certificate (Setting::get); these are the .env fallbacks, read here
+    // so they keep working after `php artisan config:cache`.
+    'agora' => [
+        'app_id' => env('AGORA_APP_ID'),
+        'app_certificate' => env('AGORA_APP_CERTIFICATE'),
+        'token_expiry' => (int) env('AGORA_TOKEN_EXPIRY', 3600),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
