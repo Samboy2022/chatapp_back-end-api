@@ -257,4 +257,38 @@ class HostFixController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Clear all application caches (routes, config, views, cache).
+     */
+    public function clearCache()
+    {
+        try {
+            Artisan::call('route:clear');
+            Artisan::call('config:clear');
+            Artisan::call('cache:clear');
+            Artisan::call('view:clear');
+
+            // Delete cached files in bootstrap/cache
+            $cacheFiles = glob(base_path('bootstrap/cache/*.php'));
+            if ($cacheFiles) {
+                foreach ($cacheFiles as $file) {
+                    if (basename($file) !== '.gitignore') {
+                        @unlink($file);
+                    }
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'All caches (routes, config, views) cleared successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to clear cache: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
+

@@ -42,10 +42,19 @@ class MessageController extends Controller
         $perPage = $request->get('per_page', 50);
         $page = $request->get('page', 1);
 
+        // "Clear chat" / "Delete chat" hide everything up to that moment for
+        // this user. Both times were stored and never read, so cleared
+        // messages came straight back on the next load.
+        $pivot = DB::table('chat_participants')
+            ->where('chat_id', $chatId)->where('user_id', Auth::id())
+            ->first(['cleared_at', 'deleted_at']);
+        $hiddenBefore = collect([$pivot->cleared_at ?? null, $pivot->deleted_at ?? null])->filter()->max();
+
         // Fetching the conversation is the recipient's device receiving it.
         app(MessageReceiptService::class)->markDelivered(Auth::user(), (int) $chatId);
 
         $messages = Message::where('chat_id', $chatId)
+            ->when($hiddenBefore, fn ($q) => $q->where('created_at', '>', $hiddenBefore))
             ->with([
                 'sender:id,name,phone_number,avatar_url',
                 'reactions.user:id,name',

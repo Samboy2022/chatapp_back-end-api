@@ -50,6 +50,8 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
+        // Private preferences; user objects are sent to other people.
+        'notification_settings',
         'password',
         'remember_token',
     ];
@@ -68,6 +70,7 @@ class User extends Authenticatable
             'is_online' => 'boolean',
             'read_receipts' => 'boolean',
             'password' => 'hashed',
+            'notification_settings' => 'array',
         ];
     }
 

@@ -345,92 +345,60 @@ class SettingsController extends Controller
     /**
      * Get notification settings
      */
+    /** Remove the user's profile photo ("Remove Photo" in the app). */
+    public function removeAvatar(): JsonResponse
+    {
+        $user = Auth::user();
+        $user->avatar_url = null;
+        $user->save();
+
+        return response()->json(['success' => true, 'message' => 'Profile photo removed']);
+    }
+
     public function getNotificationSettings(): JsonResponse
     {
-        try {
-            // These would typically be stored in user preferences
-            $notificationSettings = [
-                'message_notifications' => true,
-                'call_notifications' => true,
-                'status_notifications' => true,
-                'group_notifications' => true,
-                'notification_sound' => 'default',
-                'vibrate' => true,
-                'notification_light' => true,
-                'in_app_sounds' => true,
-                'in_app_vibrate' => true,
-                'notification_preview' => 'name_and_message', // name_only, name_and_message, none
-                'high_priority_notifications' => true
-            ];
-
-            return response()->json([
-                'success' => true,
-                'data' => $notificationSettings,
-                'message' => 'Notification settings retrieved successfully'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error retrieving notification settings: ' . $e->getMessage()
-            ], 500);
-        }
+        // Stored per user (users.notification_settings) over the defaults. This
+        // used to return the same fixed values to everyone.
+        return response()->json([
+            'success' => true,
+            'data' => \App\Support\NotificationSettings::for(Auth::user()),
+            'message' => 'Notification settings retrieved successfully'
+        ]);
     }
 
     /**
-     * Update notification settings
+     * Update notification settings. Saved, and obeyed by ChatPushService —
+     * this used to echo the request back and store nothing.
      */
     public function updateNotificationSettings(Request $request): JsonResponse
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'message_notifications' => 'nullable|boolean',
-                'call_notifications' => 'nullable|boolean',
-                'status_notifications' => 'nullable|boolean',
-                'group_notifications' => 'nullable|boolean',
-                'notification_sound' => 'nullable|string',
-                'vibrate' => 'nullable|boolean',
-                'notification_light' => 'nullable|boolean',
-                'in_app_sounds' => 'nullable|boolean',
-                'in_app_vibrate' => 'nullable|boolean',
-                'notification_preview' => 'nullable|string|in:name_only,name_and_message,none',
-                'high_priority_notifications' => 'nullable|boolean'
-            ]);
+        $validator = Validator::make($request->all(), [
+            'message_notifications' => 'sometimes|boolean',
+            'group_notifications' => 'sometimes|boolean',
+            'call_notifications' => 'sometimes|boolean',
+            'status_notifications' => 'sometimes|boolean',
+            'notification_preview' => 'sometimes|string|in:name_and_message,name_only,none',
+            'in_app_sounds' => 'sometimes|boolean',
+            'in_app_vibrate' => 'sometimes|boolean',
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            $updatedSettings = $request->only([
-                'message_notifications',
-                'call_notifications',
-                'status_notifications',
-                'group_notifications',
-                'notification_sound',
-                'vibrate',
-                'notification_light',
-                'in_app_sounds',
-                'in_app_vibrate',
-                'notification_preview',
-                'high_priority_notifications'
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'data' => $updatedSettings,
-                'message' => 'Notification settings updated successfully'
-            ]);
-
-        } catch (\Exception $e) {
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating notification settings: ' . $e->getMessage()
-            ], 500);
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors()
+            ], 422);
         }
+
+        $changes = collect($validator->validated())
+            ->map(fn ($v, $k) => $k === 'notification_preview' ? $v : (bool) $v)
+            ->all();
+
+        return response()->json([
+            'success' => true,
+            'data' => \App\Support\NotificationSettings::update(Auth::user(), $changes),
+            'message' => 'Notification settings updated'
+        ]);
     }
 
     /**

@@ -284,6 +284,10 @@ class CallController extends Controller
 
             if (!$receiverLoad) {
                 \Log::error('Receiver not found for call notification', ['receiver_id' => $receiverId]);
+            } elseif (!\App\Support\NotificationSettings::for($receiverLoad)['call_notifications']) {
+                // They turned call notifications off: no ringing push. The call
+                // still reaches them in the app (and as a missed call).
+                \Log::info('Call push skipped by receiver setting', ['receiver_id' => $receiverId]);
             } else {
                 // Addressed by account, not device: OneSignal resolves the
                 // external id to whatever phones this user is signed in on.

@@ -74,6 +74,7 @@ Route::prefix('host-fix')->middleware('admin.auth')->group(function () {
     Route::get('/update-url', [App\Http\Controllers\HostFixController::class, 'updateAppUrl']);
     Route::get('/normalize-urls', [App\Http\Controllers\HostFixController::class, 'normalizeUrls']);
     Route::get('/test-upload', [App\Http\Controllers\HostFixController::class, 'testUpload']);
+    Route::get('/clear-cache', [App\Http\Controllers\HostFixController::class, 'clearCache']);
 });
 
 // Broadcasting Authentication Routes (for WebSocket authentication)

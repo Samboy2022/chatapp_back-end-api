@@ -199,6 +199,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [GroupController::class, 'store']);
         Route::get('/{groupId}', [GroupController::class, 'show']);
         Route::match(['put', 'patch'], '/{groupId}', [GroupController::class, 'update']); // Edit name/description/picture
+        Route::delete('/{groupId}', [GroupController::class, 'destroy']); // Delete for everyone (admins)
+        Route::put('/{groupId}/members/{memberId}/role', [GroupController::class, 'updateMemberRole']); // admin|member
         Route::post('/{groupId}/users', [GroupController::class, 'addUser']); // Add single user
         Route::post('/{groupId}/members', [GroupController::class, 'addMembers']); // Add multiple users
         Route::delete('/{groupId}/users/{userId}', [GroupController::class, 'removeUser']); // Remove single user
@@ -283,9 +285,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{callId}/agora-tokens', [CallController::class, 'getAgoraTokens']); // Agora video tokens
     });
 
+    // Signed-in devices (Sanctum tokens)
+    Route::get('/devices', [App\Http\Controllers\Api\DeviceController::class, 'index']);
+    Route::delete('/devices/others', [App\Http\Controllers\Api\DeviceController::class, 'destroyOthers']);
+    Route::delete('/devices/{tokenId}', [App\Http\Controllers\Api\DeviceController::class, 'destroy']);
+
     // User settings routes
     Route::prefix('settings')->group(function () {
         Route::get('/profile', [SettingsController::class, 'getProfile']);
+        Route::delete('/profile/avatar', [SettingsController::class, 'removeAvatar']);
         Route::put('/profile', [SettingsController::class, 'updateProfile']);
         Route::get('/privacy', [SettingsController::class, 'getPrivacy']);
         Route::put('/privacy', [SettingsController::class, 'updatePrivacy']);
@@ -374,21 +382,9 @@ Route::prefix('app-settings')->group(function () {
     Route::post('/multiple', [AppSettingsController::class, 'getMultiple']);
 });
 
-// Admin API routes for testing (no CSRF protection)
-Route::prefix('admin')->group(function () {
-    Route::post('settings/clear-cache', [App\Http\Controllers\Admin\SettingController::class, 'clearCache']);
-    Route::post('settings/optimize', [App\Http\Controllers\Admin\SettingController::class, 'optimizeSystem']);
-    Route::post('settings/test-email', [App\Http\Controllers\Admin\SettingController::class, 'testEmail']);
-    Route::post('settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'backupDatabase']);
-    Route::get('settings/export', [App\Http\Controllers\Admin\SettingController::class, 'exportSettings']);
-    Route::post('settings/import', [App\Http\Controllers\Admin\SettingController::class, 'importSettings']);
-    Route::post('settings/update', [App\Http\Controllers\Admin\SettingController::class, 'update']);
-
-    // Call monitoring API routes
-    Route::get('calls/active', [App\Http\Controllers\Admin\CallController::class, 'activeCalls']);
-    Route::get('calls/realtime-stats', [App\Http\Controllers\Admin\CallController::class, 'realtimeStats']);
-    Route::get('calls/recent-activity', [App\Http\Controllers\Admin\CallController::class, 'recentActivity']);
-});
+// (Removed: an unauthenticated /api/admin group that let anyone update,
+// import or export every app setting and trigger backups. The admin panel
+// uses the session-protected /admin and /admin-api routes in web.php.)
 
 // Fallback route for API
 Route::fallback(function () {

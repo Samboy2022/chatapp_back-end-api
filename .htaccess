@@ -1,16 +1,17 @@
 <IfModule mod_rewrite.c>
-    # Redirect all requests to /public except for specific files
     RewriteEngine On
+    RewriteBase /
     RewriteCond %{REQUEST_URI} !^/public/
-    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
-# Block access to sensitive directories
+# Block access to sensitive files
 <FilesMatch "\.(env|gitignore|gitattributes|lock)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Disable directory listing
-Options -Indexes
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

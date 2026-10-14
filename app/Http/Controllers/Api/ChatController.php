@@ -33,10 +33,26 @@ class ChatController extends Controller
                     'participants:id,name,avatar_url,is_online,last_seen_at',
                     'creator:id,name,avatar_url'
                 ])
-                ->withPivot(['is_archived', 'is_pinned', 'muted_until', 'last_read_message_id'])
+                ->withPivot(['is_archived', 'is_pinned', 'muted_until', 'last_read_message_id', 'cleared_at', 'deleted_at'])
                 ->orderBy('updated_at', 'desc')
                 ->get()
+                // A deleted chat stays gone until someone writes in it again
+                // (as in WhatsApp). deleted_at was stored and never checked, so
+                // deleted chats reappeared on the next refresh.
+                ->filter(function ($chat) {
+                    $deletedAt = $chat->pivot->deleted_at;
+                    $latest = $chat->latestMessage?->created_at;
+                    return !$deletedAt || ($latest && $latest->gt(\Carbon\Carbon::parse($deletedAt)));
+                })
+                ->values()
                 ->map(function ($chat) use ($user) {
+                    // Don't preview a message the user cleared or deleted.
+                    $hiddenBefore = collect([$chat->pivot->cleared_at, $chat->pivot->deleted_at])->filter()->max();
+                    if ($hiddenBefore && $chat->latestMessage
+                        && !$chat->latestMessage->created_at->gt(\Carbon\Carbon::parse($hiddenBefore))) {
+                        $chat->setRelation('latestMessage', null);
+                    }
+
                     $chat->unread_count = $chat->getUnreadCount($user);
                     
                     // Fix: Properly handle muted_until from pivot data
@@ -412,7 +428,9 @@ class ChatController extends Controller
             }
 
             $chat->participants()->updateExistingPivot($user->id, [
-                'cleared_at' => now()
+                'cleared_at' => now(),
+                // Nothing hidden should still count as unread.
+                'last_read_message_id' => $chat->messages()->max('id')
             ]);
 
             return response()->json([
@@ -540,7 +558,8 @@ class ChatController extends Controller
             }
 
             $chat->participants()->updateExistingPivot($user->id, [
-                'deleted_at' => now()
+                'deleted_at' => now(),
+                'last_read_message_id' => $chat->messages()->max('id')
             ]);
 
             return response()->json([

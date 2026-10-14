@@ -64,8 +64,8 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            // Create token
-            $token = $user->createToken('auth_token')->plainTextToken;
+            // Create token, named after the device (Settings → Devices)
+            $token = $user->createToken(\App\Support\DeviceName::from($request))->plainTextToken;
 
             return response()->json([
                 'success' => true,
@@ -119,8 +119,8 @@ class AuthController extends Controller
             // Update online status
             $user->updateOnlineStatus(true);
 
-            // Create token
-            $token = $user->createToken('auth_token')->plainTextToken;
+            // Create token, named after the device (Settings → Devices)
+            $token = $user->createToken(\App\Support\DeviceName::from($request))->plainTextToken;
 
             return response()->json([
                 'success' => true,
@@ -355,10 +355,12 @@ class AuthController extends Controller
     {
         try {
             // Delete old token
+            // Keep the device's name across the refresh
+            $deviceName = $request->user()->currentAccessToken()->name;
             $request->user()->currentAccessToken()->delete();
-            
+
             // Create new token
-            $token = $request->user()->createToken('auth_token')->plainTextToken;
+            $token = $request->user()->createToken($deviceName ?: \App\Support\DeviceName::from($request))->plainTextToken;
 
             return response()->json([
                 'success' => true,

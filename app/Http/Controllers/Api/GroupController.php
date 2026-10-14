@@ -215,6 +215,77 @@ class GroupController extends Controller
         }
     }
 
+    /** The group if [$user] is an admin of it (or its creator), else null. */
+    private function adminGroup($groupId, $user): ?Chat
+    {
+        $group = Chat::where('type', 'group')->where('id', $groupId)->first();
+        if (!$group) {
+            return null;
+        }
+        $participant = $group->participants()->where('users.id', $user->id)->first();
+        $isAdmin = $participant && ($participant->pivot->role === 'admin'
+            || (int) $group->created_by === (int) $user->id);
+        return $isAdmin ? $group : null;
+    }
+
+    /**
+     * Make a member an admin or a regular member again (admins only).
+     */
+    public function updateMemberRole(Request $request, $groupId, $memberId)
+    {
+        $validator = Validator::make($request->all(), ['role' => 'required|in:admin,member']);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
+        }
+
+        $group = $this->adminGroup($groupId, Auth::user());
+        if (!$group) {
+            return response()->json(['success' => false, 'message' => 'Only group admins can change admins'], 403);
+        }
+
+        $member = $group->participants()->where('users.id', $memberId)->first();
+        if (!$member) {
+            return response()->json(['success' => false, 'message' => 'That person is not in this group'], 404);
+        }
+
+        if ($request->role === 'member'
+            && !$group->participants()->wherePivot('role', 'admin')->where('users.id', '!=', $memberId)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'A group needs at least one admin'
+            ], 422);
+        }
+
+        $group->participants()->updateExistingPivot($member->id, ['role' => $request->role]);
+
+        return response()->json([
+            'success' => true,
+            'data' => ['user_id' => (int) $member->id, 'role' => $request->role],
+            'message' => $request->role === 'admin'
+                ? "{$member->name} is now an admin"
+                : "{$member->name} is no longer an admin"
+        ]);
+    }
+
+    /**
+     * Delete the group for everyone (admins only): members, messages, the lot.
+     */
+    public function destroy($groupId)
+    {
+        $group = $this->adminGroup($groupId, Auth::user());
+        if (!$group) {
+            return response()->json(['success' => false, 'message' => 'Only group admins can delete the group'], 403);
+        }
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($group) {
+            $group->messages()->delete();
+            $group->participants()->detach();
+            $group->delete();
+        });
+
+        return response()->json(['success' => true, 'message' => 'Group deleted']);
+    }
+
     /**
      * Update a group's name, description and/or picture (admins only).
      */
@@ -434,8 +505,24 @@ class GroupController extends Controller
                 ], 404);
             }
 
+            $wasAdmin = $group->participants()->where('users.id', $user->id)
+                ->wherePivot('role', 'admin')->exists();
+
             // Remove user from group
             $group->participants()->detach($user->id);
+
+            // A group always keeps someone who can manage it: if the last admin
+            // leaves, the longest-standing member takes over (as in WhatsApp).
+            // An empty group is removed.
+            if (!$group->participants()->exists()) {
+                $group->messages()->delete();
+                $group->delete();
+            } elseif ($wasAdmin && !$group->participants()->wherePivot('role', 'admin')->exists()) {
+                $heir = $group->participants()->orderBy('chat_participants.joined_at')->first();
+                if ($heir) {
+                    $group->participants()->updateExistingPivot($heir->id, ['role' => 'admin']);
+                }
+            }
 
             return response()->json([
                 'success' => true,

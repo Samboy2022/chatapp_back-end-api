@@ -22,3 +22,7 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Local-only deploy artifacts
+/public/debug.php
+/vendor-prod.zip

@@ -125,7 +125,7 @@ class OtpAuthController extends Controller
         $this->markChannelVerified($user, $channel);
 
         $user->updateOnlineStatus(true);
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken(\App\Support\DeviceName::from($request))->plainTextToken;
 
         return response()->json([
             'success' => true,
