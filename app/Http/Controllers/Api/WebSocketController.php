@@ -58,7 +58,10 @@ class WebSocketController extends Controller
     {
         try {
             $user = Auth::user();
-            $isOnline = $request->is_online;
+            $isOnline = (bool) $request->is_online;
+            // Before the update, so a minute-by-minute heartbeat only
+            // refreshes last_seen_at instead of re-announcing every time.
+            $wasOnline = $user->is_online;
 
             // Update user status
             $user->update([
@@ -67,7 +70,9 @@ class WebSocketController extends Controller
             ]);
 
             // Broadcast status change
-            broadcast(new UserOnlineStatusChanged($user, $isOnline));
+            if ($wasOnline !== $isOnline) {
+                broadcast(new UserOnlineStatusChanged($user, $isOnline));
+            }
 
             return response()->json([
                 'success' => true,

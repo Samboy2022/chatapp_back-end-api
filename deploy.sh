@@ -72,7 +72,12 @@ if [ "$RUN_COMPOSER" = "1" ]; then
 fi
 php artisan migrate --force
 php artisan optimize:clear >/dev/null
-php artisan optimize >/dev/null || { echo "optimize failed; running uncached"; php artisan optimize:clear >/dev/null; }
+# Not `optimize`: that also runs config:cache, and much of the app reads env()
+# at runtime (Termii SMS, Cloudinary, OneSignal fallback, broadcast config),
+# which returns null once config is cached. Cache only what's safe.
+php artisan route:cache >/dev/null || php artisan route:clear >/dev/null
+php artisan view:cache >/dev/null || php artisan view:clear >/dev/null
+php artisan event:cache >/dev/null || php artisan event:clear >/dev/null
 REMOTE
 
 echo "==> Health check"

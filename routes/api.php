@@ -273,6 +273,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [CallController::class, 'index']);
         Route::get('/active', [CallController::class, 'getActiveCalls']);
         Route::post('/', [CallController::class, 'initiate']);
+        Route::post('/group', [CallController::class, 'startGroup']); // Start or join a group chat's call
         Route::get('/statistics', [CallController::class, 'getStatistics']);
         Route::get('/missed-count', [CallController::class, 'getMissedCallsCount']);
         Route::get('/cleanup-stale', [CallController::class, 'cleanupStaleRingingCalls']);

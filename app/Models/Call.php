@@ -18,6 +18,7 @@ class Call extends Model
         'receiver_id',
         'type',
         'call_type',
+        'is_group',
         'status',
         'started_at',
         'answered_at',
@@ -33,6 +34,7 @@ class Call extends Model
         'ended_at' => 'datetime',
         'duration' => 'integer',
         'participants' => 'array',
+        'is_group' => 'boolean',
     ];
 
     // Relationships
@@ -67,6 +69,21 @@ class Call extends Model
     public function callParticipants()
     {
         return $this->hasMany(CallParticipant::class);
+    }
+
+    /**
+     * Whether [userId] may see and act on this call: one of the two people in
+     * a private call, or anyone in the group for a group call.
+     */
+    public function involves(int $userId): bool
+    {
+        if ((int) $this->caller_id === $userId || (int) $this->receiver_id === $userId) {
+            return true;
+        }
+
+        return $this->is_group
+            && $this->chat
+            && $this->chat->participants()->where('user_id', $userId)->exists();
     }
 
     // Scopes

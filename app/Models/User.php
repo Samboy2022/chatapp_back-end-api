@@ -178,6 +178,33 @@ class User extends Authenticatable
     // Helper methods
 
     /**
+     * How long "online" holds without a check-in. The app re-announces
+     * itself every minute while it's open, so a phone that died, lost signal
+     * or was force-closed (and never said "offline") drops to away on its own.
+     */
+    public const ONLINE_WINDOW_SECONDS = 180;
+
+    /**
+     * Online means the flag is set *and* the user checked in recently.
+     *
+     * Queries that select is_online without last_seen_at get the stored flag
+     * as is, since there's nothing to judge freshness by.
+     */
+    public function getIsOnlineAttribute($value): bool
+    {
+        if (!$value) {
+            return false;
+        }
+        if (!array_key_exists('last_seen_at', $this->attributes)) {
+            return true;
+        }
+
+        $lastSeen = $this->last_seen_at;
+        return $lastSeen !== null
+            && $lastSeen->greaterThan(now()->subSeconds(self::ONLINE_WINDOW_SECONDS));
+    }
+
+    /**
      * Check if user is online
      */
     public function isOnline(): bool

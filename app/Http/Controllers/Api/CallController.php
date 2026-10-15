@@ -12,6 +12,7 @@ use App\Events\CallAccepted;
 use App\Events\CallEnded;
 use App\Events\CallRejected;
 use App\Services\AgoraService;
+use App\Services\GroupCallService;
 use App\Services\OneSignalService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -23,11 +24,13 @@ class CallController extends Controller
 {
     protected $agoraService;
     protected $push;
+    protected $groupCalls;
 
-    public function __construct(AgoraService $agoraService, OneSignalService $push)
+    public function __construct(AgoraService $agoraService, OneSignalService $push, GroupCallService $groupCalls)
     {
         $this->agoraService = $agoraService;
         $this->push = $push;
+        $this->groupCalls = $groupCalls;
     }
 
     /**
@@ -40,14 +43,20 @@ class CallController extends Controller
             $type = $request->get('type'); // audio, video, or null for all
             $userId = Auth::id();
 
-            // Get calls where user is either caller or receiver
+            // Get calls where user is either caller or receiver, plus group
+            // calls they were rung for.
             $callsQuery = Call::where(function($query) use ($userId) {
                 $query->where('caller_id', $userId)
-                      ->orWhere('receiver_id', $userId);
+                      ->orWhere('receiver_id', $userId)
+                      ->orWhere(function ($group) use ($userId) {
+                          $group->where('is_group', true)
+                                ->whereHas('callParticipants', fn ($p) => $p->where('user_id', $userId));
+                      });
             })
             ->with([
                 'caller:id,name,phone_number,avatar_url',
-                'receiver:id,name,phone_number,avatar_url'
+                'receiver:id,name,phone_number,avatar_url',
+                'chat:id,name,avatar_url',
             ])
             ->orderBy('created_at', 'desc');
 
@@ -59,6 +68,10 @@ class CallController extends Controller
 
             // Format the call data for response
             $formattedCalls = $calls->through(function($call) use ($userId) {
+                if ($call->is_group) {
+                    return $this->groupCalls->formatFor($call, (int) $userId);
+                }
+
                 $isIncoming = $call->caller_id !== $userId;
                 $otherUser = $isIncoming ? $call->caller : $call->receiver;
 
@@ -351,12 +364,109 @@ class CallController extends Controller
     }
 
     /**
+     * Start a voice or video call in a group chat — or join the one already
+     * running there, the way WhatsApp's "Join" works.
+     */
+    public function startGroup(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'chat_id' => 'required|integer|exists:chats,id',
+            'type' => 'required|string|in:video,audio',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $chat = Chat::findOrFail($request->chat_id);
+        $user = Auth::user();
+
+        if (!$chat->isGroup()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Group calls are only available in groups'
+            ], 400);
+        }
+
+        if (!$chat->participants()->where('user_id', $user->id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not a member of this group'
+            ], 403);
+        }
+
+        if (!$this->agoraService->isConfigured()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Calling is not available right now. Please try again later.'
+            ], 503);
+        }
+
+        try {
+            ['call' => $call, 'joined_existing' => $joinedExisting] =
+                $this->groupCalls->start($chat, $user, $request->type);
+
+            $data = $call->fresh()->toArray();
+            $data['agora_tokens'] = $this->groupCalls->tokensFor($call, $user);
+            $data['participants'] = $this->groupCalls->participants($call);
+            $data['group_name'] = $chat->name;
+            $data['group_avatar'] = $chat->avatar_url;
+            $data['joined_existing'] = $joinedExisting;
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'message' => $joinedExisting ? 'Joined the group call' : 'Group call started'
+            ], $joinedExisting ? 200 : 201);
+        } catch (\Exception $e) {
+            \Log::error('Error starting group call: ' . $e->getMessage(), ['chat_id' => $chat->id]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Couldn\'t start the group call'
+            ], 500);
+        }
+    }
+
+    private function joinGroupCall(Call $call): JsonResponse
+    {
+        if (!$call->involves((int) Auth::id())) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorized to answer this call'
+            ], 403);
+        }
+
+        if ($call->status !== 'answered') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Call is no longer available to answer'
+            ], 410);
+        }
+
+        $this->groupCalls->markJoined($call, Auth::user());
+
+        return response()->json([
+            'success' => true,
+            'data' => $call,
+            'message' => 'Joined the group call'
+        ]);
+    }
+
+    /**
      * Answer a call
      */
     public function answer($callId): JsonResponse
     {
         try {
             $call = Call::findOrFail($callId);
+
+            if ($call->is_group) {
+                return $this->joinGroupCall($call);
+            }
 
             // Check if user is the receiver
             if ($call->receiver_id != Auth::id()) {
@@ -418,6 +528,22 @@ class CallController extends Controller
     {
         try {
             $call = Call::findOrFail($callId);
+
+            // Hanging up a group call only takes this person out of it.
+            if ($call->is_group) {
+                if (!$call->involves((int) Auth::id())) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'You are not authorized to end this call'
+                    ], 403);
+                }
+                $ended = $this->groupCalls->leave($call, Auth::user());
+                return response()->json([
+                    'success' => true,
+                    'data' => $call->fresh(),
+                    'message' => $ended ? 'Call ended' : 'Left the call',
+                ]);
+            }
 
             // Check if user is participant in the call
             if ($call->caller_id != Auth::id() && $call->receiver_id != Auth::id()) {
@@ -504,6 +630,21 @@ class CallController extends Controller
         try {
             $call = Call::findOrFail($callId);
 
+            // Declining a group call only stops this person's ring.
+            if ($call->is_group) {
+                if (!$call->involves((int) Auth::id())) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'You are not authorized to decline this call'
+                    ], 403);
+                }
+                $this->groupCalls->decline($call, Auth::user());
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Call declined successfully'
+                ]);
+            }
+
             // Check if user is the receiver
             if ($call->receiver_id != Auth::id()) {
                 return response()->json([
@@ -581,16 +722,23 @@ class CallController extends Controller
             ])->findOrFail($callId);
 
             // Check if user is participant in the call
-            if ($call->caller_id != Auth::id() && $call->receiver_id != Auth::id()) {
+            if (!$call->involves((int) Auth::id())) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You are not authorized to view this call'
                 ], 403);
             }
 
+            $data = $call->toArray();
+            if ($call->is_group) {
+                $data['participants'] = $this->groupCalls->participants($call);
+                $data['group_name'] = $call->chat?->name;
+                $data['group_avatar'] = $call->chat?->avatar_url;
+            }
+
             return response()->json([
                 'success' => true,
-                'data' => $call,
+                'data' => $data,
                 'message' => 'Call details retrieved successfully'
             ]);
 
@@ -673,18 +821,35 @@ class CallController extends Controller
 
             $activeCalls = Call::where(function($query) use ($userId) {
                 $query->where('caller_id', $userId)
-                      ->orWhere('receiver_id', $userId);
+                      ->orWhere('receiver_id', $userId)
+                      // Group calls this user is still being rung for, or is in.
+                      ->orWhere(function ($group) use ($userId) {
+                          $group->where('is_group', true)
+                                ->whereHas('callParticipants', fn ($p) => $p
+                                    ->where('user_id', $userId)
+                                    ->whereIn('status', ['invited', 'joined']));
+                      });
             })
             ->whereIn('status', ['ringing', 'answered'])
             ->with([
                 'caller:id,name,phone_number,avatar_url',
-                'receiver:id,name,phone_number,avatar_url'
+                'receiver:id,name,phone_number,avatar_url',
+                'chat:id,name,avatar_url',
             ])
             ->orderBy('created_at', 'desc')
             ->get();
 
             // Format the active calls data
             $formattedCalls = $activeCalls->map(function($call) use ($userId) {
+                if ($call->is_group) {
+                    // Still-invited members see it ringing, so the app's
+                    // polling fallback rings their phone like a private call.
+                    $mine = $call->callParticipants()->where('user_id', $userId)->value('status');
+                    return $this->groupCalls->formatFor($call, (int) $userId, [
+                        'status' => $mine === 'invited' ? 'ringing' : 'answered',
+                    ]);
+                }
+
                 $isIncoming = $call->caller_id !== $userId;
                 $otherUser = $isIncoming ? $call->caller : $call->receiver;
 
@@ -839,7 +1004,7 @@ class CallController extends Controller
             $call = Call::findOrFail($callId);
 
             // Check if user is participant in the call
-            if ($call->caller_id != Auth::id() && $call->receiver_id != Auth::id()) {
+            if (!$call->involves((int) Auth::id())) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You are not authorized to access this call'
@@ -852,6 +1017,14 @@ class CallController extends Controller
                     'success' => false,
                     'message' => 'Call is not active'
                 ], 410);
+            }
+
+            if ($call->is_group) {
+                return response()->json([
+                    'success' => true,
+                    'data' => $this->groupCalls->tokensFor($call, Auth::user()),
+                    'message' => 'Agora video tokens retrieved successfully'
+                ]);
             }
 
             $channelName = 'call_' . $call->id;
