@@ -857,7 +857,8 @@ class CallController extends Controller
                     'id' => $call->id,
                     'caller_id' => $call->caller_id,
                     'callee_id' => $call->receiver_id,
-                    'type' => $call->type,
+                    // Calls are stored with call_type; the type column is empty.
+                    'type' => $call->call_type ?? $call->type,
                     'status' => $call->status,
                     'started_at' => $call->started_at,
                     'answered_at' => $call->answered_at,

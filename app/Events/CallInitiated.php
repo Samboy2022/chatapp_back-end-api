@@ -57,7 +57,12 @@ class CallInitiated implements ShouldBroadcastNow
     {
         return [
             'event_type' => 'call_initiated',
+            // The app rings from this payload as it would from the push, so
+            // it carries the same keys the push does.
+            'type' => 'incoming_call',
             'call_id' => $this->call->call_id ?? $this->call->id,
+            'channel' => 'call_' . $this->call->id,
+            'receiver_id' => $this->recipient->id,
             'caller_id' => $this->caller->id,
             'recipient_id' => $this->recipient->id,
             'caller_name' => $this->caller->name,

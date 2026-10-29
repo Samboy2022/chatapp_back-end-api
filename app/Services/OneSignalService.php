@@ -38,26 +38,55 @@ class OneSignalService
     }
 
     /**
-     * Ring a user's phone for an incoming call.
+     * Ring a user's phone for an incoming call, or cancel a ring.
      *
-     * Sent as a silent, data-only, high-priority message: the app turns it
-     * into the full-screen CallKit UI itself, so a system banner would only
-     * duplicate that. TTL is short because a call notification that arrives
+     * An incoming call goes out as a *visible* high-priority notification.
+     * It used to be silent and data-only, but OneSignal only passes pushes to
+     * Flutter while the app is in the foreground, so a backgrounded or closed
+     * app never rang. On Android the app's native notification extension
+     * swallows the banner and shows the full-screen call UI instead; on iOS
+     * (and on app builds without the extension) the banner is what the user
+     * taps to answer.
+     *
+     * Cancellations (call_ended / call_declined) stay silent: the extension
+     * or the running app dismisses the ring, and a "call ended" banner would
+     * only be noise. TTL is short because a call notification that arrives
      * two minutes late is worse than none at all.
      */
     public function sendCallNotification(string $userId, array $data = []): bool
     {
+        if (($data['type'] ?? null) !== 'incoming_call') {
+            return $this->send(
+                userIds: [$userId],
+                title: null,
+                body: null,
+                data: $data,
+                options: [
+                    'priority' => 10,
+                    'ttl' => self::CALL_TTL_SECONDS,
+                    'content_available' => true,
+                ]
+            );
+        }
+
+        $isVideo = ($data['call_type'] ?? 'audio') === 'video';
+        $kind = $isVideo ? 'video' : 'voice';
+        $isGroup = ($data['is_group'] ?? null) === '1' || ($data['is_group'] ?? null) === true;
+
         return $this->send(
             userIds: [$userId],
-            title: null,
-            body: null,
+            title: $data['caller_name'] ?? 'Incoming call',
+            body: $isGroup ? "Incoming group {$kind} call" : "Incoming {$kind} call",
             data: $data,
             options: [
                 'priority' => 10,
                 'ttl' => self::CALL_TTL_SECONDS,
-                // Data-only on both platforms — the app owns the UI.
+                // Wakes the iOS app too, so it can ring while it's running.
                 'content_available' => true,
-                'android_background_data' => true,
+                // One ring per call even if it's sent twice.
+                'collapse_id' => 'call_' . ($data['call_id'] ?? ''),
+                'android_visibility' => 1,
+                'ios_interruption_level' => 'time_sensitive',
             ]
         );
     }
