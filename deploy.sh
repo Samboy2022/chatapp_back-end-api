@@ -28,6 +28,9 @@ EXCLUDES=(
     --exclude='.git/' --exclude='.github/' --exclude='.claude/' --exclude='.idea/' --exclude='.vscode/'
     --exclude='.DS_Store' --exclude='*.log' --exclude='.phpunit.result.cache'
     --exclude='/tests/' --exclude='/deploy.sh'
+    # cPanel writes its PHP version handler into the root .htaccess; uploading
+    # ours would drop it and switch the site's PHP version.
+    --exclude='/.htaccess'
 )
 
 if [ "${1:-}" = "--dry-run" ]; then
