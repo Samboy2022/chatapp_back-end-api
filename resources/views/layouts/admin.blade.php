@@ -113,6 +113,20 @@
           <span>Sliders</span>
         </a>
         <a
+          href="{{ route('admin.cbt.questions.index') }}"
+          class="nav-item {{ request()->routeIs('admin.cbt.questions.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-exam text-base"></i>
+          <span>CBT Questions</span>
+        </a>
+        <a
+          href="{{ route('admin.cbt.slides.index') }}"
+          class="nav-item {{ request()->routeIs('admin.cbt.slides.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
+        >
+          <i class="ph ph-slideshow text-base"></i>
+          <span>CBT Slides</span>
+        </a>
+        <a
           href="{{ route('admin.reports.index') }}"
           class="nav-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }} flex items-center space-x-2 px-3 py-2 rounded-lg text-sm text-gray-700 mb-1"
         >

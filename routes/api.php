@@ -173,6 +173,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{messageId}/react', [MessageController::class, 'removeReaction']); // Remove reaction
     });
 
+    // CBT practice (see Api\CbtController for what each route does)
+    Route::prefix('cbt')->group(function () {
+        Route::get('/home', [App\Http\Controllers\Api\CbtController::class, 'home']);
+        Route::get('/exams/{exam}', [App\Http\Controllers\Api\CbtController::class, 'exam']);
+        Route::get('/attempts', [App\Http\Controllers\Api\CbtController::class, 'index']);
+        Route::post('/attempts', [App\Http\Controllers\Api\CbtController::class, 'start'])->middleware('throttle:30,1');
+        Route::post('/attempts/{attempt}/submit', [App\Http\Controllers\Api\CbtController::class, 'submit'])->whereNumber('attempt');
+        Route::get('/attempts/{attempt}', [App\Http\Controllers\Api\CbtController::class, 'show'])->whereNumber('attempt');
+    });
+
     // Status routes
     Route::prefix('status')->group(function () {
         Route::get('/', [StatusController::class, 'index']);

@@ -160,6 +160,17 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::post('sliders/{slider}/toggle-active', [App\Http\Controllers\Admin\SliderController::class, 'toggleActive'])->name('sliders.toggle-active');
     Route::resource('sliders', App\Http\Controllers\Admin\SliderController::class)->except(['show']);
 
+    // CBT practice: the question bank (with CSV import) and the CBT screen's slides.
+    // import/template sit before the resource so they aren't read as {question}.
+    Route::prefix('cbt')->name('cbt.')->group(function () {
+        Route::get('questions/import', [App\Http\Controllers\Admin\CbtQuestionController::class, 'importForm'])->name('questions.import');
+        Route::post('questions/import', [App\Http\Controllers\Admin\CbtQuestionController::class, 'import'])->name('questions.import.store');
+        Route::get('questions/template', [App\Http\Controllers\Admin\CbtQuestionController::class, 'template'])->name('questions.template');
+        Route::resource('questions', App\Http\Controllers\Admin\CbtQuestionController::class)->except(['show']);
+        Route::post('slides/{slide}/toggle-active', [App\Http\Controllers\Admin\CbtSlideController::class, 'toggleActive'])->name('slides.toggle-active');
+        Route::resource('slides', App\Http\Controllers\Admin\CbtSlideController::class)->except(['show']);
+    });
+
     Route::post('radio/{radio}/toggle-active', [App\Http\Controllers\Admin\RadioController::class, 'toggleActive'])->name('radio.toggle-active');
     Route::post('radio/{radio}/set-live', [App\Http\Controllers\Admin\RadioController::class, 'setLive'])->name('radio.set-live');
 
