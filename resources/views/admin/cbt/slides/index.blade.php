@@ -23,7 +23,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             @foreach ($slides as $slide)
                 <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden {{ $slide->is_active ? '' : 'opacity-60' }}">
-                    <div class="p-5 text-white" style="background: linear-gradient(135deg, {{ $slide->color_from }}, {{ $slide->color_to }})">
+                    <div class="p-5 text-white" style="background: linear-gradient(135deg, #334155, #0f172a)">
                         @if ($slide->badge)
                             <span class="inline-block px-2.5 py-1 rounded-full border border-white/40 bg-white/10 text-[11px] font-semibold tracking-wide">{{ $slide->badge }}</span>
                         @endif

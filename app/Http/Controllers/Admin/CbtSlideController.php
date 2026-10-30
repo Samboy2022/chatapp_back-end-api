@@ -20,7 +20,7 @@ class CbtSlideController extends Controller
     public function create(): View
     {
         return view('admin.cbt.slides.create', [
-            'slide' => new CbtSlide(['color_from' => '#0B1F7A', 'color_to' => '#111827', 'is_active' => true]),
+            'slide' => new CbtSlide(['is_active' => true]),
             'targets' => $this->targets(),
         ]);
     }
@@ -76,8 +76,6 @@ class CbtSlideController extends Controller
             'cta_kind' => ['required', Rule::in(['none', 'exam', 'url'])],
             'cta_exam' => ['nullable', Rule::in(array_keys(config('cbt.exams')))],
             'cta_url' => ['nullable', 'url', 'max:2048'],
-            'color_from' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'color_to' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
@@ -93,8 +91,6 @@ class CbtSlideController extends Controller
             'subtitle' => $data['subtitle'] ?? null,
             'cta_label' => $target ? (($data['cta_label'] ?? null) ?: 'Begin Now') : null,
             'cta_target' => $target,
-            'color_from' => strtoupper($data['color_from']),
-            'color_to' => strtoupper($data['color_to']),
             'sort_order' => $data['sort_order'] ?? null,
             'is_active' => $request->boolean('is_active'),
         ];

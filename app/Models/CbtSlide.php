@@ -38,7 +38,6 @@ class CbtSlide extends Model
             // The app opens an exam's setup for an exam slug, a web page for a URL.
             'cta_exam' => $target && array_key_exists($target, config('cbt.exams')) ? $target : null,
             'cta_url' => $target && preg_match('#^https?://#', $target) ? $target : null,
-            'colors' => [$this->color_from, $this->color_to],
         ];
     }
 }

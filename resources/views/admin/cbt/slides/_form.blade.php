@@ -57,15 +57,9 @@
                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm">
     </div>
 
+    <p class="text-xs text-gray-500">The app draws slides in its own brand colour.</p>
+
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Colour (left)</label>
-            <input type="color" name="color_from" value="{{ old('color_from', $slide->color_from) }}" class="w-full h-10 rounded-xl border border-gray-200">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Colour (right)</label>
-            <input type="color" name="color_to" value="{{ old('color_to', $slide->color_to) }}" class="w-full h-10 rounded-xl border border-gray-200">
-        </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Order</label>
             <input type="number" name="sort_order" min="0" value="{{ old('sort_order', $slide->sort_order) }}"
