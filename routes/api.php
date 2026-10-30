@@ -109,6 +109,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [ContactController::class, 'store']);
         Route::post('/lookup', [ContactController::class, 'lookup']);
         Route::post('/sync', [ContactController::class, 'sync']);
+        // Which of a page of phone-book numbers belong to accounts, without
+        // adding anyone (the contact picker's "on the app / invite" labels).
+        Route::post('/match', [ContactController::class, 'match']);
         Route::get('/blocked', [ContactController::class, 'getBlocked']);
         Route::get('/favorites', [ContactController::class, 'getFavorites']);
         Route::get('/search', [ContactController::class, 'search']);

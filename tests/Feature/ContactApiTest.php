@@ -31,6 +31,24 @@ class ContactApiTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_match_reports_which_phone_numbers_are_on_the_app_without_adding_them()
+    {
+        $onApp = User::factory()->create(['phone_number' => '+2348031234567']);
+
+        $response = $this->postJson('/api/contacts/match', [
+            // Same number as saved in a phone book, a stranger, and the
+            // signed-in user's own number (never matched).
+            'phones' => ['0803 123 4567', '+2349099999999', $this->user->phone_number],
+        ]);
+
+        $response->assertOk()
+            ->assertJsonCount(1, 'data.matches')
+            ->assertJsonPath('data.matches.0.phone', '0803 123 4567')
+            ->assertJsonPath('data.matches.0.user.id', $onApp->id);
+
+        $this->assertDatabaseMissing('contacts', ['user_id' => $this->user->id]);
+    }
+
     /**
      * Test syncing contacts.
      *

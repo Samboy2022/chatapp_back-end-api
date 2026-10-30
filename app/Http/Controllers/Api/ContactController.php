@@ -217,6 +217,73 @@ class ContactController extends Controller
     }
 
     /**
+     * Tell which of a page of phone numbers belong to accounts.
+     *
+     * Unlike sync, this adds nobody: the contact picker shows the phone's
+     * address book a page at a time and labels each entry "on the app" or
+     * "invite". Numbers are matched on their last 9 digits, like
+     * findUserByIdentifier, but in one query for the whole page.
+     */
+    public function match(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'phones' => 'required|array|max:200',
+            'phones.*' => 'required|string|max:32',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Last 9 digits of each number => the numbers as the client sent them.
+        $phonesByTail = [];
+        foreach ($request->phones as $phone) {
+            $digits = preg_replace('/\D+/', '', $phone);
+            if (strlen($digits) < 7) {
+                continue;
+            }
+            $phonesByTail[substr($digits, -9)][] = $phone;
+        }
+
+        $matches = [];
+
+        if ($phonesByTail) {
+            $tails = array_keys($phonesByTail);
+            $placeholders = implode(',', array_fill(0, count($tails), '?'));
+
+            $users = User::select(['id', 'name', 'phone_number', 'country_code', 'email', 'avatar_url', 'is_online'])
+                ->selectRaw(
+                    "RIGHT(REGEXP_REPLACE(COALESCE(phone_number, ''), '[^0-9]', ''), 9) AS phone_tail"
+                )
+                ->whereRaw(
+                    "RIGHT(REGEXP_REPLACE(COALESCE(phone_number, ''), '[^0-9]', ''), 9) IN ($placeholders)",
+                    $tails
+                )
+                ->where('id', '!=', Auth::id())
+                ->get();
+
+            foreach ($users as $user) {
+                $profile = $user->only([
+                    'id', 'name', 'phone_number', 'country_code', 'email', 'avatar_url', 'is_online',
+                ]);
+                foreach ($phonesByTail[$user->phone_tail] ?? [] as $phone) {
+                    $matches[] = ['phone' => $phone, 'user' => $profile];
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => ['matches' => $matches],
+            'message' => count($matches) . ' of these numbers are on the app',
+        ]);
+    }
+
+    /**
      * Get user's contacts list
      */
     public function index(Request $request): JsonResponse
